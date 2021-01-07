@@ -17,7 +17,8 @@ public class CorsConfig {
         CorsConfiguration config = new CorsConfiguration();
         // 配合前端实现固定的 session id
         config.setAllowCredentials(true);
-        config.addAllowedOrigin(CorsConfiguration.ALL);
+//        config.addAllowedOrigin(CorsConfiguration.ALL);
+        config.addAllowedOriginPattern(CorsConfiguration.ALL);
         config.addAllowedHeader(CorsConfiguration.ALL);
         config.addAllowedMethod(CorsConfiguration.ALL);
         // 接受跨域访问的header
