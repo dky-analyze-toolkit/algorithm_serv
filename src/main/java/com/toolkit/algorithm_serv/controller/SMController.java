@@ -104,7 +104,8 @@ public class SMController {
                             @RequestParam("srchex") String srchex,
                             @RequestParam("signhex") String signhex  ) throws Exception {
 
-        SM2SignVO verify = SM2SignVerUtils.VerifySignSM2(Util.hexStringToBytes(publickey), Util.hexToByte(srchex), Util.hexToByte(SecurityTestAll.SM2SignHardToSoft(signhex)));
+//        SM2SignVO verify = SM2SignVerUtils.VerifySignSM2(Util.hexStringToBytes(publickey), Util.hexToByte(srchex), Util.hexToByte(SecurityTestAll.SM2SignHardToSoft(signhex)));
+        SM2SignVO verify = SM2SignVerUtils.VerifySignSM2(Util.hexStringToBytes(publickey), Util.hexToByte(srchex), Util.hexToByte(signhex));
         System.err.println("验签结果" + verify.isVerify());
 
         JSONObject jsonOS = new JSONObject();
