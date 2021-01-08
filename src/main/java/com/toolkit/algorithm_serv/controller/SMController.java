@@ -250,7 +250,10 @@ public class SMController {
 
         }
 
-        String hex = Util.byteToHex(plainText.getBytes());
+        String hex="";
+        if(plainText!=null) {
+            hex = Util.byteToHex(plainText.getBytes());
+        }
 
         JSONObject jsonOS = new JSONObject();
         jsonOS.put("plainText", plainText);
