@@ -1,6 +1,7 @@
 package com.toolkit.algorithm_serv.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.toolkit.algorithm_serv.global.enumeration.ErrorCodeEnum;
 import com.toolkit.algorithm_serv.global.response.ResponseHelper;
 import com.toolkit.algorithm_serv.global.utils.SecurityTestAll;
 import com.toolkit.algorithm_serv.global.utils.Util;
@@ -251,14 +252,20 @@ public class SMController {
         }
 
         String hex="";
+        JSONObject jsonOS = new JSONObject();
         if(plainText!=null) {
             hex = Util.byteToHex(plainText.getBytes());
+            jsonOS.put("plainText", plainText);
+            jsonOS.put("plainHex", hex);
+            return responseHelper.success(jsonOS);
+        }
+        else {
+            hex = null;
+            jsonOS.put("plainText", plainText);
+            jsonOS.put("plainHex", hex);
+            return responseHelper.error(ErrorCodeEnum.ERROR_FAIL_SM4DEC,jsonOS);
         }
 
-        JSONObject jsonOS = new JSONObject();
-        jsonOS.put("plainText", plainText);
-        jsonOS.put("plainHex", hex);
-        return responseHelper.success(jsonOS);
     }
 
     /**
