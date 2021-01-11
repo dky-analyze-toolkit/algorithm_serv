@@ -143,14 +143,19 @@ public class SMController {
                        @RequestParam("cipherhex") String cipherhex) throws Exception {
 
         System.out.println("解密: ");
-        String plainText = new String(SM2EncDecUtils.decrypt(Util.hexToByte(privatekey), Util.hexToByte(cipherhex)));
-        System.out.println(plainText);
-
-        String hex = Util.byteToHex(plainText.getBytes());
-
+        byte[] plainBytes = SM2EncDecUtils.decrypt(Util.hexToByte(privatekey), Util.hexToByte(cipherhex));
         JSONObject jsonOS = new JSONObject();
-        jsonOS.put("plainText", plainText);
-        jsonOS.put("plainHex", hex);
+        jsonOS.put("plainText", new String(plainBytes, "UTF-8"));
+        jsonOS.put("plainHex", Util.byteToHex(plainBytes));
+
+        // String plainText = new String(SM2EncDecUtils.decrypt(Util.hexToByte(privatekey), Util.hexToByte(cipherhex)));
+        // System.out.println(plainText);
+        //
+        // String hex = Util.byteToHex(plainText.getBytes());
+        //
+        // JSONObject jsonOS = new JSONObject();
+        // jsonOS.put("plainText", plainText);
+        // jsonOS.put("plainHex", hex);
         return responseHelper.success(jsonOS);
     }
 
@@ -230,30 +235,33 @@ public class SMController {
         sm4.secretKey = key;
         sm4.hexString = true;
         sm4.iv = "30303030303030303030303030303030";
-        String plainText="";
+        String plainHex="";
         if(mode.equals("ECB"))
         {
             System.out.println("ECB模式解密");
             byte[] encData = Util.hexToByte(cipherhex);
-            plainText = sm4.decryptData_ECB_hex(encData);
-            System.out.println("明文: " + plainText);
+            plainHex = sm4.decryptData_ECB_hex(encData);
+            System.out.println("明文: " + plainHex);
             System.out.println("");
         }
         else if(mode.equals("CBC"))
         {
             System.out.println("CBC模式解密");
             byte[] encData = Util.hexToByte(cipherhex);
-            plainText = sm4.decryptData_CBC_hex(encData);
-            System.out.println("明文: " + plainText);
+            plainHex = sm4.decryptData_CBC_hex(encData);
+            System.out.println("明文: " + plainHex);
             System.out.println("");
 
         }
 
-        String hex = Util.byteToHex(plainText.getBytes());
-
         JSONObject jsonOS = new JSONObject();
-        jsonOS.put("plainText", plainText);
-        jsonOS.put("plainHex", hex);
+        jsonOS.put("plainText", new String(Util.hexToByte(plainHex), "UTF-8"));
+        jsonOS.put("plainHex", plainHex);
+        // String hex = Util.byteToHex(plainHex.getBytes());
+        //
+        // JSONObject jsonOS = new JSONObject();
+        // jsonOS.put("plainText", plainHex);
+        // jsonOS.put("plainHex", hex);
         return responseHelper.success(jsonOS);
     }
 

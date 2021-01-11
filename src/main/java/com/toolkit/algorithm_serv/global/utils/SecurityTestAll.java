@@ -184,7 +184,7 @@ public class SecurityTestAll {
         sm4.secretKey = key;
         sm4.hexString = true;
         sm4.iv = "31313131313131313131313131313131";
-        String cipherText = sm4.encryptData_CBC(text);
+        String cipherText = sm4.encryptText_CBC(text);
         return cipherText;
     }
 
