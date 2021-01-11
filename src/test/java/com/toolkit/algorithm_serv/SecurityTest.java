@@ -112,7 +112,7 @@ public class SecurityTest {
 
         System.out.println("CBC模式加密");
         sm4.iv = "30303030303030303030303030303030";
-        cipherText = sm4.encryptData_CBC(plainText);
+        cipherText = sm4.encryptText_CBC(plainText);
         System.out.println("加密密文: " + cipherText);
         System.out.println("");
 

@@ -78,6 +78,7 @@ public class SecurityTestAll {
         System.out.println("sm4Key:"+sm4Key);
         System.out.println("--生成SM4结束--");
         System.out.println("--SM4的CBC加密--");
+        String src1 = "";
         String s1 = SM4EncForCBC(sm4Key, src);
         System.out.println("密文:"+s1);
         System.out.println("CBC解密");
@@ -185,7 +186,7 @@ public class SecurityTestAll {
         sm4.secretKey = key;
         sm4.hexString = true;
         sm4.iv = "31313131313131313131313131313131";
-        String cipherText = sm4.encryptData_CBC(text);
+        String cipherText = sm4.encryptText_CBC(text);
         return cipherText;
     }
 

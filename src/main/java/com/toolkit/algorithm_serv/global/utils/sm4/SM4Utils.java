@@ -73,7 +73,8 @@ public class SM4Utils {
             sm4.sm4_setkey_dec(ctx, keyBytes);
             byte[] decrypted = sm4.sm4_crypt_ecb(ctx, Base64.decodeBase64(cipherText));
             //byte[] decrypted = sm4.sm4_crypt_ecb(ctx, new BASE64Decoder().decodeBuffer(cipherText));
-            return new String(decrypted, "UTF-8");
+            return Util.byteToHex(decrypted);
+            // return new String(decrypted, "UTF-8");
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -136,7 +137,8 @@ public class SM4Utils {
             byte[] decrypted = sm4.sm4_crypt_cbc(ctx, ivBytes, Base64.decodeBase64(cipherText));
             /*String text = new String(decrypted, "UTF-8");
             return text.substring(0,text.length()-1);*/
-            return new String(decrypted, "UTF-8");
+            return Util.byteToHex(decrypted);
+            // return new String(decrypted, "UTF-8");
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -193,14 +195,15 @@ public class SM4Utils {
             sm4.sm4_setkey_dec(ctx, keyBytes);
             byte[] decrypted = sm4.sm4_crypt_ecb(ctx, Base64.decodeBase64(cipherText));
             //byte[] decrypted = sm4.sm4_crypt_ecb(ctx, new BASE64Decoder().decodeBuffer(cipherText));
-            return new String(decrypted, "UTF-8");
+            return Util.byteToHex(decrypted);
+            // return new String(decrypted, "UTF-8");
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public String encryptData_CBC(String plainText) {
+    public String encryptData_CBC(String hexPlain) {
         try {
             SM4_Context ctx = new SM4_Context();
             ctx.isPadding = true;
@@ -218,8 +221,20 @@ public class SM4Utils {
 
             SM4 sm4 = new SM4();
             sm4.sm4_setkey_enc(ctx, keyBytes);
-            byte[] encrypted = sm4.sm4_crypt_cbc(ctx, ivBytes, plainText.getBytes("UTF-8"));
+            // byte[] encrypted = sm4.sm4_crypt_cbc(ctx, ivBytes, plainText.getBytes("UTF-8"));
+            byte[] encrypted = sm4.sm4_crypt_cbc(ctx, ivBytes, Util.hexToByte(hexPlain));
             return Util.byteToHex(encrypted);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public String encryptText_CBC(String plainText) {
+        try {
+            byte[] plainTextBytes = plainText.getBytes("UTF-8");
+            String hexPlain = Util.byteToHex(plainTextBytes);
+            return encryptData_CBC(hexPlain);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -256,7 +271,8 @@ public class SM4Utils {
             byte[] decrypted = sm4.sm4_crypt_cbc(ctx, ivBytes, Base64.decodeBase64(cipherText));
             /*String text = new String(decrypted, "UTF-8");
             return text.substring(0,text.length()-1);*/
-            return new String(decrypted, "UTF-8");
+            return Util.byteToHex(decrypted);
+            // return new String(decrypted, "UTF-8");
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -283,7 +299,7 @@ public class SM4Utils {
 
         System.out.println("CBC模式加密");
         sm4.iv = "31313131313131313131313131313131";
-        String cipherText2 = sm4.encryptData_CBC(plainText);
+        String cipherText2 = sm4.encryptText_CBC(plainText);
         System.out.println("加密密文: " + cipherText2);
         System.out.println("");
 
