@@ -110,7 +110,7 @@ public class SecurityTestAll {
 
     //公钥加密
     public static String SM2Enc(String pubKey, String src) throws IOException {
-        String encrypt = SM2EncDecUtils.encrypt(Util.hexStringToBytes(pubKey), src.getBytes());
+        String encrypt = SM2EncDecUtils.encrypt(Util.hexStringToBytes(pubKey), src.getBytes(), false);
         //删除04
         encrypt=encrypt.substring(2,encrypt.length());
         return encrypt;
@@ -120,7 +120,7 @@ public class SecurityTestAll {
     public static String SM2Dec(String priKey, String encryptedData) throws IOException {
         //填充04
         encryptedData="04"+encryptedData;
-        byte[] decrypt = SM2EncDecUtils.decrypt(Util.hexStringToBytes(priKey), Util.hexStringToBytes(encryptedData));
+        byte[] decrypt = SM2EncDecUtils.decrypt(Util.hexStringToBytes(priKey), Util.hexStringToBytes(encryptedData), false);
         return new String(decrypt);
     }
 
