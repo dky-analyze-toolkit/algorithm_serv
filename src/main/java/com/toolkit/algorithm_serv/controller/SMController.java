@@ -5,10 +5,9 @@ import com.toolkit.algorithm_serv.global.enumeration.ErrorCodeEnum;
 import com.toolkit.algorithm_serv.global.response.ResponseHelper;
 import com.toolkit.algorithm_serv.global.utils.SecurityTestAll;
 import com.toolkit.algorithm_serv.global.utils.Util;
-import com.toolkit.algorithm_serv.global.utils.sm2.*;
-import com.toolkit.algorithm_serv.global.utils.sm4.SM4Utils;
+import com.toolkit.algorithm_serv.algorithm.sm2.*;
+import com.toolkit.algorithm_serv.algorithm.sm4.SM4Utils;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
-import org.bouncycastle.crypto.KeyGenerationParameters;
 import org.bouncycastle.crypto.digests.SM3Digest;
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
 import org.bouncycastle.crypto.params.ECPublicKeyParameters;
@@ -20,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigInteger;
-import java.util.Random;
 
 //import com.toolkit.algorithm_serv.global.cache.HostConfigs;
 
@@ -41,7 +39,7 @@ public class SMController {
      */
     @RequestMapping(value = "/generateKeyPair", method = RequestMethod.GET)
     @ResponseBody
-    public Object generateKeyPair() throws Exception {
+    public Object generateKeyPair() {
 
         SM2 sm2 = SM2.Instance();
         AsymmetricCipherKeyPair key = null;
@@ -77,23 +75,25 @@ public class SMController {
     @RequestMapping(value = "/sm2sign", method = RequestMethod.GET)
     @ResponseBody
     public Object sm2sign(@RequestParam("privatekey") String privatekey,
-                          @RequestParam("srchex") String srchex) throws Exception {
+                          @RequestParam("srchex") String srchex) {
 
-        SM2SignVO sign = SM2SignVerUtils.Sign2SM2(Util.hexStringToBytes(privatekey), Util.hexToByte(srchex));
-        System.out.println("R:"+sign.sign_r);
-        System.out.println("S:"+sign.sign_s);
-//        System.out.println("sign_express:"+sign.sign_express);
-//        System.out.println("sm2_sign:"+sign.sm2_sign);
-//        System.out.println("sm2_type:"+sign.sm2_type);
-//        System.out.println("sm2_userd:"+sign.sm2_userd);
-        System.out.println("getSm2_signForHard():"+sign.getSm2_signForHard());
-        System.out.println("getSm2_signForSoft():"+sign.getSm2_signForSoft());
+        try {
+            SM2SignVO sign = SM2SignVerUtils.Sign2SM2(Util.hexStringToBytes(privatekey), Util.hexToByte(srchex));
+            System.out.println("R:" + sign.sign_r);
+            System.out.println("S:" + sign.sign_s);
+            System.out.println("getSm2_signForHard():" + sign.getSm2_signForHard());
+            System.out.println("getSm2_signForSoft():" + sign.getSm2_signForSoft());
 
-        JSONObject jsonOS = new JSONObject();
-        jsonOS.put("sign_r", sign.sign_r);
-        jsonOS.put("sign_s", sign.sign_s);
-        jsonOS.put("asn1", sign.getSm2_signForSoft());
-        return responseHelper.success(jsonOS);
+            JSONObject jsonOS = new JSONObject();
+            jsonOS.put("sign_r", sign.sign_r);
+            jsonOS.put("sign_s", sign.sign_s);
+            jsonOS.put("asn1", sign.getSm2_signForSoft());
+            return responseHelper.success(jsonOS);
+        } catch (IllegalArgumentException argEx) {
+            return responseHelper.error(ErrorCodeEnum.ERROR_PARAM_LENGTH);
+        } catch (Exception e) {
+            return responseHelper.error(ErrorCodeEnum.ERROR_FAIL_SIGN);
+        }
     }
 
     /**
@@ -104,14 +104,20 @@ public class SMController {
     @ResponseBody
     public Object sm2verify(@RequestParam("publickey") String publickey,
                             @RequestParam("srchex") String srchex,
-                            @RequestParam("signhex") String signhex  ) throws Exception {
+                            @RequestParam("signhex") String signhex  ) {
 
-        SM2SignVO verify = SM2SignVerUtils.VerifySignSM2(Util.hexStringToBytes(publickey), Util.hexToByte(srchex), Util.hexToByte(SecurityTestAll.SM2SignHardToSoft(signhex)));
-        System.err.println("验签结果" + verify.isVerify());
+        try {
+            SM2SignVO verify = SM2SignVerUtils.VerifySignSM2(Util.hexStringToBytes(publickey), Util.hexToByte(srchex), Util.hexToByte(SecurityTestAll.SM2SignHardToSoft(signhex)));
+            System.err.println("验签结果" + verify.isVerify());
 
-        JSONObject jsonOS = new JSONObject();
-        jsonOS.put("result", verify.isVerify());
-        return responseHelper.success(jsonOS);
+            JSONObject jsonOS = new JSONObject();
+            jsonOS.put("result", verify.isVerify());
+            return responseHelper.success(jsonOS);
+        } catch (IllegalArgumentException argEx) {
+            return responseHelper.error(ErrorCodeEnum.ERROR_PARAM_LENGTH);
+        } catch (Exception e) {
+            return responseHelper.error(ErrorCodeEnum.ERROR_FAIL_VERIFY_SIGN);
+        }
     }
     /**
      * 1.3 SM2加密
@@ -149,7 +155,7 @@ public class SMController {
     @ResponseBody
     public Object sm2dec(@RequestParam("privatekey") String privatekey,
                          @RequestParam("cipherhex") String cipherhex,
-                         @RequestParam(value = "cipher_format", required = false) String cipherFormat) throws Exception {
+                         @RequestParam(value = "cipher_format", required = false) String cipherFormat) {
 
         try {
             boolean oldVer = false;
@@ -180,7 +186,7 @@ public class SMController {
      */
     @RequestMapping(value = "/sm3digest", method = RequestMethod.GET)
     @ResponseBody
-    public Object sm3(@RequestParam("srchex") String srchex) throws Exception {
+    public Object sm3(@RequestParam("srchex") String srchex) {
         byte[] md = new byte[32];
         byte[] msg1 = Util.hexToByte(srchex);
         System.out.println(Util.byteToHex(msg1));
@@ -221,6 +227,9 @@ public class SMController {
                 cipherText = sm4.encryptData_ECB_hex(sourceData);
             } else if (mode.equals("CBC")) {
                 cipherText = sm4.encryptData_CBC_hex(sourceData);
+            }
+            if (cipherText == null) {
+                return responseHelper.error(ErrorCodeEnum.ERROR_FAIL_ENCRYPT);
             }
 
             JSONObject jsonOS = new JSONObject();
@@ -281,7 +290,7 @@ public class SMController {
      */
     @RequestMapping(value = "/sm4generatekey", method = RequestMethod.GET)
     @ResponseBody
-    public Object sm4generatekey() throws Exception {
+    public Object sm4generatekey() {
         int len = 32;
         String str = "";
         for (int i = 0; i < len; i++) {

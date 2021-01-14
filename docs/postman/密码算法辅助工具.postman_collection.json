@@ -1,0 +1,483 @@
+{
+	"info": {
+		"_postman_id": "35b51250-1927-4b60-bc87-e5304447189d",
+		"name": "密码算法辅助工具",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. 国密算法",
+			"item": [
+				{
+					"name": "1.0 sm2生成密钥对",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"SM2 generateKeyPair Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    pm.environment.set(\"sm2_pub_key\", jsonData.payload.publickey);\r",
+									"    pm.environment.set(\"sm2_priv_key\", jsonData.payload.privatekey);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE}}/alg/generateKeyPair",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"alg",
+								"generateKeyPair"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1.1 sm2签名",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"SM2 sign Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    pm.environment.set(\"sm2_sign_r\", jsonData.payload.sign_r);\r",
+									"    pm.environment.set(\"sm2_sign_s\", jsonData.payload.sign_s);\r",
+									"    pm.environment.set(\"sm2_sign_rs\", jsonData.payload.sign_r + jsonData.payload.sign_s);\r",
+									"    pm.environment.set(\"sm2_sign_asn1\", jsonData.payload.asn1);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE}}/alg/sm2sign?privatekey={{sm2_priv_key}}&srchex={{PLAIN_HEX}}",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"alg",
+								"sm2sign"
+							],
+							"query": [
+								{
+									"key": "privatekey",
+									"value": "{{sm2_priv_key}}"
+								},
+								{
+									"key": "srchex",
+									"value": "{{PLAIN_HEX}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1.2 sm2验签",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE}}/alg/sm2verify?publickey={{sm2_pub_key}}&srchex={{PLAIN_HEX}}&signhex={{sm2_sign_rs}}",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"alg",
+								"sm2verify"
+							],
+							"query": [
+								{
+									"key": "publickey",
+									"value": "{{sm2_pub_key}}"
+								},
+								{
+									"key": "srchex",
+									"value": "{{PLAIN_HEX}}"
+								},
+								{
+									"key": "signhex",
+									"value": "{{sm2_sign_rs}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1.3 sm2加密",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"SM2 encrypt Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    pm.environment.set(\"sm2_cipher\", jsonData.payload.cipherText);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE}}/alg/sm2enc?publickey={{sm2_pub_key}}&plainhex={{PLAIN_HEX}}&cipher_format=c1c3c2",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"alg",
+								"sm2enc"
+							],
+							"query": [
+								{
+									"key": "publickey",
+									"value": "{{sm2_pub_key}}"
+								},
+								{
+									"key": "plainhex",
+									"value": "{{PLAIN_HEX}}"
+								},
+								{
+									"key": "cipher_format",
+									"value": "c1c3c2",
+									"description": "c1c3c2或c1c2c3，不指定时默认c1c3c2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1.4 sm2解密",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE}}/alg/sm2dec?privatekey={{sm2_priv_key}}&cipherhex={{sm2_cipher}}&cipher_format=c1c3c2",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"alg",
+								"sm2dec"
+							],
+							"query": [
+								{
+									"key": "privatekey",
+									"value": "{{sm2_priv_key}}"
+								},
+								{
+									"key": "cipherhex",
+									"value": "{{sm2_cipher}}"
+								},
+								{
+									"key": "cipher_format",
+									"value": "c1c3c2",
+									"description": "c1c3c2或c1c2c3，不指定时默认c1c3c2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1.5 sm3摘要",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE}}/alg/sm3digest?srchex={{PLAIN_HEX}}",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"alg",
+								"sm3digest"
+							],
+							"query": [
+								{
+									"key": "srchex",
+									"value": "{{PLAIN_HEX}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1.6 sm4加密",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"SM4 ENCRYPT Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    pm.environment.set(\"sm4_cipher\", jsonData.payload.cipherText);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE}}/alg/sm4enc?key={{sm4_crypt_key}}&plainhex={{PLAIN_HEX}}&mode=ECB&iv={{IV}}",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"alg",
+								"sm4enc"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{sm4_crypt_key}}"
+								},
+								{
+									"key": "plainhex",
+									"value": "{{PLAIN_HEX}}"
+								},
+								{
+									"key": "mode",
+									"value": "ECB",
+									"description": "ECB / CBC"
+								},
+								{
+									"key": "iv",
+									"value": "{{IV}}",
+									"description": "默认：30303030303030303030303030303030"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1.7 sm4解密",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE}}/alg/sm4dec?key={{sm4_crypt_key}}&cipherhex={{sm4_cipher}}&mode=ECB&iv={{IV}}",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"alg",
+								"sm4dec"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{sm4_crypt_key}}"
+								},
+								{
+									"key": "cipherhex",
+									"value": "{{sm4_cipher}}"
+								},
+								{
+									"key": "mode",
+									"value": "ECB",
+									"description": "ECB / CBC"
+								},
+								{
+									"key": "iv",
+									"value": "{{IV}}",
+									"description": "默认：30303030303030303030303030303030"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1.8 sm4生成密钥",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"SM4 generateKey Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    pm.environment.set(\"sm4_crypt_key\", jsonData.payload.key);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE}}/alg/sm4generatekey",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"alg",
+								"sm4generatekey"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1.9 string2hex",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE}}/alg/string2hex?string=hello world",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"alg",
+								"string2hex"
+							],
+							"query": [
+								{
+									"key": "string",
+									"value": "hello world"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1.10 hex2string",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE}}/alg/hex2string?hex=68656c6c6f20776f726c64",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"alg",
+								"hex2string"
+							],
+							"query": [
+								{
+									"key": "hex",
+									"value": "68656c6c6f20776f726c64"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2. 对称加密",
+			"item": [],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "3. 非对称加密",
+			"item": []
+		},
+		{
+			"name": "4. 摘要算法",
+			"item": []
+		},
+		{
+			"name": "5. 数据转换和辅助",
+			"item": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "API_BASE",
+			"value": "localhost:10501"
+		},
+		{
+			"key": "PLAIN_HEX",
+			"value": "0653F3748DFD938FE83935800FF3F526B85C30C2331DD56FCB1794AA99F2A416"
+		},
+		{
+			"key": "IV",
+			"value": "30303030303030303030303030303030"
+		}
+	]
+}

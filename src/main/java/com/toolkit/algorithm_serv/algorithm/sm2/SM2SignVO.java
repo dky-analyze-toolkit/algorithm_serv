@@ -1,4 +1,4 @@
-package com.toolkit.algorithm_serv.global.utils.sm2;
+package com.toolkit.algorithm_serv.algorithm.sm2;
 /**
  * SM2签名所计算的值 可以根据实际情况增加删除字段属性
  */

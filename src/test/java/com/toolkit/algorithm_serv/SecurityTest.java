@@ -1,9 +1,9 @@
 package com.toolkit.algorithm_serv;
 
-import com.toolkit.algorithm_serv.global.utils.sm2.SM2EncDecUtils;
+import com.toolkit.algorithm_serv.algorithm.sm2.SM2EncDecUtils;
 import com.toolkit.algorithm_serv.global.utils.Util;
-import com.toolkit.algorithm_serv.global.utils.sm2.SM2SignVO;
-import com.toolkit.algorithm_serv.global.utils.sm2.SM2SignVerUtils;
+import com.toolkit.algorithm_serv.algorithm.sm2.SM2SignVO;
+import com.toolkit.algorithm_serv.algorithm.sm2.SM2SignVerUtils;
 import org.bouncycastle.crypto.digests.SM3Digest;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
