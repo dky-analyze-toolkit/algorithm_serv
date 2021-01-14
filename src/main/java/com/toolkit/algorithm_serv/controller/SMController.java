@@ -3,8 +3,7 @@ package com.toolkit.algorithm_serv.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.toolkit.algorithm_serv.global.enumeration.ErrorCodeEnum;
 import com.toolkit.algorithm_serv.global.response.ResponseHelper;
-import com.toolkit.algorithm_serv.global.utils.SecurityTestAll;
-import com.toolkit.algorithm_serv.global.utils.Util;
+import com.toolkit.algorithm_serv.utils.Util;
 import com.toolkit.algorithm_serv.algorithm.sm2.*;
 import com.toolkit.algorithm_serv.algorithm.sm4.SM4Utils;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
@@ -107,7 +106,7 @@ public class SMController {
                             @RequestParam("signhex") String signhex  ) {
 
         try {
-            SM2SignVO verify = SM2SignVerUtils.VerifySignSM2(Util.hexStringToBytes(publickey), Util.hexToByte(srchex), Util.hexToByte(SecurityTestAll.SM2SignHardToSoft(signhex)));
+            SM2SignVO verify = SM2SignVerUtils.VerifySignSM2(Util.hexStringToBytes(publickey), Util.hexToByte(srchex), Util.hexToByte(SM2SignVerUtils.SM2SignHardToSoft(signhex)));
             System.err.println("验签结果" + verify.isVerify());
 
             JSONObject jsonOS = new JSONObject();

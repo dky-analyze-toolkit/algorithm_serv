@@ -1,6 +1,6 @@
-package com.toolkit.algorithm_serv.global.algorithm;
+package com.toolkit.algorithm_serv.algorithm.b64;
 
-import com.toolkit.algorithm_serv.global.utils.UtilsHelper;
+import com.toolkit.algorithm_serv.utils.UtilsHelper;
 
 import java.util.Base64;
 

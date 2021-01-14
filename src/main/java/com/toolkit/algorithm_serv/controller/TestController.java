@@ -1,8 +1,7 @@
 package com.toolkit.algorithm_serv.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.toolkit.algorithm_serv.global.enumeration.ErrorCodeEnum;
-import com.toolkit.algorithm_serv.global.utils.SystemUtils;
+import com.toolkit.algorithm_serv.utils.SystemUtils;
 //import com.toolkit.algorithm_serv.global.cache.HostConfigs;
 import com.toolkit.algorithm_serv.global.response.ResponseHelper;
 import org.slf4j.Logger;
