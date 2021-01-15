@@ -1,4 +1,4 @@
-package com.toolkit.algorithm_serv.global.algorithm;
+package com.toolkit.algorithm_serv.algorithm.aes;
 
 import org.apache.tomcat.util.codec.binary.Base64;
 

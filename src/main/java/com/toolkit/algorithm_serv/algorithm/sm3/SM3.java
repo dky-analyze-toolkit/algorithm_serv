@@ -1,6 +1,6 @@
-package com.toolkit.algorithm_serv.global.utils.sm3;
+package com.toolkit.algorithm_serv.algorithm.sm3;
 
-import com.toolkit.algorithm_serv.global.utils.Util;
+import com.toolkit.algorithm_serv.utils.Util;
 import org.bouncycastle.crypto.digests.SM3Digest;
 import org.bouncycastle.util.encoders.Hex;
 

@@ -1,4 +1,4 @@
-package com.toolkit.algorithm_serv.global.utils;
+package com.toolkit.algorithm_serv.utils;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

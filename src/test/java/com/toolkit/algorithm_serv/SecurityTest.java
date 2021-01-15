@@ -1,9 +1,9 @@
 package com.toolkit.algorithm_serv;
 
-import com.toolkit.algorithm_serv.global.utils.sm2.SM2EncDecUtils;
-import com.toolkit.algorithm_serv.global.utils.Util;
-import com.toolkit.algorithm_serv.global.utils.sm2.SM2SignVO;
-import com.toolkit.algorithm_serv.global.utils.sm2.SM2SignVerUtils;
+import com.toolkit.algorithm_serv.algorithm.sm2.SM2EncDecUtils;
+import com.toolkit.algorithm_serv.utils.Util;
+import com.toolkit.algorithm_serv.algorithm.sm2.SM2SignVO;
+import com.toolkit.algorithm_serv.algorithm.sm2.SM2SignVerUtils;
 import org.bouncycastle.crypto.digests.SM3Digest;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
@@ -70,11 +70,11 @@ public class SecurityTest {
         prik = privatekey;
         pubk = publicKey;
         System.out.println("加密: ");
-        String cipherText = SM2EncDecUtils.encrypt(Util.hexToByte(pubk), sourceData);
+        String cipherText = SM2EncDecUtils.encrypt(Util.hexToByte(pubk), sourceData, false);
         //cipherText = "0452ba81cf5119c9f29c81c2be9c4a49ad8c0a33ed899b60548d21a62971a8e994cafc0e9fbc710a0a220b055804bb890833b50ac04ec4e130a5db75338c0c1d49a52a6d373076a5db370564a5cebb5300f79877003c52adf49dac16370e51e14e0754110547bb3b";
         System.out.println(cipherText);
         System.out.println("解密: ");
-        plainText = new String(SM2EncDecUtils.decrypt(Util.hexToByte(prik), Util.hexToByte(cipherText)));
+        plainText = new String(SM2EncDecUtils.decrypt(Util.hexToByte(prik), Util.hexToByte(cipherText), false));
         System.out.println(plainText);
 
     }

@@ -1,4 +1,4 @@
-package com.toolkit.algorithm_serv.global.utils;
+package com.toolkit.algorithm_serv.utils;
 
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;

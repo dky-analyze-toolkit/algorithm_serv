@@ -1,10 +1,10 @@
-package com.toolkit.algorithm_serv.global.utils.sm4;
+package com.toolkit.algorithm_serv.algorithm.sm4;
 
 /**
  * Created by $(USER) on $(DATE)
  */
 
-import com.toolkit.algorithm_serv.global.utils.Util;
+import com.toolkit.algorithm_serv.utils.Util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

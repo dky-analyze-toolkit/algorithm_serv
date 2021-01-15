@@ -1,4 +1,4 @@
-package com.toolkit.algorithm_serv.global.utils;
+package com.toolkit.algorithm_serv.utils;
 
 public class StringUtils {
     static public boolean isValid(String str) {

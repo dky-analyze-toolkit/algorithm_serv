@@ -2,6 +2,14 @@ package com.toolkit.algorithm_serv.global.enumeration;
 
 public enum ErrorCodeEnum {
     ERROR_OK(0, "OK"),
+    ERROR_IV_LENGTH(101, "初始向量长度错误"),
+    ERROR_IV_INVALID(102, "初始向量数据异常"),
+    ERROR_FAIL_DECRYPT(103, "数据解密失败"),
+    ERROR_CRYPT_LENGTH(104, "密文长度错误"),
+    ERROR_PARAM_LENGTH(105, "参数长度错误"),
+    ERROR_FAIL_SIGN(106, "签名失败"),
+    ERROR_FAIL_VERIFY_SIGN(107, "验签失败"),
+    ERROR_FAIL_ENCRYPT(107, "加密失败"),
     ERROR_GENERAL_ERROR(1001, "未知错误"),
     ERROR_INTERNAL_ERROR(1002, "内部错误"),
     ERROR_PARAMETER(1003, "参数错误"),

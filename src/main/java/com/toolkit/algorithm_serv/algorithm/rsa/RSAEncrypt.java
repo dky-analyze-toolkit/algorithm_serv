@@ -1,6 +1,8 @@
-package com.toolkit.algorithm_serv.global.algorithm;
+package com.toolkit.algorithm_serv.algorithm.rsa;
 
 //import com.sun.org.apache.xml.internal.security.utils.Base64;
+
+import com.toolkit.algorithm_serv.algorithm.b64.Base64Coding;
 
 import java.security.*;
 import java.security.interfaces.RSAPrivateKey;

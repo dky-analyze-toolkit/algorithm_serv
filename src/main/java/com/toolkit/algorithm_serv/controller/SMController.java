@@ -1,13 +1,12 @@
 package com.toolkit.algorithm_serv.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.toolkit.algorithm_serv.global.enumeration.ErrorCodeEnum;
 import com.toolkit.algorithm_serv.global.response.ResponseHelper;
-import com.toolkit.algorithm_serv.global.utils.SecurityTestAll;
-import com.toolkit.algorithm_serv.global.utils.Util;
-import com.toolkit.algorithm_serv.global.utils.sm2.*;
-import com.toolkit.algorithm_serv.global.utils.sm4.SM4Utils;
+import com.toolkit.algorithm_serv.utils.Util;
+import com.toolkit.algorithm_serv.algorithm.sm2.*;
+import com.toolkit.algorithm_serv.algorithm.sm4.SM4Utils;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
-import org.bouncycastle.crypto.KeyGenerationParameters;
 import org.bouncycastle.crypto.digests.SM3Digest;
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
 import org.bouncycastle.crypto.params.ECPublicKeyParameters;
@@ -19,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigInteger;
-import java.util.Random;
 
 //import com.toolkit.algorithm_serv.global.cache.HostConfigs;
 
@@ -27,6 +25,7 @@ import java.util.Random;
 @CrossOrigin(origins = "*",maxAge = 3600)
 @RequestMapping(value = "/alg")
 public class SMController {
+    private String defaultIV = "30303030303030303030303030303030";
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
@@ -39,7 +38,7 @@ public class SMController {
      */
     @RequestMapping(value = "/generateKeyPair", method = RequestMethod.GET)
     @ResponseBody
-    public Object generateKeyPair() throws Exception {
+    public Object generateKeyPair() {
 
         SM2 sm2 = SM2.Instance();
         AsymmetricCipherKeyPair key = null;
@@ -75,23 +74,25 @@ public class SMController {
     @RequestMapping(value = "/sm2sign", method = RequestMethod.GET)
     @ResponseBody
     public Object sm2sign(@RequestParam("privatekey") String privatekey,
-                          @RequestParam("srchex") String srchex) throws Exception {
+                          @RequestParam("srchex") String srchex) {
 
-        SM2SignVO sign = SM2SignVerUtils.Sign2SM2(Util.hexStringToBytes(privatekey), Util.hexToByte(srchex));
-        System.out.println("R:"+sign.sign_r);
-        System.out.println("S:"+sign.sign_s);
-//        System.out.println("sign_express:"+sign.sign_express);
-//        System.out.println("sm2_sign:"+sign.sm2_sign);
-//        System.out.println("sm2_type:"+sign.sm2_type);
-//        System.out.println("sm2_userd:"+sign.sm2_userd);
-        System.out.println("getSm2_signForHard():"+sign.getSm2_signForHard());
-        System.out.println("getSm2_signForSoft():"+sign.getSm2_signForSoft());
+        try {
+            SM2SignVO sign = SM2SignVerUtils.Sign2SM2(Util.hexStringToBytes(privatekey), Util.hexToByte(srchex));
+            System.out.println("R:" + sign.sign_r);
+            System.out.println("S:" + sign.sign_s);
+            System.out.println("getSm2_signForHard():" + sign.getSm2_signForHard());
+            System.out.println("getSm2_signForSoft():" + sign.getSm2_signForSoft());
 
-        JSONObject jsonOS = new JSONObject();
-        jsonOS.put("sign_r", sign.sign_r);
-        jsonOS.put("sign_s", sign.sign_s);
-        jsonOS.put("asn1", sign.getSm2_signForSoft());
-        return responseHelper.success(jsonOS);
+            JSONObject jsonOS = new JSONObject();
+            jsonOS.put("sign_r", sign.sign_r);
+            jsonOS.put("sign_s", sign.sign_s);
+            jsonOS.put("asn1", sign.getSm2_signForSoft());
+            return responseHelper.success(jsonOS);
+        } catch (IllegalArgumentException argEx) {
+            return responseHelper.error(ErrorCodeEnum.ERROR_PARAM_LENGTH);
+        } catch (Exception e) {
+            return responseHelper.error(ErrorCodeEnum.ERROR_FAIL_SIGN);
+        }
     }
 
     /**
@@ -102,14 +103,20 @@ public class SMController {
     @ResponseBody
     public Object sm2verify(@RequestParam("publickey") String publickey,
                             @RequestParam("srchex") String srchex,
-                            @RequestParam("signhex") String signhex  ) throws Exception {
+                            @RequestParam("signhex") String signhex  ) {
 
-        SM2SignVO verify = SM2SignVerUtils.VerifySignSM2(Util.hexStringToBytes(publickey), Util.hexToByte(srchex), Util.hexToByte(SecurityTestAll.SM2SignHardToSoft(signhex)));
-        System.err.println("验签结果" + verify.isVerify());
+        try {
+            SM2SignVO verify = SM2SignVerUtils.VerifySignSM2(Util.hexStringToBytes(publickey), Util.hexToByte(srchex), Util.hexToByte(SM2SignVerUtils.SM2SignHardToSoft(signhex)));
+            System.err.println("验签结果" + verify.isVerify());
 
-        JSONObject jsonOS = new JSONObject();
-        jsonOS.put("result", verify.isVerify());
-        return responseHelper.success(jsonOS);
+            JSONObject jsonOS = new JSONObject();
+            jsonOS.put("result", verify.isVerify());
+            return responseHelper.success(jsonOS);
+        } catch (IllegalArgumentException argEx) {
+            return responseHelper.error(ErrorCodeEnum.ERROR_PARAM_LENGTH);
+        } catch (Exception e) {
+            return responseHelper.error(ErrorCodeEnum.ERROR_FAIL_VERIFY_SIGN);
+        }
     }
     /**
      * 1.3 SM2加密
@@ -118,19 +125,25 @@ public class SMController {
     @RequestMapping(value = "/sm2enc", method = RequestMethod.GET)
     @ResponseBody
     public Object sm2enc(@RequestParam("publickey") String publicKey,
-                        @RequestParam("plainhex") String src) throws Exception {
+                         @RequestParam("plainhex") String src,
+                         @RequestParam(value = "cipher_format", required = false) String cipherFormat) {
+        try {
+            byte[] sourceData = Util.hexToByte(src);
 
-//        String plainText = "ILoveYou11";
-//        byte[] sourceData1 = plainText.getBytes();
-        byte[] sourceData = Util.hexToByte(src);
-
-        System.out.println("加密: ");
-        String cipherText = SM2EncDecUtils.encrypt(Util.hexToByte(publicKey), sourceData);
-        System.out.println(cipherText);
-        JSONObject jsonOS = new JSONObject();
-        jsonOS.put("cipherText", cipherText);
-        return responseHelper.success(jsonOS);
-
+            boolean oldVer = false;
+            if (cipherFormat != null) {
+                oldVer = cipherFormat.equalsIgnoreCase("c1c2c3");
+            }
+            String cipherText = SM2EncDecUtils.encrypt(Util.hexToByte(publicKey), sourceData, oldVer);
+            System.out.println(cipherText);
+            JSONObject jsonOS = new JSONObject();
+            jsonOS.put("cipherText", cipherText);
+            return responseHelper.success(jsonOS);
+        } catch (IllegalArgumentException argEx) {
+            return responseHelper.error(ErrorCodeEnum.ERROR_PARAM_LENGTH);
+        } catch (Exception e) {
+            return responseHelper.error(ErrorCodeEnum.ERROR_GENERAL_ERROR);
+        }
     }
 
     /**
@@ -140,23 +153,30 @@ public class SMController {
     @RequestMapping(value = "/sm2dec", method = RequestMethod.GET)
     @ResponseBody
     public Object sm2dec(@RequestParam("privatekey") String privatekey,
-                       @RequestParam("cipherhex") String cipherhex) throws Exception {
+                         @RequestParam("cipherhex") String cipherhex,
+                         @RequestParam(value = "cipher_format", required = false) String cipherFormat) {
 
-        System.out.println("解密: ");
-        byte[] plainBytes = SM2EncDecUtils.decrypt(Util.hexToByte(privatekey), Util.hexToByte(cipherhex));
-        JSONObject jsonOS = new JSONObject();
-        jsonOS.put("plainText", new String(plainBytes, "UTF-8"));
-        jsonOS.put("plainHex", Util.byteToHex(plainBytes));
+        try {
+            boolean oldVer = false;
+            if (cipherFormat != null) {
+                oldVer = cipherFormat.equalsIgnoreCase("c1c2c3");
+            }
 
-        // String plainText = new String(SM2EncDecUtils.decrypt(Util.hexToByte(privatekey), Util.hexToByte(cipherhex)));
-        // System.out.println(plainText);
-        //
-        // String hex = Util.byteToHex(plainText.getBytes());
-        //
-        // JSONObject jsonOS = new JSONObject();
-        // jsonOS.put("plainText", plainText);
-        // jsonOS.put("plainHex", hex);
-        return responseHelper.success(jsonOS);
+            byte[] plainBytes = SM2EncDecUtils.decrypt(Util.hexToByte(privatekey), Util.hexToByte(cipherhex), oldVer);
+            if (plainBytes.length > 0) {
+                JSONObject jsonOS = new JSONObject();
+                jsonOS.put("plainText", new String(plainBytes, "UTF-8"));
+                jsonOS.put("plainHex", Util.byteToHex(plainBytes));
+
+                return responseHelper.success(jsonOS);
+            } else {
+                return responseHelper.error(ErrorCodeEnum.ERROR_FAIL_DECRYPT);
+            }
+        } catch (IllegalArgumentException argEx) {
+            return responseHelper.error(ErrorCodeEnum.ERROR_PARAM_LENGTH);
+        } catch (Exception e) {
+            return responseHelper.error(ErrorCodeEnum.ERROR_GENERAL_ERROR);
+        }
     }
 
     /**
@@ -165,10 +185,9 @@ public class SMController {
      */
     @RequestMapping(value = "/sm3digest", method = RequestMethod.GET)
     @ResponseBody
-    public Object sm3(@RequestParam("srchex") String srchex) throws Exception {
+    public Object sm3(@RequestParam("srchex") String srchex) {
         byte[] md = new byte[32];
         byte[] msg1 = Util.hexToByte(srchex);
-//        byte[] msg1 = "ererfeiisgod".getBytes();
         System.out.println(Util.byteToHex(msg1));
         SM3Digest sm3 = new SM3Digest();
         sm3.update(msg1, 0, msg1.length);
@@ -189,80 +208,79 @@ public class SMController {
     @ResponseBody
     public Object sm4enc(@RequestParam("key") String key,
                          @RequestParam("plainhex") String plainhex,
-                         @RequestParam("mode") String mode) throws Exception {
-        byte[] sourceData = Util.hexToByte(plainhex);
+                         @RequestParam("mode") String mode,
+                         @RequestParam(value = "iv", required = false) String iv) {
+        try {
+            byte[] sourceData = Util.hexToByte(plainhex);
 
-        SM4Utils sm4 = new SM4Utils();
-        sm4.secretKey = key;
-        sm4.hexString = true;
-        String cipherText="";
-        if(mode.equals("ECB"))
-        {
-            System.out.println("ECB模式加密");
-            cipherText = sm4.encryptData_ECB_hex(sourceData);
-            System.out.println("密文: " + cipherText);
-            System.out.println("");
+            SM4Utils sm4 = new SM4Utils();
+            sm4.secretKey = key;
+            sm4.hexString = true;
+            String cipherText = "";
+            if (iv == null || iv.isEmpty()) {
+                sm4.iv = defaultIV;
+            } else {
+                sm4.iv = iv;
+            }
+            if (mode.equals("ECB")) {
+                cipherText = sm4.encryptData_ECB_hex(sourceData);
+            } else if (mode.equals("CBC")) {
+                cipherText = sm4.encryptData_CBC_hex(sourceData);
+            }
+            if (cipherText == null) {
+                return responseHelper.error(ErrorCodeEnum.ERROR_FAIL_ENCRYPT);
+            }
 
+            JSONObject jsonOS = new JSONObject();
+            jsonOS.put("cipherText", cipherText);
+            return responseHelper.success(jsonOS);
+        } catch (IllegalArgumentException argEx) {
+            return responseHelper.error(ErrorCodeEnum.ERROR_PARAM_LENGTH);
+        } catch (Exception e) {
+            return responseHelper.error(ErrorCodeEnum.ERROR_GENERAL_ERROR);
         }
-        else if(mode.equals("CBC"))
-        {
-            System.out.println("CBC模式加密");
-            sm4.iv = "30303030303030303030303030303030";
-            cipherText = sm4.encryptData_CBC_hex(sourceData);
-            System.out.println("加密密文: " + cipherText);
-            System.out.println("");
-
-        }
-
-        JSONObject jsonOS = new JSONObject();
-        jsonOS.put("cipherText", cipherText);
-        return responseHelper.success(jsonOS);
     }
 
     /**
-     * 1.4 SM4解密
+     * 1.7 SM4解密
      * @return
      */
     @RequestMapping(value = "/sm4dec", method = RequestMethod.GET)
     @ResponseBody
     public Object sm4dec(@RequestParam("key") String key,
                          @RequestParam("cipherhex") String cipherhex,
-                         @RequestParam("mode") String mode) throws Exception {
+                         @RequestParam("mode") String mode,
+                         @RequestParam(value = "iv", required = false) String iv) {
 
-        byte[] sourceData = Util.hexToByte(cipherhex);
-
-        SM4Utils sm4 = new SM4Utils();
-        sm4.secretKey = key;
-        sm4.hexString = true;
-        sm4.iv = "30303030303030303030303030303030";
-        String plainHex="";
-        if(mode.equals("ECB"))
-        {
-            System.out.println("ECB模式解密");
+        try {
+            SM4Utils sm4 = new SM4Utils();
+            sm4.secretKey = key;
+            sm4.hexString = true;
+            if (iv == null || iv.isEmpty()) {
+                sm4.iv = defaultIV;
+            } else {
+                sm4.iv = iv;
+            }
+            String plainHex = "";
             byte[] encData = Util.hexToByte(cipherhex);
-            plainHex = sm4.decryptData_ECB_hex(encData);
-            System.out.println("明文: " + plainHex);
-            System.out.println("");
-        }
-        else if(mode.equals("CBC"))
-        {
-            System.out.println("CBC模式解密");
-            byte[] encData = Util.hexToByte(cipherhex);
-            plainHex = sm4.decryptData_CBC_hex(encData);
-            System.out.println("明文: " + plainHex);
-            System.out.println("");
+            if (mode.equals("ECB")) {
+                plainHex = sm4.decryptData_ECB_hex(encData);
+            } else if (mode.equals("CBC")) {
+                plainHex = sm4.decryptData_CBC_hex(encData);
+            }
 
+            if (plainHex == null || plainHex.isEmpty()) {
+                return responseHelper.error(ErrorCodeEnum.ERROR_FAIL_DECRYPT);
+            }
+            JSONObject jsonOS = new JSONObject();
+            jsonOS.put("plainText", new String(Util.hexToByte(plainHex), "UTF-8"));
+            jsonOS.put("plainHex", plainHex);
+            return responseHelper.success(jsonOS);
+        } catch (IllegalArgumentException argEx) {
+            return responseHelper.error(ErrorCodeEnum.ERROR_PARAM_LENGTH);
+        } catch (Exception e) {
+            return responseHelper.error(ErrorCodeEnum.ERROR_GENERAL_ERROR);
         }
-
-        JSONObject jsonOS = new JSONObject();
-        jsonOS.put("plainText", new String(Util.hexToByte(plainHex), "UTF-8"));
-        jsonOS.put("plainHex", plainHex);
-        // String hex = Util.byteToHex(plainHex.getBytes());
-        //
-        // JSONObject jsonOS = new JSONObject();
-        // jsonOS.put("plainText", plainHex);
-        // jsonOS.put("plainHex", hex);
-        return responseHelper.success(jsonOS);
     }
 
     /**
@@ -271,7 +289,7 @@ public class SMController {
      */
     @RequestMapping(value = "/sm4generatekey", method = RequestMethod.GET)
     @ResponseBody
-    public Object sm4generatekey() throws Exception {
+    public Object sm4generatekey() {
         int len = 32;
         String str = "";
         for (int i = 0; i < len; i++) {

@@ -1,11 +1,12 @@
-package com.toolkit.algorithm_serv.global.utils.sm2;
+package com.toolkit.algorithm_serv.algorithm.sm2;
 
-import com.toolkit.algorithm_serv.global.utils.Util;
+import com.toolkit.algorithm_serv.utils.Util;
 import org.bouncycastle.asn1.*;
 import org.bouncycastle.crypto.digests.SM3Digest;
 import org.bouncycastle.math.ec.ECPoint;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Enumeration;
 
@@ -127,17 +128,31 @@ public class SM2SignVerUtils {
 			return null;
 		}
 	}
-	public static void main(String[] args) throws Exception {
-		String text = "这是一段明文";
-		byte [] sourceData = text.getBytes();
-		//String publicKey ="FA05C51AD1162133DFDF862ECA5E4A481B52FB37FF83E53D45FD18BBD6F32668A92C4692EEB305684E3B9D4ACE767F91D5D108234A9F07936020A92210BA9447";
-		//String privatekey = "5EB4DF17021CC719B678D970C620690A11B29C8357D71FA4FF9BF7FB6D89767A";
-		String publicKey ="04BB34D657EE7E8490E66EF577E6B3CEA28B739511E787FB4F71B7F38F241D87F18A5A93DF74E90FF94F4EB907F271A36B295B851F971DA5418F4915E2C1A23D6E";
-		String privatekey = "0B1CE43098BC21B8E82B5C065EDB534CB86532B1900A49D49F3C53762D2997FA";
-		SM2SignVO sign = SM2SignVerUtils.Sign2SM2(Util.hexStringToBytes(privatekey), sourceData);
-		SM2SignVO verify = SM2SignVerUtils.VerifySignSM2(Util.hexStringToBytes(publicKey), sourceData, Util.hexStringToBytes(sign.getSm2_signForSoft()));
-		System.out.println("签名得到的r值:"+sign.getSign_r()+"\n签名值 "+sign.getSm2_signForSoft());
-		System.out.println("验签得到的R值:"+verify.getVerify_r());
-		System.err.println("\n验签结果" +verify.isVerify());
+
+	//SM2签名Hard转soft
+	public static String SM2SignHardToSoft(String hardSign) {
+		byte[] bytes = Util.hexToByte(hardSign);
+		byte[] r = new byte[bytes.length / 2];
+		byte[] s = new byte[bytes.length / 2];
+		System.arraycopy(bytes, 0, r, 0, bytes.length / 2);
+		System.arraycopy(bytes, bytes.length / 2, s, 0, bytes.length / 2);
+		ASN1Integer d_r = new ASN1Integer(Util.byteConvertInteger(r));
+		ASN1Integer d_s = new ASN1Integer(Util.byteConvertInteger(s));
+		ASN1EncodableVector v2 = new ASN1EncodableVector();
+		v2.add(d_r);
+		v2.add(d_s);
+		DERSequence sign = new DERSequence(v2);
+
+		String result = null;
+		try {
+			result = Util.byteToHex(sign.getEncoded());
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
+		//SM2加密机转软加密编码格式
+		//return SM2SignHardKeyHead+hardSign.substring(0, hardSign.length()/2)+SM2SignHardKeyMid+hardSign.substring(hardSign.length()/2);
+		return result;
 	}
+
 }

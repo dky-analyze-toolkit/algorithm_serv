@@ -1,0 +1,28 @@
+
+
+【参考源码】
+1. 算法源码
+https://www.example-code.com/java/rsa_encrypt__OAEPWithSHA1AndMGF1Padding.asp
+2. 算法：
+https://github.com/TheAlgorithms/Java/blob/master/ciphers/AESEncryption.java
+3. PEM转换
+https://github.com/xiangyuecn/RSA-java/blob/master/Test.java
+4. 算法
+https://github.com/wustrive2008/aes-rsa-java/blob/master/src/main/java/com/wustrive/aesrsa/util/AES.java
+
+【算法验证--线上】
+1. 在线加密解密：http://encode.chahuo.com/
+2. 加密解密工具：http://tool.chacuo.net/cryptrsaprikey
+
+【参考资料】
+1. DES/3DES/AES 三种对称加密算法在 Java 中的实现
+https://blog.csdn.net/s573626822/article/details/80596133
+2. Java使用Cipher类实现加密，包括DES，DES3，AES和RSA加密
+https://www.cnblogs.com/caizhaokai/p/10944667.html
+3. java AES解密ECB模式ZeroPadding填充
+https://blog.csdn.net/tm7796/article/details/105143560/
+4. JAVA利用Cipher类实现DES的ZeroPadding填充加密
+https://blog.csdn.net/u010786902/article/details/111595811
+5. Java实现RSA非对称加密工具类
+https://blog.csdn.net/vandet100/article/details/106913701/
+

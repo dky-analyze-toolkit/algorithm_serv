@@ -2,7 +2,7 @@ package com.toolkit.algorithm_serv.global.response;
 
 import com.toolkit.algorithm_serv.global.enumeration.ErrorCodeEnum;
 import com.toolkit.algorithm_serv.global.bean.ResponseBean;
-import com.toolkit.algorithm_serv.global.utils.MyUtils;
+import com.toolkit.algorithm_serv.utils.MyUtils;
 import org.springframework.stereotype.Component;
 
 @Component
