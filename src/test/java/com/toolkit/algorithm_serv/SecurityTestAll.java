@@ -1,6 +1,6 @@
 package com.toolkit.algorithm_serv;
 
-import com.toolkit.algorithm_serv.utils.Util;
+import com.toolkit.algorithm_serv.utils_ex.Util;
 import com.toolkit.algorithm_serv.algorithm.sm2.SM2EncDecUtils;
 import com.toolkit.algorithm_serv.algorithm.sm2.SM2KeyVO;
 import com.toolkit.algorithm_serv.algorithm.sm2.SM2SignVO;

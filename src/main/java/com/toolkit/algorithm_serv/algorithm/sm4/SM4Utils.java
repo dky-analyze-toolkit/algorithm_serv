@@ -4,7 +4,7 @@ package com.toolkit.algorithm_serv.algorithm.sm4;
  * Created by $(USER) on $(DATE)
  */
 
-import com.toolkit.algorithm_serv.utils.Util;
+import com.toolkit.algorithm_serv.utils_ex.Util;
 import org.apache.commons.codec.binary.Base64;
 import java.io.IOException;
 import java.util.regex.Matcher;

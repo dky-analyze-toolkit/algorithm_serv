@@ -1,7 +1,7 @@
 package com.toolkit.algorithm_serv.algorithm.sm2;
 
 //import com.toolkit.algorithm_serv.global.test.SecurityTestAll;
-import com.toolkit.algorithm_serv.utils.Util;
+import com.toolkit.algorithm_serv.utils_ex.Util;
 import org.bouncycastle.math.ec.ECPoint;
 
 import java.math.BigInteger;
