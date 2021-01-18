@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Properties;
 
-public class SystemUtils {
+public class SysAuxUtils {
     public static Properties sysProps = System.getProperties();
 
     static public String getOsName() {
@@ -57,7 +57,7 @@ public class SystemUtils {
     public static BufferedReader getProcReader(Process proc) throws IOException {
         // 中文版 Windows 运行时环境的输出默认是 GBK 编码
 //        return new BufferedReader(new InputStreamReader(proc.getInputStream(), "GBK"));
-        return new BufferedReader(new InputStreamReader(proc.getInputStream(), SystemUtils.getEnvEncoding()));
+        return new BufferedReader(new InputStreamReader(proc.getInputStream(), SysAuxUtils.getEnvEncoding()));
     }
 
     public static BufferedReader getExecOutput(String[] args) throws IOException {

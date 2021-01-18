@@ -1,6 +1,6 @@
 package com.toolkit.algorithm_serv.algorithm.b64;
 
-import com.toolkit.algorithm_serv.utils.StringUtils;
+import com.toolkit.algorithm_serv.utils.StrAuxUtils;
 
 import java.util.Base64;
 
@@ -11,7 +11,7 @@ public class Base64Coding {
     }
 
     static public String encodeFromHexString(String originText) {
-        byte[] originBytes = StringUtils.hexStringToBytes(originText);
+        byte[] originBytes = StrAuxUtils.hexStringToBytes(originText);
         return encode(originBytes);
     }
 
@@ -26,6 +26,6 @@ public class Base64Coding {
 
     static public String decodeToHexString(String encodedText) {
         byte[] originBytes = decode(encodedText);
-        return StringUtils.bytesToHexString(originBytes);
+        return StrAuxUtils.bytesToHexString(originBytes);
     }
 }

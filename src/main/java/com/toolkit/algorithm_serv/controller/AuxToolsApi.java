@@ -3,7 +3,7 @@ package com.toolkit.algorithm_serv.controller;
 import com.toolkit.algorithm_serv.algorithm.b64.Base64Coding;
 import com.toolkit.algorithm_serv.global.enumeration.ErrorCodeEnum;
 import com.toolkit.algorithm_serv.global.response.ResponseHelper;
-import com.toolkit.algorithm_serv.utils.StringUtils;
+import com.toolkit.algorithm_serv.utils.StrAuxUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,16 +30,16 @@ public class AuxToolsApi {
             @RequestParam(value = "code_str", required = false)String codeStr) {
         if (codeAct.equalsIgnoreCase("encode")) {
             String encodeText = "";
-            if (StringUtils.isValid(plainHex)) {
+            if (StrAuxUtils.isValid(plainHex)) {
                 encodeText = Base64Coding.encodeFromHexString(plainHex);
-            } else if (StringUtils.isValid(plainStr)) {
+            } else if (StrAuxUtils.isValid(plainStr)) {
                 encodeText = Base64Coding.encode(plainStr.getBytes());
             } else {
                 return responseHelper.error(ErrorCodeEnum.ERROR_NEED_PARAMETER, "编码时需要填入参数 plain_hex 或 plain_str 。");
             }
             return responseHelper.success(encodeText);
         } else if (codeAct.equalsIgnoreCase("decode")) {
-            if (StringUtils.isValid(codeStr)) {
+            if (StrAuxUtils.isValid(codeStr)) {
                 String decodeHex = Base64Coding.decodeToHexString(codeStr);
                 return responseHelper.success(decodeHex);
             } else {

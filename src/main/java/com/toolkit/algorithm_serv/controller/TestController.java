@@ -1,7 +1,7 @@
 package com.toolkit.algorithm_serv.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.toolkit.algorithm_serv.utils.SystemUtils;
+import com.toolkit.algorithm_serv.utils.SysAuxUtils;
 //import com.toolkit.algorithm_serv.global.cache.HostConfigs;
 import com.toolkit.algorithm_serv.global.response.ResponseHelper;
 import org.slf4j.Logger;
@@ -26,9 +26,9 @@ public class TestController {
     @ResponseBody
     public Object getOsInfo() {
         JSONObject jsonOS = new JSONObject();
-        jsonOS.put("OS Name", SystemUtils.getOsName());
-        jsonOS.put("OS Arch", SystemUtils.getOsArch());
-        jsonOS.put("OS Version", SystemUtils.getOsVersion());
+        jsonOS.put("OS Name", SysAuxUtils.getOsName());
+        jsonOS.put("OS Arch", SysAuxUtils.getOsArch());
+        jsonOS.put("OS Version", SysAuxUtils.getOsVersion());
         return responseHelper.success(jsonOS);
     }
 
@@ -39,7 +39,7 @@ public class TestController {
     @RequestMapping(value = "/all-sys-props", method = RequestMethod.GET)
     @ResponseBody
     public Object getAllSystemProps() {
-        return responseHelper.success(SystemUtils.sysProps);
+        return responseHelper.success(SysAuxUtils.sysProps);
     }
 
 //    /**

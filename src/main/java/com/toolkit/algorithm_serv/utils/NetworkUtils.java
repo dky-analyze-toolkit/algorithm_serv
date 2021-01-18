@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
-public class networkutils {
+public class NetworkUtils {
 
     public static InetAddress getLocalHostLANAddress() {
         try {
@@ -74,11 +74,11 @@ public class networkutils {
 
     static public JSONArray getOpenPorts() {
         JSONArray openPorts = new JSONArray();
-        if (SystemUtils.isWindows()) {
+        if (SysAuxUtils.isWindows()) {
             // Windows: netstat -an
             try {
                 String[] args = new String[] { "netstat", "-an" };
-                BufferedReader output = SystemUtils.getExecOutput(args);
+                BufferedReader output = SysAuxUtils.getExecOutput(args);
                 String line;
                 while ((line = output.readLine()) != null) {
                     // 去除首尾空格
@@ -134,7 +134,7 @@ public class networkutils {
             // Linux: netstat -tunpl
             try {
                 String[] args = new String[] { "netstat", "-tunpl" };
-                BufferedReader output = SystemUtils.getExecOutput(args);
+                BufferedReader output = SysAuxUtils.getExecOutput(args);
                 String line;
                 while ((line = output.readLine()) != null) {
                     // 去除首尾空格

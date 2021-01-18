@@ -4,7 +4,7 @@ package com.toolkit.algorithm_serv.utils;
 import java.util.Random;
 import java.util.UUID;
 
-public class StringUtils {
+public class StrAuxUtils {
     static public String generatePrintableRandom(int length) {
         String valueBuff = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
@@ -101,7 +101,7 @@ public class StringUtils {
      * false -- 字符串中找不到指定属性
      */
     static public boolean isPropertyExist(String props, int property) {
-        if (!StringUtils.isValid(props))
+        if (!StrAuxUtils.isValid(props))
             return false;
         String propertyString = Integer.toString(property);
         return props.contains(propertyString);
