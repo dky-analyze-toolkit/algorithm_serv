@@ -39,32 +39,32 @@ public class HashController {
             alg = alg.toUpperCase();
 
             if (alg.contains("MD5")) {
-                jsonOS.put("MD5", HashHelper.digest(srchex,"MD5"));
+                jsonOS.put("md5", HashHelper.digest(srchex,"MD5"));
             }
             if (alg.contains("SHA1")) {
-                jsonOS.put("SHA1", HashHelper.digest(srchex,"SHA1"));//SHA SHA1 SHA-1均为sha1
+                jsonOS.put("sha1", HashHelper.digest(srchex,"SHA1"));//SHA SHA1 SHA-1均为sha1
             }
             if (alg.contains("SHA256")) {
-                jsonOS.put("SHA256", HashHelper.digest(srchex,"SHA-256"));
+                jsonOS.put("sha256", HashHelper.digest(srchex,"SHA-256"));
             }
             if (alg.contains("SHA384")) {
-                jsonOS.put("SHA384", HashHelper.digest(srchex,"SHA-384"));
+                jsonOS.put("sha384", HashHelper.digest(srchex,"SHA-384"));
             }
             if (alg.contains("SHA512")) {
-                jsonOS.put("SHA512", HashHelper.digest(srchex,"SHA-512"));
+                jsonOS.put("sha512", HashHelper.digest(srchex,"SHA-512"));
             }
             if (alg.contains("SM3")) {
-                jsonOS.put("SM3", HashHelper.sm3(srchex));
+                jsonOS.put("sm3", HashHelper.sm3(srchex));
             }
 
             if(alg.isEmpty())
             {
-                jsonOS.put("MD5", HashHelper.digest(srchex,"MD5"));
-                jsonOS.put("SHA1", HashHelper.digest(srchex,"SHA1"));
-                jsonOS.put("SHA256", HashHelper.digest(srchex,"SHA-256"));
-                jsonOS.put("SHA384", HashHelper.digest(srchex,"SHA-384"));
-                jsonOS.put("SHA512", HashHelper.digest(srchex,"SHA-512"));
-                jsonOS.put("SM3", HashHelper.sm3(srchex));
+                jsonOS.put("md5", HashHelper.digest(srchex,"MD5"));
+                jsonOS.put("sha1", HashHelper.digest(srchex,"SHA1"));
+                jsonOS.put("sha256", HashHelper.digest(srchex,"SHA-256"));
+                jsonOS.put("sha384", HashHelper.digest(srchex,"SHA-384"));
+                jsonOS.put("sha512", HashHelper.digest(srchex,"SHA-512"));
+                jsonOS.put("sm3", HashHelper.sm3(srchex));
             }
 
             return responseHelper.success(jsonOS);
