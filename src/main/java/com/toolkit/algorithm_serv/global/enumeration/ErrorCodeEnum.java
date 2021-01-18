@@ -10,6 +10,7 @@ public enum ErrorCodeEnum {
     ERROR_FAIL_SIGN(106, "签名失败"),
     ERROR_FAIL_VERIFY_SIGN(107, "验签失败"),
     ERROR_FAIL_ENCRYPT(107, "加密失败"),
+    ERROR_INVALID_URL(108, "无效请求URL"),
     ERROR_GENERAL_ERROR(1001, "未知错误"),
     ERROR_INTERNAL_ERROR(1002, "内部错误"),
     ERROR_PARAMETER(1003, "参数错误"),
