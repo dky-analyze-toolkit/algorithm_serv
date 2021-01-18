@@ -1,7 +1,7 @@
 package com.toolkit.algorithm_serv.algorithm.sm2;
 
 
-import com.toolkit.algorithm_serv.utils.Util;
+import com.toolkit.algorithm_serv.utils_ex.Util;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
 import org.bouncycastle.crypto.params.ECPublicKeyParameters;

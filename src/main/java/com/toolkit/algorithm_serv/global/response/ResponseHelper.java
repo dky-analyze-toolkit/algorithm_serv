@@ -2,7 +2,7 @@ package com.toolkit.algorithm_serv.global.response;
 
 import com.toolkit.algorithm_serv.global.bean.ResponseBean;
 import com.toolkit.algorithm_serv.global.enumeration.ErrorCodeEnum;
-import com.toolkit.algorithm_serv.utils.MyUtils;
+import com.toolkit.algorithm_serv.utils.TimeUtils;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -15,7 +15,7 @@ public class ResponseHelper {
         ResponseBean responseBean = new ResponseBean();
         responseBean.setCode(err.getCode());
         responseBean.setError(err.getMsg());
-        responseBean.setTimeStamp(MyUtils.getCurrentSystemTimestamp());
+        responseBean.setTimeStamp(TimeUtils.getCurrentSystemTimestamp());
         responseBean.setPayload(data);
         return responseBean;
     }

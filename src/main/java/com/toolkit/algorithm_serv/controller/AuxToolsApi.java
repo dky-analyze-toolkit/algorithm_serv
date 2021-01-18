@@ -1,6 +1,5 @@
 package com.toolkit.algorithm_serv.controller;
 
-import com.fasterxml.jackson.databind.ser.Serializers;
 import com.toolkit.algorithm_serv.algorithm.b64.Base64Coding;
 import com.toolkit.algorithm_serv.global.enumeration.ErrorCodeEnum;
 import com.toolkit.algorithm_serv.global.response.ResponseHelper;
