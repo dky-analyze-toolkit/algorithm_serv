@@ -1,5 +1,6 @@
 package com.toolkit.algorithm_serv;
 
+import com.toolkit.algorithm_serv.algorithm.hash.HashHelper;
 import com.toolkit.algorithm_serv.utils_ex.Util;
 import com.toolkit.algorithm_serv.algorithm.sm2.SM2EncDecUtils;
 import com.toolkit.algorithm_serv.algorithm.sm2.SM2KeyVO;
@@ -9,8 +10,6 @@ import com.toolkit.algorithm_serv.algorithm.sm2.SM2SignVerUtils;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.DERSequence;
-import org.bouncycastle.crypto.digests.SM3Digest;
-import org.bouncycastle.util.encoders.Hex;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -96,13 +95,7 @@ public class SecurityTestAll {
 
     //摘要计算
     public static String generateSM3HASH(String src) {
-        byte[] md = new byte[32];
-        byte[] msg1 = src.getBytes();
-        //System.out.println(Util.byteToHex(msg1));
-        SM3Digest sm3 = new SM3Digest();
-        sm3.update(msg1, 0, msg1.length);
-        sm3.doFinal(md, 0);
-        String s = new String(Hex.encode(md));
+        String s = HashHelper.sm3(src);
         return s.toUpperCase();
     }
 

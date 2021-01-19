@@ -1,6 +1,8 @@
 package com.toolkit.algorithm_serv;
 
+import com.toolkit.algorithm_serv.algorithm.hash.HashHelper;
 import com.toolkit.algorithm_serv.algorithm.sm2.SM2EncDecUtils;
+import com.toolkit.algorithm_serv.utils.StrAuxUtils;
 import com.toolkit.algorithm_serv.utils_ex.Util;
 import com.toolkit.algorithm_serv.algorithm.sm2.SM2SignVO;
 import com.toolkit.algorithm_serv.algorithm.sm2.SM2SignVerUtils;
@@ -81,14 +83,9 @@ public class SecurityTest {
 
     @Test
     public void sm3() {
-        byte[] md = new byte[32];
-        byte[] msg1 = "ererfeiisgod".getBytes();
-        System.out.println(Util.byteToHex(msg1));
-        SM3Digest sm3 = new SM3Digest();
-        sm3.update(msg1, 0, msg1.length);
-        sm3.doFinal(md, 0);
-        String s = new String(Hex.encode(md));
-        System.out.println(s.toUpperCase());
+        byte[] msg1 = "hello world".getBytes();
+        byte[] hash_bytes = HashHelper.sm3(msg1);
+        System.out.println(StrAuxUtils.bytesToHexString(hash_bytes).toUpperCase());
     }
 
     @Test
@@ -121,9 +118,4 @@ public class SecurityTest {
 
     }
 
-
-    public static void main(String[] args) throws IOException {
-
-
-    }
 }

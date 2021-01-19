@@ -1,17 +1,16 @@
 package com.toolkit.algorithm_serv.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.toolkit.algorithm_serv.algorithm.hash.HashHelper;
 import com.toolkit.algorithm_serv.global.enumeration.ErrorCodeEnum;
 import com.toolkit.algorithm_serv.global.response.ResponseHelper;
 import com.toolkit.algorithm_serv.utils_ex.Util;
 import com.toolkit.algorithm_serv.algorithm.sm2.*;
 import com.toolkit.algorithm_serv.algorithm.sm4.SM4Utils;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
-import org.bouncycastle.crypto.digests.SM3Digest;
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
 import org.bouncycastle.crypto.params.ECPublicKeyParameters;
 import org.bouncycastle.math.ec.ECPoint;
-import org.bouncycastle.util.encoders.Hex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -186,17 +185,8 @@ public class SMController {
     @RequestMapping(value = "/sm3digest", method = RequestMethod.GET)
     @ResponseBody
     public Object sm3(@RequestParam("srchex") String srchex) {
-        byte[] md = new byte[32];
-        byte[] msg1 = Util.hexToByte(srchex);
-        System.out.println(Util.byteToHex(msg1));
-        SM3Digest sm3 = new SM3Digest();
-        sm3.update(msg1, 0, msg1.length);
-        sm3.doFinal(md, 0);
-        String s = new String(Hex.encode(md));
-        System.out.println(s.toUpperCase());
-
         JSONObject jsonOS = new JSONObject();
-        jsonOS.put("SM3Digest", s.toUpperCase());
+        jsonOS.put("SM3Digest", HashHelper.sm3(srchex).toUpperCase());
         return responseHelper.success(jsonOS);
     }
 
