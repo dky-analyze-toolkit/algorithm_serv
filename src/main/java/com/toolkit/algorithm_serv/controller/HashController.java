@@ -44,10 +44,9 @@ public class HashController {
             }
             String[] alg_list = alg.split(",");
             for (String item : alg_list) {
-                if(item.equals("SM3"))
-                    jsonOS.put(item, HashHelper.sm3(srchex));
-                else
-                    jsonOS.put(item, HashHelper.digest(srchex, item));
+                if(item.isEmpty())
+                    continue;
+                jsonOS.put(item, HashHelper.digest(srchex, item));
             }
             return responseHelper.success(jsonOS);
         } catch (Exception e) {
