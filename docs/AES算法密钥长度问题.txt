@@ -1,0 +1,31 @@
+【问题】
+低版本JDK和JRE，限制高强度算法，运行时抛出异常：
+java.security.InvalidKeyException: Illegal key size or default parameters
+
+【解决方案】
+There have been updates since Java 8/9
+
+The Unlimited Strength Jurisdiction Policy Files are included with Java 9 and used by default
+Starting with Java 8 Update 161, Java 8 defaults to the Unlimited Strength Jurisdiction Policy.
+Starting with Java 8 Update 151, the Unlimited Strength Jurisdiction Policy is included with Java 8 but not used by default. To enable it, you need to edit the java.security file in <java_home>/jre/lib/security (for JDK) or <java_home>/lib/security (for JRE). Uncomment (or include) the line
+
+crypto.policy=unlimited
+
+Make sure you edit the file using an editor run as administrator. The policy change only takes effect after restarting the JVM
+
+Before Java 8 Update 151 you have to download JCE Unlimited Strength Jurisdiction Policy files and replace.
+
+For more details see How to install Java Cryptography Extension (JCE) unlimited strength jurisdiction policy files
+http://opensourceforgeeks.blogspot.com/2014/09/how-to-install-java-cryptography.html
+
+PS: Above link goes to my personal blog that has additional details.
+
+【验证】
+JDK和JRE，V1.8 update 281 经验证，已放开加密限制，与标准对照，计算正确
+明文：00112233445566778899aabbccddeeff
+密钥：000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f
+密文：8ea2b7ca516745bfeafc49904b496089
+
+
+【注意】
+JCEUtil.removeCryptographyRestrictions() 无效

@@ -411,7 +411,188 @@
 		},
 		{
 			"name": "2. 对称加密",
-			"item": [],
+			"item": [
+				{
+					"name": "2.1 生成密钥",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"sym_crypt generate_key Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    pm.globals.set(\"sym_key\", jsonData.payload.key);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE}}/sym_crypt/generate_key?alg={{SYM_ALG}}&key_size=256",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"sym_crypt",
+								"generate_key"
+							],
+							"query": [
+								{
+									"key": "alg",
+									"value": "{{SYM_ALG}}",
+									"description": "{{SYM_ALG}}，AES、DES、DESede"
+								},
+								{
+									"key": "key_size",
+									"value": "256"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.2 加密",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"sym_crypt encrypt Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    pm.globals.set(\"sym_cipher\", jsonData.payload.cipher);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE}}/sym_crypt/encrypt?alg={{SYM_ALG}}&mode={{SYM_MODE}}&padding={{SYM_PAD}}&key={{sym_key}}&iv={{IV}}&plain_hex=00112233445566778899aabbccddeeff",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"sym_crypt",
+								"encrypt"
+							],
+							"query": [
+								{
+									"key": "alg",
+									"value": "{{SYM_ALG}}",
+									"description": "{{SYM_ALG}}，AES、DES、DESede"
+								},
+								{
+									"key": "mode",
+									"value": "{{SYM_MODE}}",
+									"description": "{{SYM_MODE}}，以下其一：None、CBC、CFB、CTR、CTS、ECB、OFB"
+								},
+								{
+									"key": "padding",
+									"value": "{{SYM_PAD}}",
+									"description": "{{SYM_PAD}}，以下其一：None、Zero、ISO10126、PKCS5"
+								},
+								{
+									"key": "key",
+									"value": "{{sym_key}}",
+									"description": "{{sym_key}}"
+								},
+								{
+									"key": "iv",
+									"value": "{{IV}}",
+									"description": "{{IV}}"
+								},
+								{
+									"key": "plain_hex",
+									"value": "00112233445566778899aabbccddeeff",
+									"description": "{{PLAIN_HEX}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.3 解密",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"sym_crypt decrypt Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    pm.globals.set(\"sym_plain\", jsonData.payload.plain);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE}}/sym_crypt/decrypt?alg={{SYM_ALG}}&mode={{SYM_MODE}}&padding={{SYM_PAD}}&key={{sym_key}}&iv={{IV}}&cipher_hex={{sym_cipher}}",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"sym_crypt",
+								"decrypt"
+							],
+							"query": [
+								{
+									"key": "alg",
+									"value": "{{SYM_ALG}}",
+									"description": "{{SYM_ALG}}，AES、DES、DESede"
+								},
+								{
+									"key": "mode",
+									"value": "{{SYM_MODE}}",
+									"description": "{{SYM_MODE}}，以下其一：None、CBC、CFB、CTR、CTS、ECB、OFB"
+								},
+								{
+									"key": "padding",
+									"value": "{{SYM_PAD}}",
+									"description": "{{SYM_PAD}}，以下其一：None、Zero、ISO10126、PKCS5"
+								},
+								{
+									"key": "key",
+									"value": "{{sym_key}}",
+									"description": "{{sym_key}}"
+								},
+								{
+									"key": "iv",
+									"value": "{{IV}}",
+									"description": "{{IV}}"
+								},
+								{
+									"key": "cipher_hex",
+									"value": "{{sym_cipher}}",
+									"description": "{{sym_cipher}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
 			"event": [
 				{
 					"listen": "prerequest",
@@ -443,7 +624,100 @@
 		},
 		{
 			"name": "5. 数据转换和辅助",
-			"item": []
+			"item": [
+				{
+					"name": "5.1 Base64编码",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"base64 encode Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    pm.environment.set(\"b64_encode_text\", jsonData.payload);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE}}/aux/b64/encode?plain_str=12",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"aux",
+								"b64",
+								"encode"
+							],
+							"query": [
+								{
+									"key": "plain_hex",
+									"value": "{{PLAIN_HEX}}",
+									"description": "16进制的原文数据，二选一",
+									"disabled": true
+								},
+								{
+									"key": "plain_str",
+									"value": "12",
+									"description": "原文字符串，二选一"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5.2 Base64解码",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"SM4 generateKey Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    pm.environment.set(\"sm4_crypt_key\", jsonData.payload.key);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE}}/aux/b64/decode?code_str={{b64_encode_text}}",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"aux",
+								"b64",
+								"decode"
+							],
+							"query": [
+								{
+									"key": "code_str",
+									"value": "{{b64_encode_text}}",
+									"description": "16进制的原文数据"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"event": [
@@ -478,6 +752,30 @@
 		{
 			"key": "IV",
 			"value": "30303030303030303030303030303030"
+		},
+		{
+			"key": "IV8",
+			"value": "3030303030303030"
+		},
+		{
+			"key": "IV32",
+			"value": "3030303030303030303030303030303030303030303030303030303030303030"
+		},
+		{
+			"key": "IV24",
+			"value": "303030303030303030303030303030303030303030303030"
+		},
+		{
+			"key": "SYM_ALG",
+			"value": "AES"
+		},
+		{
+			"key": "SYM_MODE",
+			"value": "CTR"
+		},
+		{
+			"key": "SYM_PAD",
+			"value": "Zero"
 		}
 	]
 }
