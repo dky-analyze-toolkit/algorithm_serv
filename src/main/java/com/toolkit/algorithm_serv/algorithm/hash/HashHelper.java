@@ -1,7 +1,6 @@
 package com.toolkit.algorithm_serv.algorithm.hash;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.toolkit.algorithm_serv.utils.StrAuxUtils;
@@ -9,41 +8,41 @@ import com.toolkit.algorithm_serv.utils_ex.Util;
 import org.apache.commons.codec.binary.Hex;
 import org.bouncycastle.crypto.digests.SM3Digest;
 import java.security.MessageDigest;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collection;
+import java.util.List;
 
 public class HashHelper {
 
-//    private static final Multimap<String, String> algMap = ArrayListMultimap.create();
-//    static {
-//        algMap.put("MD5", "MD5");
-//        algMap.put("SHA1", "SHA1");
-//        algMap.put("SHA256", "SHA-256");
-//        algMap.put("SHA384", "SHA-384");
-//        algMap.put("SHA512", "SHA-512");
-//        algMap.put("SM3", "SM3");
-//    }
-
-    public static String digest(String plainhex, String alg)throws IllegalArgumentException  {
-        Map<String,String> algMap = new HashMap<String,String>();
+    private static final Multimap<String, String> algMap = ArrayListMultimap.create();
+    static {
         algMap.put("MD5", "MD5");
         algMap.put("SHA1", "SHA1");
         algMap.put("SHA256", "SHA-256");
         algMap.put("SHA384", "SHA-384");
         algMap.put("SHA512", "SHA-512");
         algMap.put("SM3", "SM3");
+    }
 
-//        Preconditions.checkArgument(algMap.containsKey(alg), "不能识别%s算法", alg);
+    public static String digest(String plainhex, String alg)throws IllegalArgumentException  {
+//        Map<String,String> algMap = new HashMap<String,String>();
+//        algMap.put("MD5", "MD5");
+//        algMap.put("SHA1", "SHA1");
+//        algMap.put("SHA256", "SHA-256");
+//        algMap.put("SHA384", "SHA-384");
+//        algMap.put("SHA512", "SHA-512");
+//        algMap.put("SM3", "SM3");
+//        Preconditions.checkArgument(!Strings.isNullOrEmpty(alg), "未指定算法");
+        Preconditions.checkArgument(algMap.containsKey(alg), "不能识别 %s 算法", alg);
 
         try {
             String cipherStr = null;
-            if(algMap.get(alg).equals("SM3"))
+            if(algMap.get(alg).toString().equals("[SM3]"))
             {
                 cipherStr = sm3(plainhex);
             }
             else
             {
-                MessageDigest messageDigest = MessageDigest.getInstance(algMap.get(alg));
+                MessageDigest messageDigest = MessageDigest.getInstance(algMap.get(alg).toString().replace("[","").replace("]",""));
                 byte[] byteMsg = Util.hexToByte(plainhex);
                 byte[] cipherBytes = messageDigest.digest(byteMsg);
                 cipherStr = Hex.encodeHexString(cipherBytes);
