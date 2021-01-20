@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "35b51250-1927-4b60-bc87-e5304447189d",
+		"_postman_id": "07a8392b-a3ca-4ed3-b3dc-c37ab8b73c0b",
 		"name": "密码算法辅助工具",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -620,7 +620,60 @@
 		},
 		{
 			"name": "4. 摘要算法",
-			"item": []
+			"item": [
+				{
+					"name": "1.1 hash摘要",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"SM2 sign Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    pm.environment.set(\"MD5\", jsonData.payload.MD5);\r",
+									"    pm.environment.set(\"SHA1\", jsonData.payload.SHA1);\r",
+									"    pm.environment.set(\"SHA256\", jsonData.payload.SHA256);\r",
+									"    pm.environment.set(\"SHA384\", jsonData.payload.SHA384);\r",
+									"    pm.environment.set(\"SHA512\", jsonData.payload.SHA512);\r",
+									"    pm.environment.set(\"SM3\", jsonData.payload.SM3);\r",
+									"    \r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE}}/alg/hash?srchex={{PLAIN_HEX}}&alg=MD5,SHA1,SHA256,SHA384,SHA512,SM3 ",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"alg",
+								"hash"
+							],
+							"query": [
+								{
+									"key": "srchex",
+									"value": "{{PLAIN_HEX}}"
+								},
+								{
+									"key": "alg",
+									"value": "MD5,SHA1,SHA256,SHA384,SHA512,SM3 ",
+									"description": "MD5,SHA1,SHA256,SHA384,SHA512,SM3  多个，用逗号分隔"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		},
 		{
 			"name": "5. 数据转换和辅助",
