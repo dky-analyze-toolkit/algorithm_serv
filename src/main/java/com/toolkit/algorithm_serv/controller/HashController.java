@@ -49,8 +49,8 @@ public class HashController {
                 jsonOS.put(item, HashHelper.digest(srchex, item));
             }
             return responseHelper.success(jsonOS);
-        } catch (Exception e) {
-            return responseHelper.error(ErrorCodeEnum.ERROR_FAIL_HASH);
+        } catch (IllegalArgumentException e) {
+            return responseHelper.error(ErrorCodeEnum.ERROR_FAIL_HASH, e.getMessage());
         }
     }
 }
