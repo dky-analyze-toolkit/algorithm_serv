@@ -21,13 +21,14 @@ public class ParamsHelper {
         validKeySizeMap.put(SymmetricAlgorithm.DES.getValue(), 64);
         // validKeySizeMap.put(SymmetricAlgorithm.DESede.getValue(), 128);
         validKeySizeMap.put(SymmetricAlgorithm.DESede.getValue(), 192);
-        // validKeySizeMap.put("SM4", 128);
+        validKeySizeMap.put("SM4", 128);
     }
 
     private static final Map<String, Integer> ivSizeMap = ImmutableMap.<String, Integer>builder()
             .put(SymmetricAlgorithm.AES.getValue(), 128)
             .put(SymmetricAlgorithm.DES.getValue(), 64)
             .put(SymmetricAlgorithm.DESede.getValue(), 64)
+            .put("SM4", 128)
             .build();
 
     private static final Map<String, Mode> modeMap = ImmutableMap.<String, Mode>builder()

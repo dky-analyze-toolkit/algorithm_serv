@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.security.InvalidKeyException;
 
 @RestController
-@RequestMapping(value = "/sym_crypt")
+@RequestMapping(value = "/crypto/sym-alg")
 public class SymCryptApi {
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -25,7 +25,7 @@ public class SymCryptApi {
         this.responseHelper = responseHelper;
     }
 
-    @GetMapping("/generate_key")
+    @GetMapping("/generate-key")
     @ResponseBody
     public Object symGenerateKey(
             @RequestParam("alg") String alg,

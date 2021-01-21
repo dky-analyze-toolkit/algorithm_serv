@@ -24,15 +24,7 @@ public class HashHelper {
     }
 
     public static String digest(String plainhex, String alg)throws IllegalArgumentException  {
-//        Map<String,String> algMap = new HashMap<String,String>();
-//        algMap.put("MD5", "MD5");
-//        algMap.put("SHA1", "SHA1");
-//        algMap.put("SHA256", "SHA-256");
-//        algMap.put("SHA384", "SHA-384");
-//        algMap.put("SHA512", "SHA-512");
-//        algMap.put("SM3", "SM3");
-//        Preconditions.checkArgument(!Strings.isNullOrEmpty(alg), "未指定算法");
-        Preconditions.checkArgument(algMap.containsKey(alg), "不能识别 %s 算法", alg);
+        Preconditions.checkArgument(algMap.containsKey(alg), "不能识别【%s】算法", alg);
 
         try {
             String cipherStr = null;

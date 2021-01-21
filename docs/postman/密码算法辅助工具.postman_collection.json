@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "07a8392b-a3ca-4ed3-b3dc-c37ab8b73c0b",
+		"_postman_id": "ea71097e-93ea-40ad-a863-241b9adddc32",
 		"name": "密码算法辅助工具",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -19,8 +19,8 @@
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData.code).to.eql(0);\r",
 									"    \r",
-									"    pm.environment.set(\"sm2_pub_key\", jsonData.payload.publickey);\r",
-									"    pm.environment.set(\"sm2_priv_key\", jsonData.payload.privatekey);\r",
+									"    pm.globals.set(\"sm2_pub_key\", jsonData.payload.publickey);\r",
+									"    pm.globals.set(\"sm2_priv_key\", jsonData.payload.privatekey);\r",
 									"});\r",
 									""
 								],
@@ -55,10 +55,10 @@
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData.code).to.eql(0);\r",
 									"    \r",
-									"    pm.environment.set(\"sm2_sign_r\", jsonData.payload.sign_r);\r",
-									"    pm.environment.set(\"sm2_sign_s\", jsonData.payload.sign_s);\r",
-									"    pm.environment.set(\"sm2_sign_rs\", jsonData.payload.sign_r + jsonData.payload.sign_s);\r",
-									"    pm.environment.set(\"sm2_sign_asn1\", jsonData.payload.asn1);\r",
+									"    pm.globals.set(\"sm2_sign_r\", jsonData.payload.sign_r);\r",
+									"    pm.globals.set(\"sm2_sign_s\", jsonData.payload.sign_s);\r",
+									"    pm.globals.set(\"sm2_sign_rs\", jsonData.payload.sign_r + jsonData.payload.sign_s);\r",
+									"    pm.globals.set(\"sm2_sign_asn1\", jsonData.payload.asn1);\r",
 									"});\r",
 									""
 								],
@@ -135,7 +135,7 @@
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData.code).to.eql(0);\r",
 									"    \r",
-									"    pm.environment.set(\"sm2_cipher\", jsonData.payload.cipherText);\r",
+									"    pm.globals.set(\"sm2_cipher\", jsonData.payload.cipherText);\r",
 									"});\r",
 									""
 								],
@@ -242,7 +242,7 @@
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData.code).to.eql(0);\r",
 									"    \r",
-									"    pm.environment.set(\"sm4_cipher\", jsonData.payload.cipherText);\r",
+									"    pm.globals.set(\"sm4_cipher\", jsonData.payload.cipherText);\r",
 									"});\r",
 									""
 								],
@@ -335,7 +335,7 @@
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData.code).to.eql(0);\r",
 									"    \r",
-									"    pm.environment.set(\"sm4_crypt_key\", jsonData.payload.key);\r",
+									"    pm.globals.set(\"sm4_crypt_key\", jsonData.payload.key);\r",
 									"});\r",
 									""
 								],
@@ -435,13 +435,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{API_BASE}}/sym_crypt/generate_key?alg={{SYM_ALG}}&key_size=256",
+							"raw": "{{API_BASE}}/crypto/sym-alg/generate-key?alg={{SYM_ALG}}&key_size=256",
 							"host": [
 								"{{API_BASE}}"
 							],
 							"path": [
-								"sym_crypt",
-								"generate_key"
+								"crypto",
+								"sym-alg",
+								"generate-key"
 							],
 							"query": [
 								{
@@ -481,19 +482,20 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{API_BASE}}/sym_crypt/encrypt?alg={{SYM_ALG}}&mode={{SYM_MODE}}&padding={{SYM_PAD}}&key={{sym_key}}&iv={{IV}}&plain_hex=00112233445566778899aabbccddeeff",
+							"raw": "{{API_BASE}}/crypto/sym-alg/encrypt?alg={{SYM_ALG}}&mode={{SYM_MODE}}&padding={{SYM_PAD}}&key={{sym_key}}&iv={{IV}}&plain_hex=00112233445566778899aabbccddeeff",
 							"host": [
 								"{{API_BASE}}"
 							],
 							"path": [
-								"sym_crypt",
+								"crypto",
+								"sym-alg",
 								"encrypt"
 							],
 							"query": [
 								{
 									"key": "alg",
 									"value": "{{SYM_ALG}}",
-									"description": "{{SYM_ALG}}，AES、DES、DESede"
+									"description": "{{SYM_ALG}}，以下其一：AES、DES、DESede、SM4"
 								},
 								{
 									"key": "mode",
@@ -548,12 +550,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{API_BASE}}/sym_crypt/decrypt?alg={{SYM_ALG}}&mode={{SYM_MODE}}&padding={{SYM_PAD}}&key={{sym_key}}&iv={{IV}}&cipher_hex={{sym_cipher}}",
+							"raw": "{{API_BASE}}/crypto/sym-alg/decrypt?alg={{SYM_ALG}}&mode={{SYM_MODE}}&padding={{SYM_PAD}}&key={{sym_key}}&iv={{IV}}&cipher_hex={{sym_cipher}}",
 							"host": [
 								"{{API_BASE}}"
 							],
 							"path": [
-								"sym_crypt",
+								"crypto",
+								"sym-alg",
 								"decrypt"
 							],
 							"query": [
@@ -650,7 +653,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{API_BASE}}/alg/hash?srchex={{PLAIN_HEX}}&alg=MD5,SHA1,SHA256,SHA384,SHA512,SM3 ",
+							"raw": "{{API_BASE}}/alg/hash?srchex={{PLAIN_HEX}}&alg=MD5,SHA1,SHA256,SHA384,SHA512,SM3",
 							"host": [
 								"{{API_BASE}}"
 							],
@@ -665,7 +668,7 @@
 								},
 								{
 									"key": "alg",
-									"value": "MD5,SHA1,SHA256,SHA384,SHA512,SM3 ",
+									"value": "MD5,SHA1,SHA256,SHA384,SHA512,SM3",
 									"description": "MD5,SHA1,SHA256,SHA384,SHA512,SM3  多个，用逗号分隔"
 								}
 							]
