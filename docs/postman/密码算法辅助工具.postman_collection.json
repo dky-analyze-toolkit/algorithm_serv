@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "ea71097e-93ea-40ad-a863-241b9adddc32",
+		"_postman_id": "3a60c669-f744-4269-9583-374b0bb2a671",
 		"name": "密码算法辅助工具",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -232,7 +232,41 @@
 					"response": []
 				},
 				{
-					"name": "1.6 sm4加密",
+					"name": "1.6 sm4生成密钥",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"SM4 generateKey Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    pm.globals.set(\"sm4_crypt_key\", jsonData.payload.key);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE}}/alg/sm4generatekey",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"alg",
+								"sm4generatekey"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1.7 sm4加密",
 					"event": [
 						{
 							"listen": "test",
@@ -287,7 +321,7 @@
 					"response": []
 				},
 				{
-					"name": "1.7 sm4解密",
+					"name": "1.8 sm4解密",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -319,41 +353,6 @@
 									"value": "{{IV}}",
 									"description": "默认：30303030303030303030303030303030"
 								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "1.8 sm4生成密钥",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"SM4 generateKey Check\", function () {\r",
-									"    var jsonData = pm.response.json();\r",
-									"    pm.expect(jsonData.code).to.eql(0);\r",
-									"    \r",
-									"    pm.globals.set(\"sm4_crypt_key\", jsonData.payload.key);\r",
-									"});\r",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{API_BASE}}/alg/sm4generatekey",
-							"host": [
-								"{{API_BASE}}"
-							],
-							"path": [
-								"alg",
-								"sm4generatekey"
 							]
 						}
 					},
@@ -653,17 +652,17 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{API_BASE}}/alg/hash?srchex={{PLAIN_HEX}}&alg=MD5,SHA1,SHA256,SHA384,SHA512,SM3",
+							"raw": "{{API_BASE}}/crypto/hash?src_hex={{PLAIN_HEX}}&alg=MD5,SHA1,SHA256,SHA384,SHA512,SM3",
 							"host": [
 								"{{API_BASE}}"
 							],
 							"path": [
-								"alg",
+								"crypto",
 								"hash"
 							],
 							"query": [
 								{
-									"key": "srchex",
+									"key": "src_hex",
 									"value": "{{PLAIN_HEX}}"
 								},
 								{
@@ -797,7 +796,173 @@
 		},
 		{
 			"name": "6. 其它辅助",
-			"item": []
+			"item": [
+				{
+					"name": "5.3 ServerTime 服务器时间",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"systime\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    pm.environment.set(\"time\", jsonData.payload.time);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE}}/aux/systime",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"aux",
+								"systime"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5.3 生成UUID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"uuid\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    pm.environment.set(\"uuid\", jsonData.payload.uuid);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE}}/aux/uuid",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"aux",
+								"uuid"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5.3 random生成随机数",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"SM4 generateKey Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    pm.environment.set(\"sm4_crypt_key\", jsonData.payload.key);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE}}/aux/random?length=80",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"aux",
+								"random"
+							],
+							"query": [
+								{
+									"key": "length",
+									"value": "80",
+									"description": "取值范围应为1-256字节"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5.3 timeconvert 时间格式转换",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"SM4 generateKey Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    pm.environment.set(\"sm4_crypt_key\", jsonData.payload.key);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE}}/aux/timeconvert?arg=time2stamp&time=2021-01-20 16:38:50",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"aux",
+								"timeconvert"
+							],
+							"query": [
+								{
+									"key": "arg",
+									"value": "time2stamp",
+									"description": "time2stamp / stamp2time"
+								},
+								{
+									"key": "time",
+									"value": "2021-01-20 16:38:50",
+									"description": "时间格式原文，二选一 （2021-01-20 16:38:50）"
+								},
+								{
+									"key": "stamp",
+									"value": null,
+									"description": "时间戳格式原文，二选一  （1611131930）",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"event": [
