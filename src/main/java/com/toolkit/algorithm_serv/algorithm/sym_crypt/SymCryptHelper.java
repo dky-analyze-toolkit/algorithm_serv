@@ -41,14 +41,15 @@ public class SymCryptHelper {
         } else {
             iv = ParamsHelper.checkIV(alg, iv);
         }
+
         if (alg.equals("DES")) {
             return new DES(mode, padding, key, iv);
-
         } else if (alg.equals("AES")) {
             return new AES(mode, padding, key, iv);
-
         } else if (alg.equals("DESede")) {
             return new DESede(mode, padding, key, iv);
+        } else if (alg.equals("SM4")) {
+            return new SM4(mode, padding, key, iv);
         }
 
         return null;
