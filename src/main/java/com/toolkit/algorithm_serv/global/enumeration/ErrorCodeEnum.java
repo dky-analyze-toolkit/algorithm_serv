@@ -102,6 +102,8 @@ public enum ErrorCodeEnum {
     ERROR_FAIL_CONNECT(2073, "连接失败!!!"),
     ERROR_FAIL_SM4DEC(2074, "SM4解密失败!!!"),
     ERROR_FAIL_HASH(2075, "计算摘要失败"),
+    ERROR_FAIL_RANDOM(2076, "生成随机数失败"),
+    ERROR_FAIL_TIME_CONVERT(2076, "时间格式转换失败"),
 
     ;
 
