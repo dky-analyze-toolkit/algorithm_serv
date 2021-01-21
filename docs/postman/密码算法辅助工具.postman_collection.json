@@ -679,7 +679,7 @@
 			]
 		},
 		{
-			"name": "5. 数据转换和辅助",
+			"name": "5. 编解码格式转换",
 			"item": [
 				{
 					"name": "5.1 Base64编码",
@@ -704,12 +704,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{API_BASE}}/aux/b64/encode?plain_str=12",
+							"raw": "{{API_BASE}}/transcoding/b64/encode?plain_str=12",
 							"host": [
 								"{{API_BASE}}"
 							],
 							"path": [
-								"aux",
+								"transcoding",
 								"b64",
 								"encode"
 							],
@@ -753,12 +753,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{API_BASE}}/aux/b64/decode?code_str={{b64_encode_text}}",
+							"raw": "{{API_BASE}}/transcoding/b64/decode?code_str={{b64_encode_text}}",
 							"host": [
 								"{{API_BASE}}"
 							],
 							"path": [
-								"aux",
+								"transcoding",
 								"b64",
 								"decode"
 							],
@@ -773,7 +773,31 @@
 					},
 					"response": []
 				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
 			]
+		},
+		{
+			"name": "6. 其它辅助",
+			"item": []
 		}
 	],
 	"event": [
