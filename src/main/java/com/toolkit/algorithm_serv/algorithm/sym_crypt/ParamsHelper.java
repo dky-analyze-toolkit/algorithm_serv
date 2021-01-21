@@ -52,8 +52,8 @@ public class ParamsHelper {
             // .put("SSL3", Padding.SSL3Padding)
             .build();
 
-    public static boolean isValidKeySize(String alg, int keySize) {
-        return validKeySizeMap.get(alg).contains(Integer.valueOf(keySize));
+    public static boolean isValidKeySize(String alg, int keyBits) {
+        return validKeySizeMap.get(alg).contains(Integer.valueOf(keyBits));
     }
 
     public static void checkAlg(String alg) {
@@ -61,8 +61,8 @@ public class ParamsHelper {
         Preconditions.checkArgument(validKeySizeMap.containsKey(alg), "不能识别【%s】算法", alg);
     }
 
-    public static void checkKeySize(String alg, int keySize) {
-        Preconditions.checkArgument(isValidKeySize(alg, keySize), "【%s】算法不支持密钥长度：%s 位", alg, keySize);
+    public static void checkKeySize(String alg, int keyBits) {
+        Preconditions.checkArgument(isValidKeySize(alg, keyBits), "【%s】算法不支持密钥长度：%s 位", alg, keyBits);
     }
 
     public static void checkMode(String mode) {
@@ -78,9 +78,9 @@ public class ParamsHelper {
         checkPadding(padding);
     }
 
-    public static void checkAlgKeySize(String alg, int keySize) {
+    public static void checkAlgKeySize(String alg, int keyBits) {
         checkAlg(alg);
-        checkKeySize(alg, keySize);
+        checkKeySize(alg, keyBits);
     }
 
     public static void checkIVSize(String alg, int ivSize) {

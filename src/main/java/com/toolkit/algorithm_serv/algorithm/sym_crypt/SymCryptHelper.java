@@ -11,28 +11,25 @@ import java.io.UnsupportedEncodingException;
 import java.security.*;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
 
 public class SymCryptHelper {
-    // private static final Map<String, Boolean> validKeySizeMap = new HashMap<>(5);
-    // static {
-    //     validKeySizeMap.put("DES", Boolean.TRUE);
-    // }
-    // private static final List<String> algLists = Lists.newArrayList("AES", "DES", "DESede");
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
-
-    public static byte[] generateKey(String alg, int keySize) throws IllegalArgumentException {
-        ParamsHelper.checkAlgKeySize(alg, keySize);
+    public static byte[] generateKey(String alg, int keyBits) throws IllegalArgumentException {
+        ParamsHelper.checkAlgKeySize(alg, keyBits);
 
         // 随机生成密钥
-        byte[] key = KeyUtil.generateKey(alg, keySize).getEncoded();
+        byte[] key = KeyUtil.generateKey(alg, keyBits).getEncoded();
         return key;
     }
 
-    public static String generateKeyHex(String alg, int keyLen) {
-        return StrAuxUtils.bytesToHexString(SymCryptHelper.generateKey(alg, keyLen));
+    public static String generateKeyHex(String alg, int keyBits) {
+        return StrAuxUtils.bytesToHexString(SymCryptHelper.generateKey(alg, keyBits));
     }
 
     private static SymmetricCrypto initCrypto(String alg, Mode mode, Padding padding, byte[] key, byte[] iv) {
