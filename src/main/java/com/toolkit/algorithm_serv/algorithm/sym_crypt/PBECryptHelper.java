@@ -34,7 +34,9 @@ public class PBECryptHelper {
         return secretKey;
     }
 
-    public static byte[] encrypt(String alg, byte[] plain, String password, byte[] salt) throws Exception {
+    public static byte[] encrypt(String alg, byte[] plain, String password, byte[] salt)
+            throws InvalidKeySpecException, NoSuchAlgorithmException, NoSuchPaddingException,
+            InvalidAlgorithmParameterException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
         // 从密码转换密钥
         Key key = pwdToKey(alg, password);
         // 实例化PBE参数
@@ -48,7 +50,9 @@ public class PBECryptHelper {
         return cipher.doFinal(plain);
     }
 
-    public static String encrypt(String alg, String plainHex, String password, String saltHex) throws Exception {
+    public static String encrypt(String alg, String plainHex, String password, String saltHex)
+            throws NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException,
+            BadPaddingException, InvalidAlgorithmParameterException, InvalidKeySpecException {
         byte[] plain = HexUtil.decodeHex(plainHex);
         byte[] salt = HexUtil.decodeHex(saltHex);
 
