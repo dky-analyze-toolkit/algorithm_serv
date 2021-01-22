@@ -1,6 +1,10 @@
 package com.toolkit.algorithm_serv.algorithm.sym_crypt;
 
 import cn.hutool.core.util.HexUtil;
+import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
 
 import javax.crypto.*;
 import javax.crypto.spec.PBEKeySpec;
@@ -12,15 +16,35 @@ import java.util.Map;
 public class PBECryptHelper {
     private static final int RANDOM_SIZE = 32;
     private static final int ITERATION_COUN = 100;
-    // private static final Map<String, Integer>
+    private static final Map<String, Integer> algSaltLenMap = ImmutableMap.<String, Integer>builder()
+            .put("PBEWithMD5AndDES", 8)
+            .put("PBEWithSHA1AndDESede", 8)
+            .put("PBEWithSHA1AndRC2_40", 8)
+            .build();
 
-    public static byte[] initSalt() {
-        SecureRandom random = new SecureRandom();
-        return random.generateSeed(RANDOM_SIZE);
+    public static void checkAlg(String alg) {
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(alg), "未指定算法");
+        Preconditions.checkArgument(algSaltLenMap.containsKey(alg), "不能识别【%s】算法", alg);
     }
 
-    public static String initSaltHex() {
-        byte[] salt = initSalt();
+    public static void checkSaltSize(String alg, int saltSize) {
+        Preconditions.checkArgument(saltSize >= algSaltLenMap.get(alg), "【%s】算法的盐长度至少为【%s】位",
+                alg, algSaltLenMap.get(alg));
+    }
+
+    public static void checkAlgSaltSize(String alg, int saltSize) {
+        checkAlg(alg);
+        checkSaltSize(alg, saltSize);
+    }
+
+    public static byte[] initSalt(String alg, int saltSize) {
+        checkAlgSaltSize(alg, saltSize);
+        SecureRandom random = new SecureRandom();
+        return random.generateSeed(saltSize);
+    }
+
+    public static String initSaltHex(String alg, int saltSize) {
+        byte[] salt = initSalt(alg, saltSize);
         return HexUtil.encodeHexStr(salt, false);
     }
 
@@ -37,6 +61,9 @@ public class PBECryptHelper {
     public static byte[] encrypt(String alg, byte[] plain, String password, byte[] salt)
             throws InvalidKeySpecException, NoSuchAlgorithmException, NoSuchPaddingException,
             InvalidAlgorithmParameterException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
+
+        checkAlgSaltSize(alg, salt.length);
+
         // 从密码转换密钥
         Key key = pwdToKey(alg, password);
         // 实例化PBE参数
@@ -61,6 +88,8 @@ public class PBECryptHelper {
     }
 
     public static byte[] decrypt(String alg, byte[] cipherData, String password, byte[] salt) throws Exception {
+        checkAlgSaltSize(alg, salt.length);
+
         // 从密码转换密钥
         Key key = pwdToKey(alg, password);
         // 实例化PBE参数

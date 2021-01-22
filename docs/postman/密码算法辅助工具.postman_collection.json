@@ -423,7 +423,7 @@
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData.code).to.eql(0);\r",
 									"    \r",
-									"    pm.globals.set(\"sym_key\", jsonData.payload.key);\r",
+									"    pm.globals.set(\"sym_key\", jsonData.payload.key_hex);\r",
 									"});\r",
 									""
 								],
@@ -847,6 +847,209 @@
 								"crypto",
 								"sym-alg",
 								"vigenere",
+								"decrypt"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.8 生成PBE盐",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"sym_crypt PBE_init_salt Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    pm.globals.set(\"PBE_SALT\", jsonData.payload.salt_hex);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.globals.set(\"PBE_ALG\", \"PBEWithMD5AndDES\");\r",
+									"pm.globals.set(\"PASSWORD\", \"2234567\");\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE}}/crypto/sym-alg/pbe/init-salt?alg={{PBE_ALG}}&salt_size=8",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"crypto",
+								"sym-alg",
+								"pbe",
+								"init-salt"
+							],
+							"query": [
+								{
+									"key": "alg",
+									"value": "{{PBE_ALG}}",
+									"description": "{{PBE_ALG}}，以下之一：PBEWithMD5AndDES，PBEWithSHA1AndDESede，PBEWithSHA1AndRC2_40"
+								},
+								{
+									"key": "salt_size",
+									"value": "8"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.9 PBE加密",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"ext_sym_crypt encrypt Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    pm.globals.set(\"sym_cipher\", jsonData.payload.cipher_hex);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "alg",
+									"value": "{{PBE_ALG}}",
+									"description": "{{PBE_ALG}}，以下之一：PBEWithMD5AndDES，PBEWithSHA1AndDESede，PBEWithSHA1AndRC2_40",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "{{PASSWORD}}",
+									"description": "{{PASSWORD}}",
+									"type": "text"
+								},
+								{
+									"key": "salt_hex",
+									"value": "{{PBE_SALT}}",
+									"description": "{{PBE_SALT}}",
+									"type": "text"
+								},
+								{
+									"key": "plain_hex",
+									"value": "1234",
+									"description": "{{PLAIN_HEX}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/crypto/sym-alg/pbe/encrypt",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"crypto",
+								"sym-alg",
+								"pbe",
+								"encrypt"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.10 PBE解密",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "alg",
+									"value": "{{PBE_ALG}}",
+									"description": "{{PBE_ALG}}，以下之一：PBEWithMD5AndDES，PBEWithSHA1AndDESede，PBEWithSHA1AndRC2_40",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "{{PASSWORD}}",
+									"description": "{{PASSWORD}}",
+									"type": "text"
+								},
+								{
+									"key": "salt_hex",
+									"value": "{{PBE_SALT}}",
+									"description": "{{PBE_SALT}}",
+									"type": "text"
+								},
+								{
+									"key": "cipher_hex",
+									"value": "{{sym_cipher}}",
+									"description": "{{sym_cipher}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/crypto/sym-alg/pbe/decrypt",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"crypto",
+								"sym-alg",
+								"pbe",
 								"decrypt"
 							]
 						}

@@ -5,6 +5,7 @@ import cn.hutool.crypto.CryptoException;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
 import com.toolkit.algorithm_serv.algorithm.sym_crypt.ExtSymCryptHelper;
+import com.toolkit.algorithm_serv.algorithm.sym_crypt.PBECryptHelper;
 import com.toolkit.algorithm_serv.algorithm.sym_crypt.SymCryptHelper;
 import com.toolkit.algorithm_serv.global.enumeration.ErrorCodeEnum;
 import com.toolkit.algorithm_serv.global.exception.ExceptionHelper;
@@ -28,6 +29,17 @@ public class SymCryptApi {
         this.responseHelper = responseHelper;
     }
 
+    private void putHexSize(JSONObject jsonResult, String hex) {
+        jsonResult.put("size", hex.length() / 2);
+        jsonResult.put("bits", hex.length() / 2 * 8);
+    }
+
+    private void jsonPutHex(JSONObject jsonResult, String key, String value) {
+        jsonResult.put(key + "_hex", value);
+        jsonResult.put(key + "_b64", Base64.encode(value));
+        putHexSize(jsonResult, value);
+    }
+
     @GetMapping("/generate-key")
     @ResponseBody
     public Object symGenerateKey(
@@ -38,10 +50,7 @@ public class SymCryptApi {
             String keyHex = SymCryptHelper.generateKeyHex(alg, keyBits);
             JSONObject jsonKey = new JSONObject();
             jsonKey.put("alg", alg);
-            jsonKey.put("key", keyHex);
-            jsonKey.put("size", keyHex.length() / 2);
-            jsonKey.put("bits", keyHex.length() / 2 * 8);
-            jsonKey.put("key_b64", Base64.encode(keyHex));
+            jsonPutHex(jsonKey, "key", keyHex);
             return responseHelper.success(jsonKey);
         } catch (Exception e) {
             return exceptionHelper.response(e);
@@ -68,21 +77,17 @@ public class SymCryptApi {
                     return responseHelper.error(ErrorCodeEnum.ERROR_NEED_PLAIN);
                 }
                 result = SymCryptHelper.encrypt(alg, mode, padding, plainHex, key, iv);
-                jsonResult.put("cipher_hex", result);
-                jsonResult.put("cipher_b64", Base64.encode(result));
+                jsonPutHex(jsonResult, "cipher", result);
             } else if (crypt.equals("decrypt")) {
                 if (Strings.isNullOrEmpty(cipherHex)) {
                     return responseHelper.error(ErrorCodeEnum.ERROR_NEED_CIPHER);
                 }
                 result = SymCryptHelper.decrypt(alg, mode, padding, cipherHex, key, iv);
-                jsonResult.put("plain_hex", result);
-                jsonResult.put("plain_b64", Base64.encode(result));
+                jsonPutHex(jsonResult, "plain", result);
             } else {
                 return responseHelper.error(ErrorCodeEnum.ERROR_GENERAL_ERROR);
             }
 
-            jsonResult.put("size", result.length() / 2);
-            jsonResult.put("bits", result.length() / 2 * 8);
             return responseHelper.success(jsonResult);
         } catch (Exception e) {
             return exceptionHelper.response(e);
@@ -102,17 +107,13 @@ public class SymCryptApi {
             String result = "";
             if (crypt.equals("encrypt")) {
                 result = ExtSymCryptHelper.encrypt("RC4", plainHex, key);
-                jsonResult.put("cipher_hex", result);
-                jsonResult.put("cipher_b64", Base64.encode(result));
+                jsonPutHex(jsonResult, "cipher", result);
             } else if (crypt.equals("decrypt")) {
                 result = ExtSymCryptHelper.decrypt("RC4", cipherHex, key);
-                jsonResult.put("plain_hex", result);
-                jsonResult.put("plain_b64", Base64.encode(result));
+                jsonPutHex(jsonResult, "plain", result);
             } else {
                 return responseHelper.error(ErrorCodeEnum.ERROR_GENERAL_ERROR);
             }
-            jsonResult.put("size", result.length() / 2);
-            jsonResult.put("bits", result.length() / 2 * 8);
             return responseHelper.success(jsonResult);
         } catch (Exception e) {
             return exceptionHelper.response(e);
@@ -140,6 +141,48 @@ public class SymCryptApi {
                 return responseHelper.error(ErrorCodeEnum.ERROR_GENERAL_ERROR);
             }
             jsonResult.put("length", result.length());
+            return responseHelper.success(jsonResult);
+        } catch (Exception e) {
+            return exceptionHelper.response(e);
+        }
+    }
+
+    @GetMapping("/pbe/init-salt")
+    @ResponseBody
+    public Object initPBESalt(@RequestParam(value = "alg") String alg,
+                              @RequestParam(value = "salt_size") int saltSize) {
+        try {
+            String saltHex = PBECryptHelper.initSaltHex(alg, saltSize);
+            JSONObject jsonResult = new JSONObject();
+            jsonPutHex(jsonResult, "salt", saltHex);
+            return responseHelper.success(jsonResult);
+        } catch (Exception e) {
+            return exceptionHelper.response(e);
+        }
+    }
+
+    @PostMapping("/pbe/{crypt}")
+    @ResponseBody
+    public Object doPBECrypt(
+            @PathVariable("crypt") String crypt,
+            @RequestParam(value = "alg") String alg,
+            @RequestParam(value = "password") String password,
+            @RequestParam(value = "salt_hex") String saltHex,
+            @RequestParam(value = "plain_hex", required = false) String plainHex,
+            @RequestParam(value = "cipher_hex", required = false) String cipherHex
+    ) {
+        try {
+            JSONObject jsonResult = new JSONObject();
+            String result = "";
+            if (crypt.equals("encrypt")) {
+                result = PBECryptHelper.encrypt(alg, plainHex, password, saltHex);
+                jsonPutHex(jsonResult, "cipher", result);
+            } else if (crypt.equals("decrypt")) {
+                result = PBECryptHelper.decrypt(alg, cipherHex, password, saltHex);
+                jsonPutHex(jsonResult, "plain", result);
+            } else {
+                return responseHelper.error(ErrorCodeEnum.ERROR_GENERAL_ERROR);
+            }
             return responseHelper.success(jsonResult);
         } catch (Exception e) {
             return exceptionHelper.response(e);
