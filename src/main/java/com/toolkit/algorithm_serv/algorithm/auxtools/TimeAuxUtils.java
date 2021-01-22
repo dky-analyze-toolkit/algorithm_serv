@@ -1,4 +1,6 @@
 package com.toolkit.algorithm_serv.algorithm.auxtools;
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
 import com.google.common.base.Preconditions;
 
 import java.sql.Timestamp;
@@ -14,10 +16,15 @@ import static com.toolkit.algorithm_serv.utils.TimeUtils.parseTimeFromString;
 public class TimeAuxUtils {
 
     public static String time2stamp(String timeStr) throws IllegalArgumentException {
-//        Preconditions.checkArgument(randomLen >= 1 && randomLen <= 256, "指定的长度: %s 无效，取值范围应为1-256字节", randomLen);
         try {
-            Timestamp createTime = parseTimeFromString(timeStr,"yyyy-mm-dd hh:mm:ss[. ...]");
-            return createTime.toString();
+
+            DateTime datetime = DateUtil.parse(timeStr);
+
+            Timestamp timestamp = parseTimeFromString(timeStr, "yyyy-mm-dd hh:mm:ss");
+            Long milliSeconds = timestamp.getTime();
+//            timestamp.setTime(milliSeconds);
+            return milliSeconds.toString();
+
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -26,10 +33,9 @@ public class TimeAuxUtils {
 
     public static String stamp2time(String stampStr) throws IllegalArgumentException {
         try {
-//            Timestamp createTime = timestamp(timeStr,"yyyy/MM/dd HH:mm:ss");
-            String timeStr = "";
-
-            return timeStr;
+            Timestamp timestamp = new Timestamp(0);
+            timestamp.setTime(Long.valueOf(stampStr));
+            return timestamp.toString();
         } catch (Exception e) {
             e.printStackTrace();
             return null;

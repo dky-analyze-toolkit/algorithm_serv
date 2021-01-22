@@ -1,5 +1,7 @@
 package com.toolkit.algorithm_serv.controller;
 
+import cn.hutool.core.convert.Convert;
+import cn.hutool.core.util.CharsetUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.toolkit.algorithm_serv.algorithm.hash.HashHelper;
 import com.toolkit.algorithm_serv.global.enumeration.ErrorCodeEnum;
@@ -42,30 +44,36 @@ public class SMApi {
     @RequestMapping(value = "/generateKeyPair", method = RequestMethod.GET)
     @ResponseBody
     public Object generateKeyPair() {
-
-        SM2 sm2 = SM2.Instance();
-        AsymmetricCipherKeyPair key = null;
-        while (true){
-            key=sm2.ecc_key_pair_generator.generateKeyPair();
-            if(((ECPrivateKeyParameters) key.getPrivate()).getD().toByteArray().length==32){
-                break;
+        try{
+            SM2 sm2 = SM2.Instance();
+            AsymmetricCipherKeyPair key = null;
+            while (true){
+                key=sm2.ecc_key_pair_generator.generateKeyPair();
+                if(((ECPrivateKeyParameters) key.getPrivate()).getD().toByteArray().length==32){
+                    break;
+                }
             }
-        }
-        ECPrivateKeyParameters ecpriv = (ECPrivateKeyParameters) key.getPrivate();
-        ECPublicKeyParameters ecpub = (ECPublicKeyParameters) key.getPublic();
-        BigInteger privateKey = ecpriv.getD();
-        ECPoint publicKey = ecpub.getQ();
-        SM2KeyVO sm2KeyVO = new SM2KeyVO();
-        sm2KeyVO.setPublicKey(publicKey);
-        sm2KeyVO.setPrivateKey(privateKey);
-        //System.out.println("公钥: " + Util.byteToHex(publicKey.getEncoded()));
-        //System.out.println("私钥: " + Util.byteToHex(privateKey.toByteArray()));
+            ECPrivateKeyParameters ecpriv = (ECPrivateKeyParameters) key.getPrivate();
+            ECPublicKeyParameters ecpub = (ECPublicKeyParameters) key.getPublic();
+            BigInteger privateKey = ecpriv.getD();
+            ECPoint publicKey = ecpub.getQ();
+            SM2KeyVO sm2KeyVO = new SM2KeyVO();
+            sm2KeyVO.setPublicKey(publicKey);
+            sm2KeyVO.setPrivateKey(privateKey);
+            //System.out.println("公钥: " + Util.byteToHex(publicKey.getEncoded()));
+            //System.out.println("私钥: " + Util.byteToHex(privateKey.toByteArray()));
 //        return sm2KeyVO;
 
-        JSONObject jsonOS = new JSONObject();
-        jsonOS.put("publickey", Util.byteToHex(publicKey.getEncoded()));
-        jsonOS.put("privatekey", Util.byteToHex(privateKey.toByteArray()));
-        return responseHelper.success(jsonOS);
+            JSONObject jsonOS = new JSONObject();
+            jsonOS.put("publickey", Util.byteToHex(publicKey.getEncoded()));
+            jsonOS.put("privatekey", Util.byteToHex(privateKey.toByteArray()));
+            return responseHelper.success(jsonOS);
+
+        }
+        catch (Exception e) {
+            return responseHelper.error(ErrorCodeEnum.ERROR_GENERAL_ERROR, e.getMessage());
+        }
+
     }
 
     /**
@@ -189,9 +197,14 @@ public class SMApi {
     @RequestMapping(value = "/sm3digest", method = RequestMethod.GET)
     @ResponseBody
     public Object sm3(@RequestParam("srchex") String srchex) {
-        JSONObject jsonOS = new JSONObject();
-        jsonOS.put("SM3Digest", HashHelper.sm3(srchex).toUpperCase());
-        return responseHelper.success(jsonOS);
+        try{
+            JSONObject jsonOS = new JSONObject();
+            jsonOS.put("SM3Digest", HashHelper.sm3(srchex).toUpperCase());
+            return responseHelper.success(jsonOS);
+        }
+        catch (Exception e) {
+            return responseHelper.error(ErrorCodeEnum.ERROR_GENERAL_ERROR, e.getMessage());
+        }
     }
 
     /**
@@ -284,26 +297,30 @@ public class SMApi {
     @RequestMapping(value = "/sm4generatekey", method = RequestMethod.GET)
     @ResponseBody
     public Object sm4generatekey() {
-        int len = 32;
-        String str = "";
-        for (int i = 0; i < len; i++) {
-            char temp = 0;
-            int key = (int) (Math.random() * 2);
-            switch (key) {
-                case 0:
-                    temp = (char) (Math.random() * 10 + 48);//产生随机数字
-                    break;
-                case 1:
-                    temp = (char) (Math.random() * 6 + 'a');//产生a-f
-                    break;
-                default:
-                    break;
+        try{
+            int len = 32;
+            String str = "";
+            for (int i = 0; i < len; i++) {
+                char temp = 0;
+                int key = (int) (Math.random() * 2);
+                switch (key) {
+                    case 0:
+                        temp = (char) (Math.random() * 10 + 48);//产生随机数字
+                        break;
+                    case 1:
+                        temp = (char) (Math.random() * 6 + 'a');//产生a-f
+                        break;
+                    default:
+                        break;
+                }
+                str = str + temp;
             }
-            str = str + temp;
+            JSONObject jsonOS = new JSONObject();
+            jsonOS.put("key", str.toUpperCase());
+            return responseHelper.success(jsonOS);
+        }        catch (Exception e) {
+            return responseHelper.error(ErrorCodeEnum.ERROR_GENERAL_ERROR, e.getMessage());
         }
-        JSONObject jsonOS = new JSONObject();
-        jsonOS.put("key", str.toUpperCase());
-        return responseHelper.success(jsonOS);
     }
     /**
      * 1.9 string2hex
@@ -313,11 +330,14 @@ public class SMApi {
     @ResponseBody
     public Object string2hex(@RequestParam("string") String str) throws Exception {
 
-        String hex = Util.byteToHex(str.getBytes());
-
-        JSONObject jsonOS = new JSONObject();
-        jsonOS.put("hexstring", hex);
-        return responseHelper.success(jsonOS);
+        try{
+            JSONObject jsonOS = new JSONObject();
+            jsonOS.put("hexstring", Convert.toHex(str, CharsetUtil.CHARSET_UTF_8));
+            return responseHelper.success(jsonOS);
+        }
+        catch (Exception e) {
+            return responseHelper.error(ErrorCodeEnum.ERROR_GENERAL_ERROR, e.getMessage());
+        }
     }
     /**
      * 1.10 hex2string
@@ -327,11 +347,14 @@ public class SMApi {
     @ResponseBody
     public Object hex2string(@RequestParam("hex") String hex) throws Exception {
 
-        String str = Util.hexStringToString(hex,2);
-
-        JSONObject jsonOS = new JSONObject();
-        jsonOS.put("string", str.toUpperCase());
-        return responseHelper.success(jsonOS);
+        try{
+            JSONObject jsonOS = new JSONObject();
+            jsonOS.put("string", Convert.hexToStr(hex, CharsetUtil.CHARSET_UTF_8));
+            return responseHelper.success(jsonOS);
+        }
+        catch (Exception e) {
+            return responseHelper.error(ErrorCodeEnum.ERROR_GENERAL_ERROR, e.getMessage());
+        }
     }
 
 }
