@@ -16,7 +16,7 @@ public class TimeAuxUtils {
     public static String time2stamp(String timeStr) throws IllegalArgumentException {
 //        Preconditions.checkArgument(randomLen >= 1 && randomLen <= 256, "指定的长度: %s 无效，取值范围应为1-256字节", randomLen);
         try {
-            Timestamp createTime = parseTimeFromString(timeStr,"yyyy-mm-dd hh:mm:ss[.f...]");
+            Timestamp createTime = parseTimeFromString(timeStr,"yyyy-mm-dd hh:mm:ss[. ...]");
             return createTime.toString();
         } catch (Exception e) {
             e.printStackTrace();

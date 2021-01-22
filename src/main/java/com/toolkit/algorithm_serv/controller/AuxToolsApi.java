@@ -1,4 +1,9 @@
 package com.toolkit.algorithm_serv.controller;
+
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.RandomUtil;
 import com.alibaba.fastjson.JSONObject;
 
 import com.toolkit.algorithm_serv.global.enumeration.ErrorCodeEnum;
@@ -8,11 +13,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
 import static com.toolkit.algorithm_serv.algorithm.auxtools.RandomHelper.generateRandom;
 import static com.toolkit.algorithm_serv.algorithm.auxtools.TimeAuxUtils.stamp2time;
 import static com.toolkit.algorithm_serv.algorithm.auxtools.TimeAuxUtils.time2stamp;
-import static com.toolkit.algorithm_serv.utils.StrAuxUtils.generateUuid;
-import static com.toolkit.algorithm_serv.utils.TimeUtils.getNowTime;
 
 @RestController
 @RequestMapping(value = "/aux")
@@ -20,42 +24,53 @@ public class AuxToolsApi {
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final ResponseHelper responseHelper;
+
     @Autowired
     public AuxToolsApi(ResponseHelper responseHelper) {
         this.responseHelper = responseHelper;
     }
 
-    @GetMapping("/timeconvert/{arg}")
+    @GetMapping("/time-convert/{arg}")
     @ResponseBody
-    public Object timeconvert(
+    public Object timeConvert(
             @PathVariable(value = "arg", required = true) String codeAct,
             @RequestParam(value = "time", required = false) String timeStr,
             @RequestParam(value = "stamp", required = false) String stampStr) {
         if (codeAct.equalsIgnoreCase("time2stamp")) {
-            stampStr = time2stamp(timeStr);
+            if (StrAuxUtils.isValid(timeStr)) {
+                stampStr = time2stamp(timeStr);
+            }
             return responseHelper.success(stampStr);
         } else if (codeAct.equalsIgnoreCase("stamp2time")) {
-            timeStr = stamp2time(timeStr);
+            if (StrAuxUtils.isValid(stampStr)) {
+                timeStr = stamp2time(stampStr);
+            }
             return responseHelper.success(timeStr);
         } else {
-            return responseHelper.error(ErrorCodeEnum.ERROR_FAIL_TIME_CONVERT, "检查输入的参数，arg：" + codeAct + " time："+ timeStr + " stamp："+ stampStr);
+            return responseHelper.error(ErrorCodeEnum.ERROR_FAIL_TIME_CONVERT, "检查输入的参数，arg：" + codeAct + " time：" + timeStr + " stamp：" + stampStr);
         }
 
     }
 
-    @GetMapping("/systime")
+    @GetMapping("/system-time")
     @ResponseBody
     public Object systemTime() {
         JSONObject jsonOS = new JSONObject();
-        jsonOS.put("time", getNowTime());
+//        jsonOS.put("time", DateTime.now()); //"2021-01-21T08:14:12.650+00:00",
+        jsonOS.put("time", DateUtil.now());   //"2021-01-21 16:14:12"
         return responseHelper.success(jsonOS);
     }
 
     @GetMapping("/uuid")
     @ResponseBody
-    public Object generateUUID() {
+    public Object generateUUID(@RequestParam(value = "simple", required = false) String simple) {
         JSONObject jsonOS = new JSONObject();
-        jsonOS.put("uuid", generateUuid().toUpperCase());
+        if (StrAuxUtils.isValid(simple)) {
+            jsonOS.put("uuid", IdUtil.simpleUUID());
+        } else {
+            jsonOS.put("uuid", IdUtil.randomUUID());
+        }
+
         return responseHelper.success(jsonOS);
     }
 
@@ -64,11 +79,13 @@ public class AuxToolsApi {
     @ResponseBody
     public Object random(@RequestParam(value = "length", required = false) int randomLen) {
         try {
-            String random = generateRandom(randomLen);
 
             JSONObject jsonOS = new JSONObject();
             jsonOS.put("length", randomLen);
-            jsonOS.put("random", random);
+            jsonOS.put("random", generateRandom(randomLen));
+//            jsonOS.put("random1", RandomUtil.randomString(randomLen));
+//            jsonOS.put("random2", RandomUtil.randomStringUpper(randomLen));
+
             return responseHelper.success(jsonOS);
         } catch (IllegalArgumentException e) {
             return responseHelper.error(ErrorCodeEnum.ERROR_FAIL_RANDOM, e.getMessage());
