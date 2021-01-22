@@ -23,7 +23,7 @@ public class TransCodingApi {
         this.responseHelper = responseHelper;
     }
 
-    @GetMapping("/b64/{arg}")
+    @PostMapping("/b64/{arg}")
     @ResponseBody
     public Object base64Code(
             @PathVariable(value = "arg", required = true)String codeAct,
@@ -41,7 +41,7 @@ public class TransCodingApi {
                 return responseHelper.error(ErrorCodeEnum.ERROR_NEED_PARAMETER, "编码时需要填入参数 plain_hex 或 plain_str 。");
             }
             JSONObject jsonRes = new JSONObject();
-            jsonRes.put("encode_text", encodeText);
+            jsonRes.put("encode_str", encodeText);
             jsonRes.put("length", encodeText.length());
             return responseHelper.success(jsonRes);
         } else if (codeAct.equalsIgnoreCase("decode")) {

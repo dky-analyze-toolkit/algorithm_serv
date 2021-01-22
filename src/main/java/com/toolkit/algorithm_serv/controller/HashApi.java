@@ -33,7 +33,7 @@ public class HashApi {
      *
      * @return
      */
-    @RequestMapping(value = "/hash", method = RequestMethod.GET)
+    @PostMapping("/hash")
     @ResponseBody
     public Object hash(@RequestParam("src_hex") String srcHex,
                        @RequestParam("alg") String alg) {

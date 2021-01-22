@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "3a60c669-f744-4269-9583-374b0bb2a671",
+		"_postman_id": "ea71097e-93ea-40ad-a863-241b9adddc32",
 		"name": "密码算法辅助工具",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -232,41 +232,7 @@
 					"response": []
 				},
 				{
-					"name": "1.6 sm4生成密钥",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"SM4 generateKey Check\", function () {\r",
-									"    var jsonData = pm.response.json();\r",
-									"    pm.expect(jsonData.code).to.eql(0);\r",
-									"    \r",
-									"    pm.globals.set(\"sm4_crypt_key\", jsonData.payload.key);\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{API_BASE}}/alg/sm4generatekey",
-							"host": [
-								"{{API_BASE}}"
-							],
-							"path": [
-								"alg",
-								"sm4generatekey"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "1.7 sm4加密",
+					"name": "1.6 sm4加密",
 					"event": [
 						{
 							"listen": "test",
@@ -321,7 +287,7 @@
 					"response": []
 				},
 				{
-					"name": "1.8 sm4解密",
+					"name": "1.7 sm4解密",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -353,6 +319,41 @@
 									"value": "{{IV}}",
 									"description": "默认：30303030303030303030303030303030"
 								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1.8 sm4生成密钥",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"SM4 generateKey Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    pm.globals.set(\"sm4_crypt_key\", jsonData.payload.key);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE}}/alg/sm4generatekey",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"alg",
+								"sm4generatekey"
 							]
 						}
 					},
@@ -478,10 +479,51 @@
 						}
 					],
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "alg",
+									"value": "{{SYM_ALG}}",
+									"description": "{{SYM_ALG}}，以下其一：AES、DES、DESede、SM4",
+									"type": "text"
+								},
+								{
+									"key": "mode",
+									"value": "{{SYM_MODE}}",
+									"description": "{{SYM_MODE}}，以下其一：None、CBC、CFB、CTR、CTS、ECB、OFB",
+									"type": "text"
+								},
+								{
+									"key": "padding",
+									"value": "{{SYM_PAD}}",
+									"description": "{{SYM_PAD}}，以下其一：None、Zero、ISO10126、PKCS5",
+									"type": "text"
+								},
+								{
+									"key": "key",
+									"value": "{{sym_key}}",
+									"description": "{{sym_key}}",
+									"type": "text"
+								},
+								{
+									"key": "iv",
+									"value": "{{IV}}",
+									"description": "{{IV}}",
+									"type": "text"
+								},
+								{
+									"key": "plain_hex",
+									"value": "00112233445566778899aabbccddeeff",
+									"description": "{{PLAIN_HEX}}",
+									"type": "text"
+								}
+							]
+						},
 						"url": {
-							"raw": "{{API_BASE}}/crypto/sym-alg/encrypt?alg={{SYM_ALG}}&mode={{SYM_MODE}}&padding={{SYM_PAD}}&key={{sym_key}}&iv={{IV}}&plain_hex=00112233445566778899aabbccddeeff",
+							"raw": "{{API_BASE}}/crypto/sym-alg/encrypt",
 							"host": [
 								"{{API_BASE}}"
 							],
@@ -489,45 +531,13 @@
 								"crypto",
 								"sym-alg",
 								"encrypt"
-							],
-							"query": [
-								{
-									"key": "alg",
-									"value": "{{SYM_ALG}}",
-									"description": "{{SYM_ALG}}，以下其一：AES、DES、DESede、SM4"
-								},
-								{
-									"key": "mode",
-									"value": "{{SYM_MODE}}",
-									"description": "{{SYM_MODE}}，以下其一：None、CBC、CFB、CTR、CTS、ECB、OFB"
-								},
-								{
-									"key": "padding",
-									"value": "{{SYM_PAD}}",
-									"description": "{{SYM_PAD}}，以下其一：None、Zero、ISO10126、PKCS5"
-								},
-								{
-									"key": "key",
-									"value": "{{sym_key}}",
-									"description": "{{sym_key}}"
-								},
-								{
-									"key": "iv",
-									"value": "{{IV}}",
-									"description": "{{IV}}"
-								},
-								{
-									"key": "plain_hex",
-									"value": "00112233445566778899aabbccddeeff",
-									"description": "{{PLAIN_HEX}}"
-								}
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "2.3 解密",
+					"name": "2.2 解密",
 					"event": [
 						{
 							"listen": "test",
@@ -546,10 +556,51 @@
 						}
 					],
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "alg",
+									"value": "{{SYM_ALG}}",
+									"description": "{{SYM_ALG}}，以下其一：AES、DES、DESede、SM4",
+									"type": "text"
+								},
+								{
+									"key": "mode",
+									"value": "{{SYM_MODE}}",
+									"description": "{{SYM_MODE}}，以下其一：None、CBC、CFB、CTR、CTS、ECB、OFB",
+									"type": "text"
+								},
+								{
+									"key": "padding",
+									"value": "{{SYM_PAD}}",
+									"description": "{{SYM_PAD}}，以下其一：None、Zero、ISO10126、PKCS5",
+									"type": "text"
+								},
+								{
+									"key": "key",
+									"value": "{{sym_key}}",
+									"description": "{{sym_key}}",
+									"type": "text"
+								},
+								{
+									"key": "iv",
+									"value": "{{IV}}",
+									"description": "{{IV}}",
+									"type": "text"
+								},
+								{
+									"key": "cipher_hex",
+									"value": "{{sym_cipher}}",
+									"description": "{{sym_cipher}}",
+									"type": "text"
+								}
+							]
+						},
 						"url": {
-							"raw": "{{API_BASE}}/crypto/sym-alg/decrypt?alg={{SYM_ALG}}&mode={{SYM_MODE}}&padding={{SYM_PAD}}&key={{sym_key}}&iv={{IV}}&cipher_hex={{sym_cipher}}",
+							"raw": "{{API_BASE}}/crypto/sym-alg/decrypt",
 							"host": [
 								"{{API_BASE}}"
 							],
@@ -557,38 +608,6 @@
 								"crypto",
 								"sym-alg",
 								"decrypt"
-							],
-							"query": [
-								{
-									"key": "alg",
-									"value": "{{SYM_ALG}}",
-									"description": "{{SYM_ALG}}，AES、DES、DESede"
-								},
-								{
-									"key": "mode",
-									"value": "{{SYM_MODE}}",
-									"description": "{{SYM_MODE}}，以下其一：None、CBC、CFB、CTR、CTS、ECB、OFB"
-								},
-								{
-									"key": "padding",
-									"value": "{{SYM_PAD}}",
-									"description": "{{SYM_PAD}}，以下其一：None、Zero、ISO10126、PKCS5"
-								},
-								{
-									"key": "key",
-									"value": "{{sym_key}}",
-									"description": "{{sym_key}}"
-								},
-								{
-									"key": "iv",
-									"value": "{{IV}}",
-									"description": "{{IV}}"
-								},
-								{
-									"key": "cipher_hex",
-									"value": "{{sym_cipher}}",
-									"description": "{{sym_cipher}}"
-								}
 							]
 						}
 					},
@@ -616,7 +635,7 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"pm.globals.set(\"EXT_SYM_KEY\", \"hello kid111222\");\r",
+									"pm.globals.set(\"EXT_SYM_KEY\", \"hello \");\r",
 									""
 								],
 								"type": "text/javascript"
@@ -624,10 +643,26 @@
 						}
 					],
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "key",
+									"value": "{{EXT_SYM_KEY}}",
+									"description": "{{EXT_SYM_KEY}}",
+									"type": "text"
+								},
+								{
+									"key": "plain_hex",
+									"value": "00112233445566778899aabbccddee",
+									"type": "text"
+								}
+							]
+						},
 						"url": {
-							"raw": "{{API_BASE}}/crypto/sym-alg/rc4/encrypt?key={{EXT_SYM_KEY}}&plain_hex=00112233445566778899aabbccddee",
+							"raw": "{{API_BASE}}/crypto/sym-alg/rc4/encrypt",
 							"host": [
 								"{{API_BASE}}"
 							],
@@ -636,17 +671,6 @@
 								"sym-alg",
 								"rc4",
 								"encrypt"
-							],
-							"query": [
-								{
-									"key": "key",
-									"value": "{{EXT_SYM_KEY}}",
-									"description": "{{EXT_SYM_KEY}}"
-								},
-								{
-									"key": "plain_hex",
-									"value": "00112233445566778899aabbccddee"
-								}
 							]
 						}
 					},
@@ -675,10 +699,27 @@
 						}
 					],
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "key",
+									"value": "{{EXT_SYM_KEY}}",
+									"description": "{{EXT_SYM_KEY}}",
+									"type": "text"
+								},
+								{
+									"key": "cipher_hex",
+									"value": "{{sym_cipher}}",
+									"description": "{{sym_cipher}}",
+									"type": "text"
+								}
+							]
+						},
 						"url": {
-							"raw": "{{API_BASE}}/crypto/sym-alg/rc4/decrypt?key={{EXT_SYM_KEY}}&cipher_hex={{sym_cipher}}",
+							"raw": "{{API_BASE}}/crypto/sym-alg/rc4/decrypt",
 							"host": [
 								"{{API_BASE}}"
 							],
@@ -687,18 +728,6 @@
 								"sym-alg",
 								"rc4",
 								"decrypt"
-							],
-							"query": [
-								{
-									"key": "key",
-									"value": "{{EXT_SYM_KEY}}",
-									"description": "{{EXT_SYM_KEY}}"
-								},
-								{
-									"key": "cipher_hex",
-									"value": "{{sym_cipher}}",
-									"description": "{{sym_cipher}}"
-								}
 							]
 						}
 					},
@@ -854,7 +883,7 @@
 			"name": "4. 摘要算法",
 			"item": [
 				{
-					"name": "1.1 hash摘要",
+					"name": "4.1 hash摘要",
 					"event": [
 						{
 							"listen": "test",
@@ -879,10 +908,27 @@
 						}
 					],
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "src_hex",
+									"value": "{{PLAIN_HEX}}",
+									"description": "{{PLAIN_HEX}}",
+									"type": "text"
+								},
+								{
+									"key": "alg",
+									"value": "MD5,SHA1,SHA256,SHA384,SHA512,SM3",
+									"description": "MD5,SHA1,SHA256,SHA384,SHA512,SM3  多个，用逗号分隔",
+									"type": "text"
+								}
+							]
+						},
 						"url": {
-							"raw": "{{API_BASE}}/crypto/hash?src_hex={{PLAIN_HEX}}&alg=MD5,SHA1,SHA256,SHA384,SHA512,SM3",
+							"raw": "{{API_BASE}}/crypto/hash",
 							"host": [
 								"{{API_BASE}}"
 							],
@@ -893,12 +939,14 @@
 							"query": [
 								{
 									"key": "src_hex",
-									"value": "{{PLAIN_HEX}}"
+									"value": "{{PLAIN_HEX}}",
+									"disabled": true
 								},
 								{
 									"key": "alg",
 									"value": "MD5,SHA1,SHA256,SHA384,SHA512,SM3",
-									"description": "MD5,SHA1,SHA256,SHA384,SHA512,SM3  多个，用逗号分隔"
+									"description": "MD5,SHA1,SHA256,SHA384,SHA512,SM3  多个，用逗号分隔",
+									"disabled": true
 								}
 							]
 						}
@@ -921,7 +969,7 @@
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData.code).to.eql(0);\r",
 									"    \r",
-									"    pm.globals.set(\"b64_encode_text\", jsonData.payload.encode_text);\r",
+									"    pm.globals.set(\"b64_encode_str\", jsonData.payload.encode_str);\r",
 									"});\r",
 									""
 								],
@@ -930,10 +978,27 @@
 						}
 					],
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "plain_hex",
+									"value": "{{PLAIN_HEX}}",
+									"description": "16进制的原文数据，二选一",
+									"type": "text"
+								},
+								{
+									"key": "plain_str",
+									"value": "123456",
+									"description": "原文字符串，二选一",
+									"type": "text"
+								}
+							]
+						},
 						"url": {
-							"raw": "{{API_BASE}}/transcoding/b64/encode?plain_str=123456",
+							"raw": "{{API_BASE}}/transcoding/b64/encode",
 							"host": [
 								"{{API_BASE}}"
 							],
@@ -941,19 +1006,6 @@
 								"transcoding",
 								"b64",
 								"encode"
-							],
-							"query": [
-								{
-									"key": "plain_hex",
-									"value": "{{PLAIN_HEX}}",
-									"description": "16进制的原文数据，二选一",
-									"disabled": true
-								},
-								{
-									"key": "plain_str",
-									"value": "123456",
-									"description": "原文字符串，二选一"
-								}
 							]
 						}
 					},
@@ -966,11 +1018,11 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"SM4 generateKey Check\", function () {\r",
+									"pm.test(\"base64 decode Check\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData.code).to.eql(0);\r",
 									"    \r",
-									"    pm.environment.set(\"sm4_crypt_key\", jsonData.payload.key);\r",
+									"    pm.environment.set(\"b64_decode_hex\", jsonData.payload.decode_hex);\r",
 									"});\r",
 									""
 								],
@@ -979,10 +1031,21 @@
 						}
 					],
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "code_str",
+									"value": "{{b64_encode_str}}",
+									"description": "base64编码字符串",
+									"type": "text"
+								}
+							]
+						},
 						"url": {
-							"raw": "{{API_BASE}}/transcoding/b64/decode?code_str={{b64_encode_text}}",
+							"raw": "{{API_BASE}}/transcoding/b64/decode",
 							"host": [
 								"{{API_BASE}}"
 							],
@@ -990,13 +1053,6 @@
 								"transcoding",
 								"b64",
 								"decode"
-							],
-							"query": [
-								{
-									"key": "code_str",
-									"value": "{{b64_encode_text}}",
-									"description": "16进制的原文数据"
-								}
 							]
 						}
 					},
@@ -1026,173 +1082,7 @@
 		},
 		{
 			"name": "6. 其它辅助",
-			"item": [
-				{
-					"name": "5.3 ServerTime 服务器时间",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"systime\", function () {\r",
-									"    var jsonData = pm.response.json();\r",
-									"    pm.expect(jsonData.code).to.eql(0);\r",
-									"    \r",
-									"    pm.environment.set(\"time\", jsonData.payload.time);\r",
-									"});\r",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{API_BASE}}/aux/systime",
-							"host": [
-								"{{API_BASE}}"
-							],
-							"path": [
-								"aux",
-								"systime"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "5.3 生成UUID",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"uuid\", function () {\r",
-									"    var jsonData = pm.response.json();\r",
-									"    pm.expect(jsonData.code).to.eql(0);\r",
-									"    \r",
-									"    pm.environment.set(\"uuid\", jsonData.payload.uuid);\r",
-									"});\r",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{API_BASE}}/aux/uuid",
-							"host": [
-								"{{API_BASE}}"
-							],
-							"path": [
-								"aux",
-								"uuid"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "5.3 random生成随机数",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"SM4 generateKey Check\", function () {\r",
-									"    var jsonData = pm.response.json();\r",
-									"    pm.expect(jsonData.code).to.eql(0);\r",
-									"    \r",
-									"    pm.environment.set(\"sm4_crypt_key\", jsonData.payload.key);\r",
-									"});\r",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{API_BASE}}/aux/random?length=80",
-							"host": [
-								"{{API_BASE}}"
-							],
-							"path": [
-								"aux",
-								"random"
-							],
-							"query": [
-								{
-									"key": "length",
-									"value": "80",
-									"description": "取值范围应为1-256字节"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "5.3 timeconvert 时间格式转换",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"SM4 generateKey Check\", function () {\r",
-									"    var jsonData = pm.response.json();\r",
-									"    pm.expect(jsonData.code).to.eql(0);\r",
-									"    \r",
-									"    pm.environment.set(\"sm4_crypt_key\", jsonData.payload.key);\r",
-									"});\r",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{API_BASE}}/aux/timeconvert?arg=time2stamp&time=2021-01-20 16:38:50",
-							"host": [
-								"{{API_BASE}}"
-							],
-							"path": [
-								"aux",
-								"timeconvert"
-							],
-							"query": [
-								{
-									"key": "arg",
-									"value": "time2stamp",
-									"description": "time2stamp / stamp2time"
-								},
-								{
-									"key": "time",
-									"value": "2021-01-20 16:38:50",
-									"description": "时间格式原文，二选一 （2021-01-20 16:38:50）"
-								},
-								{
-									"key": "stamp",
-									"value": null,
-									"description": "时间戳格式原文，二选一  （1611131930）",
-									"disabled": true
-								}
-							]
-						}
-					},
-					"response": []
-				}
-			]
+			"item": []
 		}
 	],
 	"event": [

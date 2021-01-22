@@ -48,10 +48,9 @@ public class SymCryptApi {
         } catch (Exception e) {
             return responseHelper.error(ErrorCodeEnum.ERROR_GENERAL_ERROR, e.getMessage());
         }
-
     }
 
-    @GetMapping("/{crypt}")
+    @PostMapping("/{crypt}")
     @ResponseBody
     public Object doCrypt(
             @PathVariable("crypt") String crypt,
@@ -99,7 +98,7 @@ public class SymCryptApi {
         }
     }
 
-    @GetMapping("/rc4/{crypt}")
+    @PostMapping("/rc4/{crypt}")
     @ResponseBody
     public Object doRC4Crypt(
             @PathVariable("crypt") String crypt,
