@@ -1,9 +1,7 @@
 package com.toolkit.algorithm_serv.controller;
 
-import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
-import cn.hutool.core.util.RandomUtil;
 import com.alibaba.fastjson.JSONObject;
 
 import com.toolkit.algorithm_serv.global.enumeration.ErrorCodeEnum;
@@ -36,7 +34,7 @@ public class AuxToolsApi {
             @PathVariable(value = "arg", required = true) String codeAct,
             @RequestParam(value = "time", required = false) String timeStr,
             @RequestParam(value = "stamp", required = false) String stampStr) {
-        try{
+        try {
             if (codeAct.equalsIgnoreCase("time2stamp")) {
                 if (StrAuxUtils.isValid(timeStr)) {
                     stampStr = time2stamp(timeStr);
@@ -54,8 +52,7 @@ public class AuxToolsApi {
             } else {
                 return responseHelper.error(ErrorCodeEnum.ERROR_FAIL_TIME_CONVERT, "不能识别的参数，arg：" + codeAct);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return responseHelper.error(ErrorCodeEnum.ERROR_GENERAL_ERROR, e.getMessage());
         }
 
@@ -64,21 +61,19 @@ public class AuxToolsApi {
     @GetMapping("/system-time")
     @ResponseBody
     public Object systemTime() {
-        try{
+        try {
             JSONObject jsonOS = new JSONObject();
-    //        jsonOS.put("time", DateTime.now()); //"2021-01-21T08:14:12.650+00:00",
             jsonOS.put("time", DateUtil.now());   //"2021-01-21 16:14:12"
             return responseHelper.success(jsonOS);
         } catch (Exception e) {
             return responseHelper.error(ErrorCodeEnum.ERROR_GENERAL_ERROR, e.getMessage());
         }
-
     }
 
     @GetMapping("/uuid")
     @ResponseBody
     public Object generateUUID(@RequestParam(value = "simple", required = false) String simple) {
-        try{
+        try {
             JSONObject jsonOS = new JSONObject();
             if (StrAuxUtils.isValid(simple)) {
                 jsonOS.put("uuid", IdUtil.simpleUUID());

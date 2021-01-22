@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "fa04ac92-1630-438b-bc97-9021ea95a5d8",
+		"_postman_id": "c8da6d8f-97de-460e-b65d-887ef5c3e299",
 		"name": "密码算法辅助工具",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1429,7 +1429,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{API_BASE}}/aux/time-convert/time2stamp?time=2021-01-20 16:38:55",
+							"raw": "{{API_BASE}}/aux/time-convert/time2stamp?time=2021.01.20 16:38:55",
 							"host": [
 								"{{API_BASE}}"
 							],
@@ -1441,8 +1441,8 @@
 							"query": [
 								{
 									"key": "time",
-									"value": "2021-01-20 16:38:55",
-									"description": "2021-01-20 16:38:50"
+									"value": "2021.01.20 16:38:55",
+									"description": "yyyy-MM-dd HH:mm:ss\nyyyy/MM/dd HH:mm:ss\nyyyy.MM.dd HH:mm:ss\nyyyy年MM月dd日 HH:mm:ss"
 								},
 								{
 									"key": "stamp",
