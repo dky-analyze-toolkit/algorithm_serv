@@ -13,18 +13,18 @@ import com.google.common.collect.Multimap;
 import java.util.Map;
 
 public class ParamsHelper {
-    private static final Multimap<String, Integer> validKeySizeMap = ArrayListMultimap.create();
+    private static final Multimap<String, Integer> validKeyBitsMap = ArrayListMultimap.create();
     static {
-        validKeySizeMap.put(SymmetricAlgorithm.AES.getValue(), 128);
-        validKeySizeMap.put(SymmetricAlgorithm.AES.getValue(), 192);
-        validKeySizeMap.put(SymmetricAlgorithm.AES.getValue(), 256);
-        validKeySizeMap.put(SymmetricAlgorithm.DES.getValue(), 64);
+        validKeyBitsMap.put(SymmetricAlgorithm.AES.getValue(), 128);
+        validKeyBitsMap.put(SymmetricAlgorithm.AES.getValue(), 192);
+        validKeyBitsMap.put(SymmetricAlgorithm.AES.getValue(), 256);
+        validKeyBitsMap.put(SymmetricAlgorithm.DES.getValue(), 64);
         // validKeySizeMap.put(SymmetricAlgorithm.DESede.getValue(), 128);
-        validKeySizeMap.put(SymmetricAlgorithm.DESede.getValue(), 192);
-        validKeySizeMap.put("SM4", 128);
+        validKeyBitsMap.put(SymmetricAlgorithm.DESede.getValue(), 192);
+        validKeyBitsMap.put("SM4", 128);
     }
 
-    private static final Map<String, Integer> ivSizeMap = ImmutableMap.<String, Integer>builder()
+    private static final Map<String, Integer> ivBitsMap = ImmutableMap.<String, Integer>builder()
             .put(SymmetricAlgorithm.AES.getValue(), 128)
             .put(SymmetricAlgorithm.DES.getValue(), 64)
             .put(SymmetricAlgorithm.DESede.getValue(), 64)
@@ -53,12 +53,12 @@ public class ParamsHelper {
             .build();
 
     public static boolean isValidKeySize(String alg, int keyBits) {
-        return validKeySizeMap.get(alg).contains(Integer.valueOf(keyBits));
+        return validKeyBitsMap.get(alg).contains(Integer.valueOf(keyBits));
     }
 
     public static void checkAlg(String alg) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(alg), "未指定算法");
-        Preconditions.checkArgument(validKeySizeMap.containsKey(alg), "不能识别【%s】算法", alg);
+        Preconditions.checkArgument(validKeyBitsMap.containsKey(alg), "不能识别【%s】算法", alg);
     }
 
     public static void checkKeySize(String alg, int keyBits) {
@@ -84,12 +84,12 @@ public class ParamsHelper {
     }
 
     public static void checkIVSize(String alg, int ivSize) {
-        int size = ivSizeMap.get(alg);
+        int size = ivBitsMap.get(alg);
         Preconditions.checkArgument(ivSize >= size, "【%s】算法初始向量长度应为：%s 位", alg, size);
     }
 
     public static byte[] checkIV(String alg, byte[] iv) {
-        int size = ivSizeMap.get(alg);
+        int size = ivBitsMap.get(alg);
         Preconditions.checkArgument(iv != null && iv.length >= (size / 8), "【%s】算法初始向量长度应为：%s 位", alg, size);
         if (iv.length > size / 8) {
             return ArrayUtil.resize(iv, size / 8);

@@ -2,29 +2,29 @@ package com.toolkit.algorithm_serv.controller;
 
 import cn.hutool.core.codec.Base64;
 import cn.hutool.crypto.CryptoException;
-import cn.hutool.crypto.symmetric.Vigenere;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
 import com.toolkit.algorithm_serv.algorithm.sym_crypt.ExtSymCryptHelper;
 import com.toolkit.algorithm_serv.algorithm.sym_crypt.SymCryptHelper;
 import com.toolkit.algorithm_serv.global.enumeration.ErrorCodeEnum;
+import com.toolkit.algorithm_serv.global.exception.ExceptionHelper;
 import com.toolkit.algorithm_serv.global.response.ResponseHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.InvalidKeyException;
-
 @RestController
 @RequestMapping(value = "/crypto/sym-alg")
 public class SymCryptApi {
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    private final ExceptionHelper exceptionHelper;
     private final ResponseHelper responseHelper;
 
     @Autowired
-    public SymCryptApi(ResponseHelper responseHelper) {
+    public SymCryptApi(ExceptionHelper exceptionHelper, ResponseHelper responseHelper) {
+        this.exceptionHelper = exceptionHelper;
         this.responseHelper = responseHelper;
     }
 
@@ -43,15 +43,12 @@ public class SymCryptApi {
             jsonKey.put("bits", keyHex.length() / 2 * 8);
             jsonKey.put("key_b64", Base64.encode(keyHex));
             return responseHelper.success(jsonKey);
-        } catch (IllegalArgumentException e) {
-            return responseHelper.error(ErrorCodeEnum.ERROR_INVALID_ALG_PARAM, e.getMessage());
         } catch (Exception e) {
-            return responseHelper.error(ErrorCodeEnum.ERROR_GENERAL_ERROR, e.getMessage());
+            return exceptionHelper.response(e);
         }
-
     }
 
-    @GetMapping("/{crypt}")
+    @PostMapping("/{crypt}")
     @ResponseBody
     public Object doCrypt(
             @PathVariable("crypt") String crypt,
@@ -87,19 +84,12 @@ public class SymCryptApi {
             jsonResult.put("size", result.length() / 2);
             jsonResult.put("bits", result.length() / 2 * 8);
             return responseHelper.success(jsonResult);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-            return responseHelper.error(ErrorCodeEnum.ERROR_INVALID_ALG_PARAM, e.getMessage());
-        } catch (CryptoException e) {
-            e.printStackTrace();
-            return responseHelper.error(ErrorCodeEnum.ERROR_FAIL_CRYPT, e.getMessage());
         } catch (Exception e) {
-            e.printStackTrace();
-            return responseHelper.error(ErrorCodeEnum.ERROR_GENERAL_ERROR, e.getMessage());
+            return exceptionHelper.response(e);
         }
     }
 
-    @GetMapping("/rc4/{crypt}")
+    @PostMapping("/rc4/{crypt}")
     @ResponseBody
     public Object doRC4Crypt(
             @PathVariable("crypt") String crypt,
@@ -124,15 +114,8 @@ public class SymCryptApi {
             jsonResult.put("size", result.length() / 2);
             jsonResult.put("bits", result.length() / 2 * 8);
             return responseHelper.success(jsonResult);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-            return responseHelper.error(ErrorCodeEnum.ERROR_INVALID_ALG_PARAM, e.getMessage());
-        } catch (CryptoException e) {
-            e.printStackTrace();
-            return responseHelper.error(ErrorCodeEnum.ERROR_FAIL_CRYPT, e.getMessage());
         } catch (Exception e) {
-            e.printStackTrace();
-            return responseHelper.error(ErrorCodeEnum.ERROR_GENERAL_ERROR, e.getMessage());
+            return exceptionHelper.response(e);
         }
     }
 
@@ -158,15 +141,8 @@ public class SymCryptApi {
             }
             jsonResult.put("length", result.length());
             return responseHelper.success(jsonResult);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-            return responseHelper.error(ErrorCodeEnum.ERROR_INVALID_ALG_PARAM, e.getMessage());
-        } catch (CryptoException e) {
-            e.printStackTrace();
-            return responseHelper.error(ErrorCodeEnum.ERROR_FAIL_CRYPT, e.getMessage());
         } catch (Exception e) {
-            e.printStackTrace();
-            return responseHelper.error(ErrorCodeEnum.ERROR_GENERAL_ERROR, e.getMessage());
+            return exceptionHelper.response(e);
         }
     }
 
