@@ -1,5 +1,7 @@
 package com.toolkit.algorithm_serv.controller;
 
+import cn.hutool.core.lang.Validator;
+import com.alibaba.fastjson.JSONObject;
 import com.toolkit.algorithm_serv.algorithm.b64.Base64Coding;
 import com.toolkit.algorithm_serv.global.enumeration.ErrorCodeEnum;
 import com.toolkit.algorithm_serv.global.response.ResponseHelper;
@@ -27,7 +29,8 @@ public class TransCodingApi {
             @PathVariable(value = "arg", required = true)String codeAct,
             @RequestParam(value = "plain_hex", required = false)String plainHex,
             @RequestParam(value = "plain_str", required = false)String plainStr,
-            @RequestParam(value = "code_str", required = false)String codeStr) {
+            @RequestParam(value = "code_str", required = false)String codeStr
+    ) {
         if (codeAct.equalsIgnoreCase("encode")) {
             String encodeText = "";
             if (StrAuxUtils.isValid(plainHex)) {
@@ -37,11 +40,17 @@ public class TransCodingApi {
             } else {
                 return responseHelper.error(ErrorCodeEnum.ERROR_NEED_PARAMETER, "编码时需要填入参数 plain_hex 或 plain_str 。");
             }
-            return responseHelper.success(encodeText);
+            JSONObject jsonRes = new JSONObject();
+            jsonRes.put("encode_text", encodeText);
+            jsonRes.put("length", encodeText.length());
+            return responseHelper.success(jsonRes);
         } else if (codeAct.equalsIgnoreCase("decode")) {
             if (StrAuxUtils.isValid(codeStr)) {
                 String decodeHex = Base64Coding.decodeToHexString(codeStr);
-                return responseHelper.success(decodeHex);
+                JSONObject jsonRes = new JSONObject();
+                jsonRes.put("decode_hex", decodeHex);
+                jsonRes.put("size", decodeHex.length() / 2);
+                return responseHelper.success(jsonRes);
             } else {
                 return responseHelper.error(ErrorCodeEnum.ERROR_NEED_PARAMETER, "解码时需要填入参数 code_str 。");
             }

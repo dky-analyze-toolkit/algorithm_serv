@@ -434,7 +434,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{API_BASE}}/crypto/sym-alg/generate-key?alg={{SYM_ALG}}&key_size=256",
+							"raw": "{{API_BASE}}/crypto/sym-alg/generate-key?alg={{SYM_ALG}}&key_bits=128",
 							"host": [
 								"{{API_BASE}}"
 							],
@@ -450,8 +450,8 @@
 									"description": "{{SYM_ALG}}，AES、DES、DESede"
 								},
 								{
-									"key": "key_size",
-									"value": "256"
+									"key": "key_bits",
+									"value": "128"
 								}
 							]
 						}
@@ -469,7 +469,7 @@
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData.code).to.eql(0);\r",
 									"    \r",
-									"    pm.globals.set(\"sym_cipher\", jsonData.payload.cipher);\r",
+									"    pm.globals.set(\"sym_cipher\", jsonData.payload.cipher_hex);\r",
 									"});\r",
 									""
 								],
@@ -593,6 +593,236 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "2.4 RC4加密",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"ext_sym_crypt encrypt Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    pm.globals.set(\"sym_cipher\", jsonData.payload.cipher_hex);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.globals.set(\"EXT_SYM_KEY\", \"hello kid111222\");\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE}}/crypto/sym-alg/rc4/encrypt?key={{EXT_SYM_KEY}}&plain_hex=00112233445566778899aabbccddee",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"crypto",
+								"sym-alg",
+								"rc4",
+								"encrypt"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{EXT_SYM_KEY}}",
+									"description": "{{EXT_SYM_KEY}}"
+								},
+								{
+									"key": "plain_hex",
+									"value": "00112233445566778899aabbccddee"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.5 RC4解密",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE}}/crypto/sym-alg/rc4/decrypt?key={{EXT_SYM_KEY}}&cipher_hex={{sym_cipher}}",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"crypto",
+								"sym-alg",
+								"rc4",
+								"decrypt"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{EXT_SYM_KEY}}",
+									"description": "{{EXT_SYM_KEY}}"
+								},
+								{
+									"key": "cipher_hex",
+									"value": "{{sym_cipher}}",
+									"description": "{{sym_cipher}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.6 Vigenere加密",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"ext_sym_crypt encrypt Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    pm.globals.set(\"sym_cipher\", jsonData.payload.cipher_str);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.globals.set(\"EXT_SYM_KEY\", \"hello kid111222\");\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "key",
+									"value": "{{EXT_SYM_KEY}}",
+									"description": "{{EXT_SYM_KEY}}",
+									"type": "text"
+								},
+								{
+									"key": "plain_str",
+									"value": "what is the matter?",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/crypto/sym-alg/vigenere/encrypt",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"crypto",
+								"sym-alg",
+								"vigenere",
+								"encrypt"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.7 Vigenere解密",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "key",
+									"value": "{{EXT_SYM_KEY}}",
+									"description": "{{EXT_SYM_KEY}}",
+									"type": "text"
+								},
+								{
+									"key": "cipher_str",
+									"value": "{{sym_cipher}}",
+									"description": "{{sym_cipher}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/crypto/sym-alg/vigenere/decrypt",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"crypto",
+								"sym-alg",
+								"vigenere",
+								"decrypt"
+							]
+						}
+					},
+					"response": []
 				}
 			],
 			"event": [
@@ -691,7 +921,7 @@
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData.code).to.eql(0);\r",
 									"    \r",
-									"    pm.environment.set(\"b64_encode_text\", jsonData.payload);\r",
+									"    pm.globals.set(\"b64_encode_text\", jsonData.payload.encode_text);\r",
 									"});\r",
 									""
 								],
@@ -703,7 +933,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{API_BASE}}/transcoding/b64/encode?plain_str=12",
+							"raw": "{{API_BASE}}/transcoding/b64/encode?plain_str=123456",
 							"host": [
 								"{{API_BASE}}"
 							],
@@ -721,7 +951,7 @@
 								},
 								{
 									"key": "plain_str",
-									"value": "12",
+									"value": "123456",
 									"description": "原文字符串，二选一"
 								}
 							]
