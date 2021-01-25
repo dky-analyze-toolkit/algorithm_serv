@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "fa04ac92-1630-438b-bc97-9021ea95a5d8",
+		"_postman_id": "f21b61a7-42cc-4b5a-b2f2-5f4d9a3e306c",
 		"name": "密码算法辅助工具",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -289,7 +289,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{API_BASE}}/alg/sm4enc?key={{sm4_crypt_key}}&plainhex={{PLAIN_HEX}}&mode=ECB&iv={{IV}}",
+							"raw": "{{API_BASE}}/alg/sm4enc?key=0123456789abcdeffedcba9876543210&plainhex=0123456789abcdeffedcba9876543210&mode=ECB&iv={{IV}}",
 							"host": [
 								"{{API_BASE}}"
 							],
@@ -300,11 +300,13 @@
 							"query": [
 								{
 									"key": "key",
-									"value": "{{sm4_crypt_key}}"
+									"value": "0123456789abcdeffedcba9876543210",
+									"description": "{{sm4_crypt_key}}，测试：0123456789abcdeffedcba9876543210"
 								},
 								{
 									"key": "plainhex",
-									"value": "{{PLAIN_HEX}}"
+									"value": "0123456789abcdeffedcba9876543210",
+									"description": "{{PLAIN_HEX}}，测试：0123456789abcdeffedcba9876543210"
 								},
 								{
 									"key": "mode",
@@ -448,7 +450,7 @@
 								{
 									"key": "alg",
 									"value": "{{SYM_ALG}}",
-									"description": "{{SYM_ALG}}，AES、DES、DESede"
+									"description": "{{SYM_ALG}}，AES、DES、DESede、SM4"
 								},
 								{
 									"key": "key_bits",
@@ -498,7 +500,7 @@
 								},
 								{
 									"key": "padding",
-									"value": "{{SYM_PAD}}",
+									"value": "ISO10126",
 									"description": "{{SYM_PAD}}，以下其一：None、Zero、ISO10126、PKCS5",
 									"type": "text"
 								},
@@ -516,7 +518,7 @@
 								},
 								{
 									"key": "plain_hex",
-									"value": "00112233445566778899aabbccddeeff",
+									"value": "0123456789abcdeffedc",
 									"description": "{{PLAIN_HEX}}",
 									"type": "text"
 								}
@@ -537,7 +539,7 @@
 					"response": []
 				},
 				{
-					"name": "2.2 解密",
+					"name": "2.3 解密",
 					"event": [
 						{
 							"listen": "test",
@@ -547,7 +549,7 @@
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData.code).to.eql(0);\r",
 									"    \r",
-									"    pm.globals.set(\"sym_plain\", jsonData.payload.plain);\r",
+									"    pm.globals.set(\"sym_plain\", jsonData.payload.plain_hex);\r",
 									"});\r",
 									""
 								],
@@ -575,7 +577,7 @@
 								},
 								{
 									"key": "padding",
-									"value": "{{SYM_PAD}}",
+									"value": "None",
 									"description": "{{SYM_PAD}}，以下其一：None、Zero、ISO10126、PKCS5",
 									"type": "text"
 								},
@@ -969,6 +971,12 @@
 									"value": "1234",
 									"description": "{{PLAIN_HEX}}",
 									"type": "text"
+								},
+								{
+									"key": "iteration_count",
+									"value": "100000",
+									"description": "迭代次数，最大10000",
+									"type": "text"
 								}
 							]
 						},
@@ -1037,6 +1045,12 @@
 									"key": "cipher_hex",
 									"value": "{{sym_cipher}}",
 									"description": "{{sym_cipher}}",
+									"type": "text"
+								},
+								{
+									"key": "iteration_count",
+									"value": "100000",
+									"description": "迭代次数，最大10000",
 									"type": "text"
 								}
 							]

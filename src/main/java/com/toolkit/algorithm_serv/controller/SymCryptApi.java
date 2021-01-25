@@ -168,6 +168,7 @@ public class SymCryptApi {
             @RequestParam(value = "alg") String alg,
             @RequestParam(value = "password") String password,
             @RequestParam(value = "salt_hex") String saltHex,
+            @RequestParam(value = "iteration_count", required = false, defaultValue = "0") int iterationCount,
             @RequestParam(value = "plain_hex", required = false) String plainHex,
             @RequestParam(value = "cipher_hex", required = false) String cipherHex
     ) {
@@ -175,10 +176,10 @@ public class SymCryptApi {
             JSONObject jsonResult = new JSONObject();
             String result = "";
             if (crypt.equals("encrypt")) {
-                result = PBECryptHelper.encrypt(alg, plainHex, password, saltHex);
+                result = PBECryptHelper.encrypt(alg, plainHex, password, saltHex, iterationCount);
                 jsonPutHex(jsonResult, "cipher", result);
             } else if (crypt.equals("decrypt")) {
-                result = PBECryptHelper.decrypt(alg, cipherHex, password, saltHex);
+                result = PBECryptHelper.decrypt(alg, cipherHex, password, saltHex, iterationCount);
                 jsonPutHex(jsonResult, "plain", result);
             } else {
                 return responseHelper.error(ErrorCodeEnum.ERROR_GENERAL_ERROR);
