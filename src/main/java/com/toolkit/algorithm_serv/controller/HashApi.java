@@ -43,7 +43,7 @@ public class HashApi {
             alg = alg.toUpperCase();
 
             if (alg.isEmpty()) {
-                alg = "MD5,SHA1,SHA256,SHA384,SHA512,SM3";
+                alg = "MD5,SHA1,SHA224,SHA256,SHA384,SHA512,SM3";
             } else {
                 alg = alg.replaceAll(" ", "");
             }

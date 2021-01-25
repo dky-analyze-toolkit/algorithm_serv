@@ -17,6 +17,7 @@ public class HashHelper {
     static {
         algMap.put("MD5", "MD5");
         algMap.put("SHA1", "SHA1");
+        algMap.put("SHA224", "SHA-224");
         algMap.put("SHA256", "SHA-256");
         algMap.put("SHA384", "SHA-384");
         algMap.put("SHA512", "SHA-512");

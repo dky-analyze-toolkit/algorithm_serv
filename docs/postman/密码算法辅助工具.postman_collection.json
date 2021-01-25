@@ -1118,13 +1118,13 @@
 							"urlencoded": [
 								{
 									"key": "src_hex",
-									"value": "{{PLAIN_HEX}}",
+									"value": "68656c6c6f20776f726c64",
 									"description": "{{PLAIN_HEX}}",
 									"type": "text"
 								},
 								{
 									"key": "alg",
-									"value": "MD5,SHA1,SHA256,SHA384,SHA512,SM3",
+									"value": "MD5,SHA1,SHA224,SHA256,SHA384,SHA512,SM3",
 									"description": "MD5,SHA1,SHA256,SHA384,SHA512,SM3  多个，用逗号分隔",
 									"type": "text"
 								}
@@ -1138,19 +1138,6 @@
 							"path": [
 								"crypto",
 								"hash"
-							],
-							"query": [
-								{
-									"key": "src_hex",
-									"value": "{{PLAIN_HEX}}",
-									"disabled": true
-								},
-								{
-									"key": "alg",
-									"value": "MD5,SHA1,SHA256,SHA384,SHA512,SM3",
-									"description": "MD5,SHA1,SHA256,SHA384,SHA512,SM3  多个，用逗号分隔",
-									"disabled": true
-								}
 							]
 						}
 					},
