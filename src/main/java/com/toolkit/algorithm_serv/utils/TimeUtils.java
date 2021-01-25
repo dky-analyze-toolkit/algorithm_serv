@@ -1,5 +1,9 @@
 package com.toolkit.algorithm_serv.utils;
 
+import cn.hutool.core.date.BetweenFormatter;
+import cn.hutool.core.date.DateUnit;
+import cn.hutool.core.date.DateUtil;
+
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -87,5 +91,21 @@ public class TimeUtils {
         Date currentDate = getCurrentDate();
 
         return new Timestamp(currentDate.getTime());
+    }
+
+    public static long timeUsedMS(Date startTime) {
+        Date nowTime = DateUtil.date();
+        long betweenTime = DateUtil.between(startTime, nowTime, DateUnit.MS);
+        return betweenTime;
+    }
+
+    public static String timeUsedFormat(Date startTime, boolean unitMs) {
+        long betweenTime = timeUsedMS(startTime);
+        String formatBetween = DateUtil.formatBetween(betweenTime, BetweenFormatter.Level.SECOND);
+        if (unitMs) {
+            long timeMs = betweenTime % 1000;
+            formatBetween += String.format("%d毫秒", timeMs);
+        }
+        return formatBetween;
     }
 }

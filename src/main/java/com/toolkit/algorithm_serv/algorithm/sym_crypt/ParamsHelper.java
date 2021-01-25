@@ -73,6 +73,12 @@ public class ParamsHelper {
         Preconditions.checkArgument(paddingMap.containsKey(padding), "不支持【%s】填充/补齐方式", padding);
     }
 
+    public static void checkBlockBits(String alg, String inputBlock) {
+        int bits = ivBitsMap.get(alg);
+        int blockBits = inputBlock == null ? 0 : inputBlock.length() / 2 * 8;
+        Preconditions.checkArgument(bits == blockBits, "【%s】算法的数据块长度应为：%s 位", alg, bits);
+    }
+
     public static void checkModePadding(String mode, String padding) {
         checkMode(mode);
         checkPadding(padding);
@@ -84,15 +90,15 @@ public class ParamsHelper {
     }
 
     public static void checkIVSize(String alg, int ivSize) {
-        int size = ivBitsMap.get(alg);
-        Preconditions.checkArgument(ivSize >= size, "【%s】算法初始向量长度应为：%s 位", alg, size);
+        int bits = ivBitsMap.get(alg);
+        Preconditions.checkArgument(ivSize >= bits, "【%s】算法初始向量长度应为：%s 位", alg, bits);
     }
 
     public static byte[] checkIV(String alg, byte[] iv) {
-        int size = ivBitsMap.get(alg);
-        Preconditions.checkArgument(iv != null && iv.length >= (size / 8), "【%s】算法初始向量长度应为：%s 位", alg, size);
-        if (iv.length > size / 8) {
-            return ArrayUtil.resize(iv, size / 8);
+        int bits = ivBitsMap.get(alg);
+        Preconditions.checkArgument(iv != null && iv.length >= (bits / 8), "【%s】算法初始向量长度应为：%s 位", alg, bits);
+        if (iv.length > bits / 8) {
+            return ArrayUtil.resize(iv, bits / 8);
         } else {
             return iv;
         }

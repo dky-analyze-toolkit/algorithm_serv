@@ -98,4 +98,32 @@ public class SymCryptHelper {
         return StrAuxUtils.bytesToHexString(plain);
     }
 
+    public static String encryptLoop(String alg, String plainHex, String keyHex, int iterationCount) throws InvalidKeyException {
+        ParamsHelper.checkBlockBits(alg, plainHex);
+
+        byte[] plain = StrAuxUtils.hexStringToBytes(plainHex);
+        byte[] key = StrAuxUtils.hexStringToBytes(keyHex);
+
+        byte[] input = plain;
+        for (int i=0; i<iterationCount; i++) {
+            input = encrypt(alg, "ECB", "None", input, key, null);
+        }
+
+        return StrAuxUtils.bytesToHexString(input);
+    }
+
+    public static String decryptLoop(String alg, String cipherHex, String keyHex, int iterationCount) throws InvalidKeyException {
+        ParamsHelper.checkBlockBits(alg, cipherHex);
+
+        byte[] cipher = StrAuxUtils.hexStringToBytes(cipherHex);
+        byte[] key = StrAuxUtils.hexStringToBytes(keyHex);
+
+        byte[] input = cipher;
+        for (int i=0; i<iterationCount; i++) {
+            input = decrypt(alg, "ECB", "None", input, key, null);
+        }
+
+        return StrAuxUtils.bytesToHexString(input);
+    }
+
 }
