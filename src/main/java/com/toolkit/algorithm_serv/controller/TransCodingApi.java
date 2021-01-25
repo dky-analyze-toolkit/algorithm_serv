@@ -13,6 +13,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import static com.toolkit.algorithm_serv.algorithm.auxtools.TimeAuxUtils.stamp2time;
+import static com.toolkit.algorithm_serv.algorithm.auxtools.TimeAuxUtils.time2stamp;
+
 @RestController
 @RequestMapping(value = "/transcoding")
 public class TransCodingApi {
@@ -28,10 +31,10 @@ public class TransCodingApi {
     @PostMapping("/b64/{arg}")
     @ResponseBody
     public Object base64Code(
-            @PathVariable(value = "arg", required = true)String codeAct,
-            @RequestParam(value = "plain_hex", required = false)String plainHex,
-            @RequestParam(value = "plain_str", required = false)String plainStr,
-            @RequestParam(value = "code_str", required = false)String codeStr
+            @PathVariable(value = "arg", required = true) String codeAct,
+            @RequestParam(value = "plain_hex", required = false) String plainHex,
+            @RequestParam(value = "plain_str", required = false) String plainStr,
+            @RequestParam(value = "code_str", required = false) String codeStr
     ) {
         if (codeAct.equalsIgnoreCase("encode")) {
             String encodeText = "";
@@ -61,32 +64,79 @@ public class TransCodingApi {
         }
     }
 
-    @RequestMapping(value = "/string2hex", method = RequestMethod.GET)
+    @GetMapping("/time/{arg}")
     @ResponseBody
-    public Object string2hex(@RequestParam("string") String str) throws Exception {
-
-        try{
-            JSONObject jsonOS = new JSONObject();
-            jsonOS.put("hexstring", Convert.toHex(str, CharsetUtil.CHARSET_UTF_8));
-            jsonOS.put("CHARSET_GBK", Convert.toHex(str, CharsetUtil.CHARSET_GBK));
-            jsonOS.put("CHARSET_ISO_8859_1", Convert.toHex(str, CharsetUtil.CHARSET_ISO_8859_1));
-            return responseHelper.success(jsonOS);
+    public Object timeConvert(
+            @PathVariable(value = "arg", required = true) String codeAct,
+            @RequestParam(value = "time", required = false) String timeStr,
+            @RequestParam(value = "stamp", required = false) String stampStr) {
+        try {
+            if (codeAct.equalsIgnoreCase("time2stamp")) {
+                if (StrAuxUtils.isValid(timeStr)) {
+                    stampStr = time2stamp(timeStr);
+                }
+                JSONObject jsonOS = new JSONObject();
+                jsonOS.put("stamp", stampStr);
+                return responseHelper.success(jsonOS);
+            } else if (codeAct.equalsIgnoreCase("stamp2time")) {
+                if (StrAuxUtils.isValid(stampStr)) {
+                    timeStr = stamp2time(stampStr);
+                }
+                JSONObject jsonOS = new JSONObject();
+                jsonOS.put("time", timeStr);
+                return responseHelper.success(jsonOS);
+            } else {
+                return responseHelper.error(ErrorCodeEnum.ERROR_FAIL_TIME_CONVERT, "不能识别的参数，arg：" + codeAct);
+            }
+        } catch (Exception e) {
+            return responseHelper.error(ErrorCodeEnum.ERROR_GENERAL_ERROR, e.getMessage());
         }
-        catch (Exception e) {
+
+    }
+
+    @RequestMapping(value = "/string2hex")
+    @ResponseBody
+    public Object string2hex(@RequestParam("string") String str,
+                             @RequestParam("charset") String strCharset) throws Exception {
+
+        try {
+            JSONObject jsonOS = new JSONObject();
+            if (strCharset.equals("UTF-8")) {
+                jsonOS.put("hexString", Convert.toHex(str, CharsetUtil.CHARSET_UTF_8));
+            } else if (strCharset.equals("GBK")) {
+                jsonOS.put("hexString", Convert.toHex(str, CharsetUtil.CHARSET_GBK));
+            } else if (strCharset.equals("ISO8859-1")) {
+                jsonOS.put("hexString", Convert.toHex(str, CharsetUtil.CHARSET_ISO_8859_1));
+            } else {
+                String errMsg = String.format("当前请求的接口，不能识别【%s】字符集。", strCharset);
+                return responseHelper.error(ErrorCodeEnum.ERROR_NO_SUCH_FUNC, errMsg);
+            }
+            return responseHelper.success(jsonOS);
+        } catch (Exception e) {
             return responseHelper.error(ErrorCodeEnum.ERROR_GENERAL_ERROR, e.getMessage());
         }
     }
 
-    @RequestMapping(value = "/hex2string", method = RequestMethod.GET)
+    @RequestMapping(value = "/hex2string")
     @ResponseBody
-    public Object hex2string(@RequestParam("hex") String hex) throws Exception {
+    public Object hex2string(@RequestParam("hex") String hexStr,
+                             @RequestParam("charset") String strCharset) throws Exception {
 
-        try{
+        try {
             JSONObject jsonOS = new JSONObject();
-            jsonOS.put("string", Convert.hexToStr(hex, CharsetUtil.CHARSET_UTF_8));
+            if (strCharset.equals("UTF-8")) {
+                jsonOS.put("string", Convert.hexToStr(hexStr, CharsetUtil.CHARSET_UTF_8));
+            } else if (strCharset.equals("GBK")) {
+                jsonOS.put("string", Convert.hexToStr(hexStr, CharsetUtil.CHARSET_GBK));
+            } else if (strCharset.equals("ISO8859-1")) {
+                jsonOS.put("string", Convert.hexToStr(hexStr, CharsetUtil.CHARSET_ISO_8859_1));
+            } else {
+                String errMsg = String.format("当前请求的接口，不能识别【%s】字符集。", strCharset);
+                return responseHelper.error(ErrorCodeEnum.ERROR_NO_SUCH_FUNC, errMsg);
+            }
+
             return responseHelper.success(jsonOS);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return responseHelper.error(ErrorCodeEnum.ERROR_GENERAL_ERROR, e.getMessage());
         }
     }

@@ -30,36 +30,6 @@ public class AuxToolsApi {
         this.responseHelper = responseHelper;
     }
 
-    @GetMapping("/time-convert/{arg}")
-    @ResponseBody
-    public Object timeConvert(
-            @PathVariable(value = "arg", required = true) String codeAct,
-            @RequestParam(value = "time", required = false) String timeStr,
-            @RequestParam(value = "stamp", required = false) String stampStr) {
-        try {
-            if (codeAct.equalsIgnoreCase("time2stamp")) {
-                if (StrAuxUtils.isValid(timeStr)) {
-                    stampStr = time2stamp(timeStr);
-                }
-                JSONObject jsonOS = new JSONObject();
-                jsonOS.put("stamp", stampStr);
-                return responseHelper.success(jsonOS);
-            } else if (codeAct.equalsIgnoreCase("stamp2time")) {
-                if (StrAuxUtils.isValid(stampStr)) {
-                    timeStr = stamp2time(stampStr);
-                }
-                JSONObject jsonOS = new JSONObject();
-                jsonOS.put("time", timeStr);
-                return responseHelper.success(jsonOS);
-            } else {
-                return responseHelper.error(ErrorCodeEnum.ERROR_FAIL_TIME_CONVERT, "不能识别的参数，arg：" + codeAct);
-            }
-        } catch (Exception e) {
-            return responseHelper.error(ErrorCodeEnum.ERROR_GENERAL_ERROR, e.getMessage());
-        }
-
-    }
-
     @GetMapping("/system-time")
     @ResponseBody
     public Object systemTime() {
