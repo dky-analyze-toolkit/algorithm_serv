@@ -49,7 +49,7 @@ public class HashApi {
             }
             String[] alg_list = alg.split(",");
             for (String item : alg_list) {
-                if(item.isEmpty())
+                if (item.isEmpty())
                     continue;
                 jsonOS.put(item, HashHelper.digest(srcHex, item));
             }

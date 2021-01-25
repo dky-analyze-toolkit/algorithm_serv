@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 import static com.toolkit.algorithm_serv.algorithm.auxtools.RandomHelper.generateRandom;
 import static com.toolkit.algorithm_serv.algorithm.auxtools.TimeAuxUtils.stamp2time;
 import static com.toolkit.algorithm_serv.algorithm.auxtools.TimeAuxUtils.time2stamp;
@@ -74,6 +76,10 @@ public class AuxToolsApi {
     @ResponseBody
     public Object generateUUID(@RequestParam(value = "simple", required = false) String simple) {
         try {
+
+//            System.out.println("UUID.fromString "+  UUID.fromString(UUID.randomUUID().toString()));
+//            System.out.println("UUID.randomUUID "+  UUID.randomUUID());
+
             JSONObject jsonOS = new JSONObject();
             if (StrAuxUtils.isValid(simple)) {
                 jsonOS.put("uuid", IdUtil.simpleUUID());

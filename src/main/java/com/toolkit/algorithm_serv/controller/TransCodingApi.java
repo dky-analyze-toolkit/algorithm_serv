@@ -1,6 +1,8 @@
 package com.toolkit.algorithm_serv.controller;
 
+import cn.hutool.core.convert.Convert;
 import cn.hutool.core.lang.Validator;
+import cn.hutool.core.util.CharsetUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.toolkit.algorithm_serv.algorithm.b64.Base64Coding;
 import com.toolkit.algorithm_serv.global.enumeration.ErrorCodeEnum;
@@ -56,6 +58,36 @@ public class TransCodingApi {
             }
         } else {
             return responseHelper.error(ErrorCodeEnum.ERROR_INVALID_URL, "只支持 base64 编码和解码，不支持：" + codeAct + "。");
+        }
+    }
+
+    @RequestMapping(value = "/string2hex", method = RequestMethod.GET)
+    @ResponseBody
+    public Object string2hex(@RequestParam("string") String str) throws Exception {
+
+        try{
+            JSONObject jsonOS = new JSONObject();
+            jsonOS.put("hexstring", Convert.toHex(str, CharsetUtil.CHARSET_UTF_8));
+            jsonOS.put("CHARSET_GBK", Convert.toHex(str, CharsetUtil.CHARSET_GBK));
+            jsonOS.put("CHARSET_ISO_8859_1", Convert.toHex(str, CharsetUtil.CHARSET_ISO_8859_1));
+            return responseHelper.success(jsonOS);
+        }
+        catch (Exception e) {
+            return responseHelper.error(ErrorCodeEnum.ERROR_GENERAL_ERROR, e.getMessage());
+        }
+    }
+
+    @RequestMapping(value = "/hex2string", method = RequestMethod.GET)
+    @ResponseBody
+    public Object hex2string(@RequestParam("hex") String hex) throws Exception {
+
+        try{
+            JSONObject jsonOS = new JSONObject();
+            jsonOS.put("string", Convert.hexToStr(hex, CharsetUtil.CHARSET_UTF_8));
+            return responseHelper.success(jsonOS);
+        }
+        catch (Exception e) {
+            return responseHelper.error(ErrorCodeEnum.ERROR_GENERAL_ERROR, e.getMessage());
         }
     }
 }

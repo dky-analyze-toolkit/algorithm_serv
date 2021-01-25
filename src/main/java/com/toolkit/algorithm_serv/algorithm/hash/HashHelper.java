@@ -7,40 +7,38 @@ import com.toolkit.algorithm_serv.utils.StrAuxUtils;
 import com.toolkit.algorithm_serv.utils_ex.Util;
 import org.apache.commons.codec.binary.Hex;
 import org.bouncycastle.crypto.digests.SM3Digest;
+
 import java.security.MessageDigest;
-import java.util.Collection;
-import java.util.List;
 
 public class HashHelper {
 
-    private static final Multimap<String, String> algMap = ArrayListMultimap.create();
+    private static final Multimap<String, String> algMultiMap = ArrayListMultimap.create();
+
     static {
-        algMap.put("MD5", "MD5");
-        algMap.put("SHA1", "SHA1");
-        algMap.put("SHA224", "SHA-224");
-        algMap.put("SHA256", "SHA-256");
-        algMap.put("SHA384", "SHA-384");
-        algMap.put("SHA512", "SHA-512");
-        algMap.put("SM3", "SM3");
+        algMultiMap.put("MD5", "MD5");
+        algMultiMap.put("SHA1", "SHA1");
+        algMultiMap.put("SHA224", "SHA-224");
+        algMultiMap.put("SHA256", "SHA-256");
+        algMultiMap.put("SHA384", "SHA-384");
+        algMultiMap.put("SHA512", "SHA-512");
+        algMultiMap.put("SM3", "SM3");
     }
 
-    public static String digest(String plainhex, String alg)throws IllegalArgumentException  {
-        Preconditions.checkArgument(algMap.containsKey(alg), "不能识别【%s】算法", alg);
+    public static String digest(String srcHex, String alg) throws IllegalArgumentException {
+        Preconditions.checkArgument(algMultiMap.containsKey(alg), "不能识别【%s】算法", alg);
 
         try {
             String cipherStr = null;
-            if(algMap.get(alg).toString().equals("[SM3]"))
-            {
-                cipherStr = sm3(plainhex);
-            }
-            else
-            {
-                MessageDigest messageDigest = MessageDigest.getInstance(algMap.get(alg).toString().replace("[","").replace("]",""));
-                byte[] byteMsg = Util.hexToByte(plainhex);
+
+            if (algMultiMap.get(alg).toString().equals("[SM3]")) {
+                cipherStr = sm3(srcHex);
+            } else {
+                MessageDigest messageDigest = MessageDigest.getInstance(algMultiMap.get(alg).toString().replace("[", "").replace("]", ""));
+                byte[] byteMsg = Util.hexToByte(srcHex);
                 byte[] cipherBytes = messageDigest.digest(byteMsg);
                 cipherStr = Hex.encodeHexString(cipherBytes);
             }
-            System.out.println(algMap.get(alg)+":"+cipherStr.toUpperCase());
+            System.out.println(algMultiMap.get(alg) + ":" + cipherStr.toUpperCase());
 
             return cipherStr.toUpperCase();
         } catch (Exception e) {
@@ -57,9 +55,9 @@ public class HashHelper {
         return hashBytes;
     }
 
-    public static String sm3(String srchex) {
+    public static String sm3(String srcHex) {
         byte[] hashBytes = new byte[32];
-        byte[] srcBytes = Util.hexToByte(srchex);
+        byte[] srcBytes = Util.hexToByte(srcHex);
         hashBytes = sm3(srcBytes);
         return StrAuxUtils.bytesToHexString(hashBytes).toUpperCase();
     }
