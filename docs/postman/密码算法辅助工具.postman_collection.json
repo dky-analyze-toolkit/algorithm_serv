@@ -1301,19 +1301,6 @@
 							"path": [
 								"crypto",
 								"hash"
-							],
-							"query": [
-								{
-									"key": "src_hex",
-									"value": "{{PLAIN_HEX}}",
-									"disabled": true
-								},
-								{
-									"key": "alg",
-									"value": "MD5,SHA1,SHA256,SHA384,SHA512,SM3",
-									"description": "MD5,SHA1,SHA256,SHA384,SHA512,SM3  多个，用逗号分隔",
-									"disabled": true
-								}
 							]
 						}
 					},

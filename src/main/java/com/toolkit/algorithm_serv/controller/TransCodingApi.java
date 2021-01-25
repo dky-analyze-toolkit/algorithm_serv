@@ -101,16 +101,20 @@ public class TransCodingApi {
 
         try {
             JSONObject jsonOS = new JSONObject();
+            String strRes = null;
             if (strCharset.equals("UTF-8")) {
-                jsonOS.put("hexString", Convert.toHex(str, CharsetUtil.CHARSET_UTF_8));
+                strRes = Convert.toHex(str, CharsetUtil.CHARSET_UTF_8);
             } else if (strCharset.equals("GBK")) {
-                jsonOS.put("hexString", Convert.toHex(str, CharsetUtil.CHARSET_GBK));
+                strRes =  Convert.toHex(str, CharsetUtil.CHARSET_GBK);
             } else if (strCharset.equals("ISO8859-1")) {
-                jsonOS.put("hexString", Convert.toHex(str, CharsetUtil.CHARSET_ISO_8859_1));
+                strRes = Convert.toHex(str, CharsetUtil.CHARSET_ISO_8859_1);
             } else {
                 String errMsg = String.format("当前请求的接口，不能识别【%s】字符集。", strCharset);
                 return responseHelper.error(ErrorCodeEnum.ERROR_NO_SUCH_FUNC, errMsg);
             }
+            jsonOS.put("hexString", strRes);
+            jsonOS.put("size", strRes.length() / 2);
+
             return responseHelper.success(jsonOS);
         } catch (Exception e) {
             return responseHelper.error(ErrorCodeEnum.ERROR_GENERAL_ERROR, e.getMessage());
@@ -124,16 +128,19 @@ public class TransCodingApi {
 
         try {
             JSONObject jsonOS = new JSONObject();
+            String strRes = null;
             if (strCharset.equals("UTF-8")) {
-                jsonOS.put("string", Convert.hexToStr(hexStr, CharsetUtil.CHARSET_UTF_8));
+                strRes = Convert.hexToStr(hexStr, CharsetUtil.CHARSET_UTF_8);
             } else if (strCharset.equals("GBK")) {
-                jsonOS.put("string", Convert.hexToStr(hexStr, CharsetUtil.CHARSET_GBK));
+                strRes = Convert.hexToStr(hexStr, CharsetUtil.CHARSET_GBK);
             } else if (strCharset.equals("ISO8859-1")) {
-                jsonOS.put("string", Convert.hexToStr(hexStr, CharsetUtil.CHARSET_ISO_8859_1));
+                strRes = Convert.hexToStr(hexStr, CharsetUtil.CHARSET_ISO_8859_1);
             } else {
                 String errMsg = String.format("当前请求的接口，不能识别【%s】字符集。", strCharset);
                 return responseHelper.error(ErrorCodeEnum.ERROR_NO_SUCH_FUNC, errMsg);
             }
+            jsonOS.put("string",strRes);
+            jsonOS.put("size", strRes.length());
 
             return responseHelper.success(jsonOS);
         } catch (Exception e) {
