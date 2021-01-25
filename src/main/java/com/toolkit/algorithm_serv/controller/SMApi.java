@@ -85,10 +85,11 @@ public class SMApi {
     @RequestMapping(value = "/sm2sign", method = RequestMethod.GET)
     @ResponseBody
     public Object sm2sign(@RequestParam("privatekey") String privatekey,
+                          @RequestParam(value = "user_id", required = false) String userID,
                           @RequestParam("srchex") String srchex) {
 
         try {
-            SM2SignVO sign = SM2SignVerUtils.Sign2SM2(Util.hexStringToBytes(privatekey), Util.hexToByte(srchex));
+            SM2SignVO sign = SM2SignVerUtils.Sign2SM2(Util.hexStringToBytes(privatekey), Util.hexToByte(srchex), userID);
             System.out.println("R:" + sign.sign_r);
             System.out.println("S:" + sign.sign_s);
             System.out.println("getSm2_signForHard():" + sign.getSm2_signForHard());
@@ -113,11 +114,13 @@ public class SMApi {
     @RequestMapping(value = "/sm2verify", method = RequestMethod.GET)
     @ResponseBody
     public Object sm2verify(@RequestParam("publickey") String publickey,
+                            @RequestParam(value = "user_id", required = false) String userID,
                             @RequestParam("srchex") String srchex,
                             @RequestParam("signhex") String signhex  ) {
 
         try {
-            SM2SignVO verify = SM2SignVerUtils.VerifySignSM2(Util.hexStringToBytes(publickey), Util.hexToByte(srchex), Util.hexToByte(SM2SignVerUtils.SM2SignHardToSoft(signhex)));
+            SM2SignVO verify = SM2SignVerUtils.VerifySignSM2(Util.hexStringToBytes(publickey), Util.hexToByte(srchex),
+                    Util.hexToByte(SM2SignVerUtils.SM2SignHardToSoft(signhex)), userID);
             System.err.println("验签结果" + verify.isVerify());
 
             JSONObject jsonOS = new JSONObject();

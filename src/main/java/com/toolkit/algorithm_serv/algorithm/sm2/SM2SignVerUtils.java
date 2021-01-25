@@ -1,5 +1,6 @@
 package com.toolkit.algorithm_serv.algorithm.sm2;
 
+import com.google.common.base.Strings;
 import com.toolkit.algorithm_serv.utils_ex.Util;
 import org.bouncycastle.asn1.*;
 import org.bouncycastle.crypto.digests.SM3Digest;
@@ -17,7 +18,7 @@ public class SM2SignVerUtils {
 	/**
 	 * 默认USERID
 	 */
-	public static String USER_ID = "1234567812345678";
+	public static String DEFAULT_USER_ID = "1234567812345678";
 	/**
 	 * 私钥签名
 	 * 使用SM3进行对明文数据计算一个摘要值
@@ -26,7 +27,11 @@ public class SM2SignVerUtils {
 	 * @return 签名后的值
 	 * @throws Exception
 	 */
-	public static SM2SignVO Sign2SM2(byte[] privatekey,byte[] sourceData) throws Exception{
+	public static SM2SignVO Sign2SM2(byte[] privatekey, byte[] sourceData, String userID) throws Exception{
+		if (Strings.isNullOrEmpty(userID)) {
+			userID = DEFAULT_USER_ID;
+		}
+
 		SM2SignVO sm2SignVO = new SM2SignVO();
 		sm2SignVO.setSm2_type("sign");
 		SM2Factory factory = SM2Factory.getInstance();
@@ -39,7 +44,7 @@ public class SM2SignVerUtils {
 		//System.out.println("椭圆曲线点Y: "+ userKey.getYCoord().toBigInteger().toString(16));
 
 		SM3Digest sm3Digest = new SM3Digest();
-		byte [] z = factory.sm2GetZ(USER_ID.getBytes(), userKey);
+		byte [] z = factory.sm2GetZ(userID.getBytes(), userKey);
 		//System.out.println("SM3摘要Z: " + Util.getHexString(z));
 		//System.out.println("被加密数据的16进制: " + Util.getHexString(sourceData));
 		sm2SignVO.setSm3_z(Util.getHexString(z));
@@ -77,8 +82,12 @@ public class SM2SignVerUtils {
 	 * @return 验签的对象 包含了相关参数和验签结果
 	 */
 	@SuppressWarnings("unchecked")
-	public static SM2SignVO VerifySignSM2(byte[] publicKey,byte[] sourceData,byte[] signData){
+	public static SM2SignVO VerifySignSM2(byte[] publicKey, byte[] sourceData, byte[] signData, String userID){
 		try {
+			if (Strings.isNullOrEmpty(userID)) {
+				userID = DEFAULT_USER_ID;
+			}
+
 			byte[] formatedPubKey;
 			SM2SignVO verifyVo = new SM2SignVO();
 			verifyVo.setSm2_type("verify");
@@ -94,7 +103,7 @@ public class SM2SignVerUtils {
 			ECPoint userKey = factory.ecc_curve.decodePoint(formatedPubKey);
 
 			SM3Digest sm3Digest = new SM3Digest();
-			byte [] z = factory.sm2GetZ(USER_ID.getBytes(), userKey);
+			byte [] z = factory.sm2GetZ(userID.getBytes(), userKey);
 			//System.out.println("SM3摘要Z: " + Util.getHexString(z));
 			verifyVo.setSm3_z(Util.getHexString(z));
 			sm3Digest.update(z,0,z.length);

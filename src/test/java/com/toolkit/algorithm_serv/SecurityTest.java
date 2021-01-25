@@ -23,12 +23,12 @@ public class SecurityTest {
         String publicKey = "042780f0963a428a7b030ac1c14a90b967bf365f5394ebf1f0ca1598d4d9bece4fdfa05ba043817fef68bef497088e3992362ce55b1858444fa5a3e00c5042b207";
         String privatekey = "73e83d33d95274eeeb23f01834d02fe920b4afece377410435698dfdf1d84203";
 
-        SM2SignVO sign = SM2SignVerUtils.Sign2SM2(Util.hexStringToBytes(privatekey), Util.hexToByte(src));
+        SM2SignVO sign = SM2SignVerUtils.Sign2SM2(Util.hexStringToBytes(privatekey), Util.hexToByte(src), null);
         System.out.println("R:"+sign.sign_r);
         System.out.println("S:"+sign.sign_s);
         //验签硬加密的串
         String signYJ = "54720652E5EE53D14F338A03EDAC10E7F93D877EC2168F9287810807D02D2409F3EEE542638AD0B204BC3C8F93EDBCFBE87DEEFB07C0B36F34508AB49B6F90EF";
-        SM2SignVO verify = SM2SignVerUtils.VerifySignSM2(Util.hexStringToBytes(publicKey), Util.hexToByte(src), Util.hexToByte(SecurityTestAll.SM2SignHardToSoft(signYJ)));
+        SM2SignVO verify = SM2SignVerUtils.VerifySignSM2(Util.hexStringToBytes(publicKey), Util.hexToByte(src), Util.hexToByte(SecurityTestAll.SM2SignHardToSoft(signYJ)), null);
         System.err.println("验签结果" + verify.isVerify());
     }
 
@@ -42,12 +42,12 @@ public class SecurityTest {
         String publicKey = "0485B52403AEB742F952EFF7200BDBA0A399F0971FEB0EAA0CBE00A1A5EE922A34A24BD9CD2EA740B84290838A862E432BD9BBC0CD0659FD6D172CD1871CD76068";
         String privatekey = "62329467E71E70960C7A479C03CA7FC0A2BE92E000240C4F4080F0B2437C536D";
 
-        SM2SignVO sign = SM2SignVerUtils.Sign2SM2(Util.hexStringToBytes(privatekey), Util.hexToByte(src));
+        SM2SignVO sign = SM2SignVerUtils.Sign2SM2(Util.hexStringToBytes(privatekey), Util.hexToByte(src), null);
         System.out.println("R:"+sign.sign_r);
         System.out.println("S:"+sign.sign_s);
         //验签硬加密的串
         String signYJ = "233fabe6f81002fbee8c69d9561114d99e0640ecf27d63561d850d77ac76ee5f5d0530bd6eca60e960784f9ad883b77dcfa3c8b274918034faf509faeee2e5ea";
-        SM2SignVO verify = SM2SignVerUtils.VerifySignSM2(Util.hexStringToBytes(publicKey), Util.hexToByte(src), Util.hexToByte(SecurityTestAll.SM2SignHardToSoft(signYJ)));
+        SM2SignVO verify = SM2SignVerUtils.VerifySignSM2(Util.hexStringToBytes(publicKey), Util.hexToByte(src), Util.hexToByte(SecurityTestAll.SM2SignHardToSoft(signYJ)), null);
         System.err.println("验签结果" + verify.isVerify());
     }
 

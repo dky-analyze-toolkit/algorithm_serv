@@ -1,6 +1,9 @@
 package com.toolkit.algorithm_serv.controller;
 
 import cn.hutool.core.codec.Base64;
+import cn.hutool.core.date.BetweenFormatter;
+import cn.hutool.core.date.DateUnit;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.crypto.CryptoException;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
@@ -10,10 +13,14 @@ import com.toolkit.algorithm_serv.algorithm.sym_crypt.SymCryptHelper;
 import com.toolkit.algorithm_serv.global.enumeration.ErrorCodeEnum;
 import com.toolkit.algorithm_serv.global.exception.ExceptionHelper;
 import com.toolkit.algorithm_serv.global.response.ResponseHelper;
+import com.toolkit.algorithm_serv.utils.TimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
 
 @RestController
 @RequestMapping(value = "/crypto/sym-alg")
@@ -38,6 +45,11 @@ public class SymCryptApi {
         jsonResult.put(key + "_hex", value);
         jsonResult.put(key + "_b64", Base64.encode(value));
         putHexSize(jsonResult, value);
+    }
+
+    private Object noSuchCrypt(String crypt) {
+        String errMsg = String.format("当前请求的接口，不能识别【%s】功能。", crypt);
+        return responseHelper.error(ErrorCodeEnum.ERROR_NO_SUCH_FUNC, errMsg);
     }
 
     @GetMapping("/generate-key")
@@ -85,7 +97,7 @@ public class SymCryptApi {
                 result = SymCryptHelper.decrypt(alg, mode, padding, cipherHex, key, iv);
                 jsonPutHex(jsonResult, "plain", result);
             } else {
-                return responseHelper.error(ErrorCodeEnum.ERROR_GENERAL_ERROR);
+                return noSuchCrypt(crypt);
             }
 
             return responseHelper.success(jsonResult);
@@ -112,7 +124,7 @@ public class SymCryptApi {
                 result = ExtSymCryptHelper.decrypt("RC4", cipherHex, key);
                 jsonPutHex(jsonResult, "plain", result);
             } else {
-                return responseHelper.error(ErrorCodeEnum.ERROR_GENERAL_ERROR);
+                return noSuchCrypt(crypt);
             }
             return responseHelper.success(jsonResult);
         } catch (Exception e) {
@@ -138,7 +150,7 @@ public class SymCryptApi {
                 result = ExtSymCryptHelper.decrypt("Vigenere", cipherStr, key);
                 jsonResult.put("plain_str", result);
             } else {
-                return responseHelper.error(ErrorCodeEnum.ERROR_GENERAL_ERROR);
+                return noSuchCrypt(crypt);
             }
             jsonResult.put("length", result.length());
             return responseHelper.success(jsonResult);
@@ -182,12 +194,51 @@ public class SymCryptApi {
                 result = PBECryptHelper.decrypt(alg, cipherHex, password, saltHex, iterationCount);
                 jsonPutHex(jsonResult, "plain", result);
             } else {
-                return responseHelper.error(ErrorCodeEnum.ERROR_GENERAL_ERROR);
+                return noSuchCrypt(crypt);
             }
             return responseHelper.success(jsonResult);
         } catch (Exception e) {
             return exceptionHelper.response(e);
         }
+    }
+
+    @PostMapping("/kits/loop/{crypt}")
+    @ResponseBody
+    public Object doLoopCrypt(
+            @PathVariable("crypt") String crypt,
+            @RequestParam(value = "alg") String alg,
+            @RequestParam(value = "key") String key,
+            @RequestParam(value = "iteration_count") int iterationCount,
+            @RequestParam(value = "plain_hex", required = false) String plainHex,
+            @RequestParam(value = "cipher_hex", required = false) String cipherHex
+    ) {
+        try {
+            if (iterationCount <=0 || iterationCount > 1000000) {
+                return responseHelper.error(ErrorCodeEnum.ERROR_LOOP_TOO_MUCH, "循环加解密的次数只允许【1--1,000,000】。");
+            }
+            JSONObject jsonResult = new JSONObject();
+            String result = "";
+            // 循环加解密的起始时间
+            Date startTime = DateUtil.date();
+
+            if (crypt.equals("encrypt")) {
+                result = SymCryptHelper.encryptLoop(alg, plainHex, key, iterationCount);
+                jsonPutHex(jsonResult, "cipher", result);
+            } else if (crypt.equals("decrypt")) {
+                result = SymCryptHelper.decryptLoop(alg, cipherHex, key, iterationCount);
+                jsonPutHex(jsonResult, "plain", result);
+            } else {
+                return noSuchCrypt(crypt);
+            }
+
+            // 循环加解密消耗的时间
+            jsonResult.put("time_used", TimeUtils.timeUsedFormat(startTime, true));
+
+            return responseHelper.success(jsonResult);
+        } catch (Exception e) {
+            return exceptionHelper.response(e);
+        }
+
     }
 
 }

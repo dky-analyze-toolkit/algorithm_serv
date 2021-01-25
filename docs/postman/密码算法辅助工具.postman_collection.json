@@ -70,7 +70,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{API_BASE}}/alg/sm2sign?privatekey={{sm2_priv_key}}&srchex={{PLAIN_HEX}}",
+							"raw": "{{API_BASE}}/alg/sm2sign?privatekey={{sm2_priv_key}}&srchex={{PLAIN_HEX}}&user_id=ALICE123@YAHOO.COM",
 							"host": [
 								"{{API_BASE}}"
 							],
@@ -81,11 +81,18 @@
 							"query": [
 								{
 									"key": "privatekey",
-									"value": "{{sm2_priv_key}}"
+									"value": "{{sm2_priv_key}}",
+									"description": "{{sm2_priv_key}}"
 								},
 								{
 									"key": "srchex",
-									"value": "{{PLAIN_HEX}}"
+									"value": "{{PLAIN_HEX}}",
+									"description": "{{PLAIN_HEX}}"
+								},
+								{
+									"key": "user_id",
+									"value": "ALICE123@YAHOO.COM",
+									"description": "可标识ID，例如：ALICE123@YAHOO.COM。无此参数时，系统默认值：1234567812345678"
 								}
 							]
 						}
@@ -98,7 +105,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{API_BASE}}/alg/sm2verify?publickey={{sm2_pub_key}}&srchex={{PLAIN_HEX}}&signhex={{sm2_sign_rs}}",
+							"raw": "{{API_BASE}}/alg/sm2verify?publickey={{sm2_pub_key}}&srchex={{PLAIN_HEX}}&signhex={{sm2_sign_rs}}&user_id=ALICE123@YAHOO.COM",
 							"host": [
 								"{{API_BASE}}"
 							],
@@ -109,15 +116,23 @@
 							"query": [
 								{
 									"key": "publickey",
-									"value": "{{sm2_pub_key}}"
+									"value": "{{sm2_pub_key}}",
+									"description": "{{sm2_pub_key}}"
 								},
 								{
 									"key": "srchex",
-									"value": "{{PLAIN_HEX}}"
+									"value": "{{PLAIN_HEX}}",
+									"description": "{{PLAIN_HEX}}"
 								},
 								{
 									"key": "signhex",
-									"value": "{{sm2_sign_rs}}"
+									"value": "{{sm2_sign_rs}}",
+									"description": "{{sm2_sign_rs}}"
+								},
+								{
+									"key": "user_id",
+									"value": "ALICE123@YAHOO.COM",
+									"description": "可标识ID，例如：ALICE123@YAHOO.COM。无此参数时，系统默认值：1234567812345678"
 								}
 							]
 						}
@@ -1064,6 +1079,140 @@
 								"crypto",
 								"sym-alg",
 								"pbe",
+								"decrypt"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.11 循环加密",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"sym_crypt loopEncrypt Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    pm.globals.set(\"sym_cipher\", jsonData.payload.cipher_hex);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "alg",
+									"value": "{{SYM_ALG}}",
+									"description": "{{SYM_ALG}}，以下其一：AES、DES、DESede、SM4",
+									"type": "text"
+								},
+								{
+									"key": "key",
+									"value": "{{sym_key}}",
+									"description": "{{sym_key}}",
+									"type": "text"
+								},
+								{
+									"key": "plain_hex",
+									"value": "0123456789abcdeffedcba9876543210",
+									"description": "{{PLAIN_HEX}}",
+									"type": "text"
+								},
+								{
+									"key": "iteration_count",
+									"value": "1000000",
+									"description": "取值范围：1-1000000",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/crypto/sym-alg/kits/loop/encrypt",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"crypto",
+								"sym-alg",
+								"kits",
+								"loop",
+								"encrypt"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.12 循环解密",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"sym_crypt loopDecrypt Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    pm.globals.set(\"sym_plain\", jsonData.payload.plain_hex);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "alg",
+									"value": "{{SYM_ALG}}",
+									"description": "{{SYM_ALG}}，以下其一：AES、DES、DESede、SM4",
+									"type": "text"
+								},
+								{
+									"key": "key",
+									"value": "{{sym_key}}",
+									"description": "{{sym_key}}",
+									"type": "text"
+								},
+								{
+									"key": "cipher_hex",
+									"value": "{{sym_cipher}}",
+									"description": "{{sym_cipher}}",
+									"type": "text"
+								},
+								{
+									"key": "iteration_count",
+									"value": "1000000",
+									"description": "取值范围：1-1000000",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/crypto/sym-alg/kits/loop/decrypt",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"crypto",
+								"sym-alg",
+								"kits",
+								"loop",
 								"decrypt"
 							]
 						}
