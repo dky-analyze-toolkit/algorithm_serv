@@ -1,17 +1,9 @@
 package com.toolkit.algorithm_serv.algorithm.auxtools;
+
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
-import com.google.common.base.Preconditions;
 
 import java.sql.Timestamp;
-//import java.text.DateFormat;
-//import java.text.SimpleDateFormat;
-//import java.util.Date;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-
-import static com.toolkit.algorithm_serv.utils.TimeUtils.parseTimeFromString;
 
 public class TimeAuxUtils {
 
@@ -19,10 +11,7 @@ public class TimeAuxUtils {
         try {
 
             DateTime datetime = DateUtil.parse(timeStr);
-
-            Timestamp timestamp = parseTimeFromString(timeStr, "yyyy-mm-dd hh:mm:ss");
-            Long milliSeconds = timestamp.getTime();
-//            timestamp.setTime(milliSeconds);
+            Long milliSeconds = Timestamp.valueOf(datetime.toString()).getTime();
             return milliSeconds.toString();
 
         } catch (Exception e) {
