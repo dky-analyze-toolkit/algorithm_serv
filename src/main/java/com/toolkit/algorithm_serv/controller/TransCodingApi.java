@@ -1,22 +1,30 @@
 package com.toolkit.algorithm_serv.controller;
 
+import cn.hutool.core.codec.Base64;
 import cn.hutool.core.convert.Convert;
-import cn.hutool.core.lang.Validator;
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.io.IoUtil;
+import cn.hutool.core.io.resource.ResourceUtil;
 import cn.hutool.core.net.URLDecoder;
 import cn.hutool.core.util.CharsetUtil;
+import cn.hutool.crypto.PemUtil;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.base.Strings;
 import com.toolkit.algorithm_serv.algorithm.b64.Base64Coding;
+import com.toolkit.algorithm_serv.algorithm.sym_crypt.SymCryptHelper;
 import com.toolkit.algorithm_serv.global.enumeration.ErrorCodeEnum;
+import com.toolkit.algorithm_serv.global.exception.ExceptionHelper;
 import com.toolkit.algorithm_serv.global.response.ResponseHelper;
 import com.toolkit.algorithm_serv.utils.StrAuxUtils;
-import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
+import java.io.InputStream;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 
 import static com.toolkit.algorithm_serv.algorithm.auxtools.TimeAuxUtils.stamp2time;
 import static com.toolkit.algorithm_serv.algorithm.auxtools.TimeAuxUtils.time2stamp;
@@ -26,11 +34,24 @@ import static com.toolkit.algorithm_serv.algorithm.auxtools.TimeAuxUtils.time2st
 public class TransCodingApi {
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    private final ExceptionHelper exceptionHelper;
     private final ResponseHelper responseHelper;
 
     @Autowired
-    public TransCodingApi(ResponseHelper responseHelper) {
+    public TransCodingApi(ExceptionHelper exceptionHelper, ResponseHelper responseHelper) {
+        this.exceptionHelper = exceptionHelper;
         this.responseHelper = responseHelper;
+    }
+
+    private void putHexSize(JSONObject jsonResult, String hex) {
+        jsonResult.put("size", hex.length() / 2);
+        jsonResult.put("bits", hex.length() / 2 * 8);
+    }
+
+    private void jsonPutHex(JSONObject jsonResult, String key, String value) {
+        jsonResult.put(key + "_hex", value);
+        jsonResult.put(key + "_b64", Base64.encode(value));
+        putHexSize(jsonResult, value);
     }
 
     @PostMapping("/b64/{arg}")
@@ -101,7 +122,7 @@ public class TransCodingApi {
 
     @RequestMapping(value = "/string2hex")
     @ResponseBody
-    public Object string2hex(@RequestParam("string") String str,
+    public Object string2hex(@RequestParam("plain_str") String str,
                              @RequestParam("charset") String strCharset) throws Exception {
 
         try {
@@ -128,7 +149,7 @@ public class TransCodingApi {
 
     @RequestMapping(value = "/hex2string")
     @ResponseBody
-    public Object hex2string(@RequestParam("hex") String hexStr,
+    public Object hex2string(@RequestParam("plain_hex") String hexStr,
                              @RequestParam("charset") String strCharset) throws Exception {
 
         try {
@@ -190,6 +211,27 @@ public class TransCodingApi {
             return responseHelper.error(ErrorCodeEnum.ERROR_GENERAL_ERROR, e.getMessage());
         }
 
+    }
+
+    @PostMapping("/pem2hex")
+    @ResponseBody
+    public Object pem2hex(@RequestParam(value = "plain_str") String plainStr) {
+        try {
+            JSONObject jsonResult = new JSONObject();
+
+            InputStream pemStream = IoUtil.toStream(plainStr.getBytes());
+            PublicKey publicKey = (PublicKey) PemUtil.readPemKey(pemStream);
+            PrivateKey privateKey = (PrivateKey) PemUtil.readPemKey(pemStream);
+            if (Strings.isNullOrEmpty(plainStr)) {
+                    return responseHelper.error(ErrorCodeEnum.ERROR_NEED_PLAIN);
+                }
+            jsonPutHex(jsonResult, "hexString", PemUtil.readPemKey(pemStream).getEncoded().toString());
+            putHexSize(jsonResult, PemUtil.readPemKey(pemStream).getEncoded().toString());
+
+            return responseHelper.success(jsonResult);
+        } catch (Exception e) {
+            return exceptionHelper.response(e);
+        }
     }
 
 }

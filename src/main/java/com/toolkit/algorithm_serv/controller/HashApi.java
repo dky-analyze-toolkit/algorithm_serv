@@ -1,12 +1,9 @@
 package com.toolkit.algorithm_serv.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.google.common.base.Strings;
 import com.toolkit.algorithm_serv.algorithm.hash.HashHelper;
 import com.toolkit.algorithm_serv.global.enumeration.ErrorCodeEnum;
 import com.toolkit.algorithm_serv.global.response.ResponseHelper;
-import com.toolkit.algorithm_serv.utils.StrAuxUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
