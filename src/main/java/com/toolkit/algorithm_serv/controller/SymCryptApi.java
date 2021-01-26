@@ -7,6 +7,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.crypto.CryptoException;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
+import com.toolkit.algorithm_serv.algorithm.auxtools.JsonResultHelper;
 import com.toolkit.algorithm_serv.algorithm.sym_crypt.ExtSymCryptHelper;
 import com.toolkit.algorithm_serv.algorithm.sym_crypt.PBECryptHelper;
 import com.toolkit.algorithm_serv.algorithm.sym_crypt.SymCryptHelper;
@@ -36,17 +37,6 @@ public class SymCryptApi {
         this.responseHelper = responseHelper;
     }
 
-    private void putHexSize(JSONObject jsonResult, String hex) {
-        jsonResult.put("size", hex.length() / 2);
-        jsonResult.put("bits", hex.length() / 2 * 8);
-    }
-
-    private void jsonPutHex(JSONObject jsonResult, String key, String value) {
-        jsonResult.put(key + "_hex", value);
-        jsonResult.put(key + "_b64", Base64.encode(value));
-        putHexSize(jsonResult, value);
-    }
-
     private Object noSuchCrypt(String crypt) {
         String errMsg = String.format("当前请求的接口，不能识别【%s】功能。", crypt);
         return responseHelper.error(ErrorCodeEnum.ERROR_NO_SUCH_FUNC, errMsg);
@@ -62,7 +52,7 @@ public class SymCryptApi {
             String keyHex = SymCryptHelper.generateKeyHex(alg, keyBits);
             JSONObject jsonKey = new JSONObject();
             jsonKey.put("alg", alg);
-            jsonPutHex(jsonKey, "key", keyHex);
+            JsonResultHelper.jsonPutHex(jsonKey, "key", keyHex);
             return responseHelper.success(jsonKey);
         } catch (Exception e) {
             return exceptionHelper.response(e);
@@ -89,13 +79,13 @@ public class SymCryptApi {
                     return responseHelper.error(ErrorCodeEnum.ERROR_NEED_PLAIN);
                 }
                 result = SymCryptHelper.encrypt(alg, mode, padding, plainHex, key, iv);
-                jsonPutHex(jsonResult, "cipher", result);
+                JsonResultHelper.jsonPutHex(jsonResult, "cipher", result);
             } else if (crypt.equals("decrypt")) {
                 if (Strings.isNullOrEmpty(cipherHex)) {
                     return responseHelper.error(ErrorCodeEnum.ERROR_NEED_CIPHER);
                 }
                 result = SymCryptHelper.decrypt(alg, mode, padding, cipherHex, key, iv);
-                jsonPutHex(jsonResult, "plain", result);
+                JsonResultHelper.jsonPutHex(jsonResult, "plain", result);
             } else {
                 return noSuchCrypt(crypt);
             }
@@ -119,10 +109,10 @@ public class SymCryptApi {
             String result = "";
             if (crypt.equals("encrypt")) {
                 result = ExtSymCryptHelper.encrypt("RC4", plainHex, key);
-                jsonPutHex(jsonResult, "cipher", result);
+                JsonResultHelper.jsonPutHex(jsonResult, "cipher", result);
             } else if (crypt.equals("decrypt")) {
                 result = ExtSymCryptHelper.decrypt("RC4", cipherHex, key);
-                jsonPutHex(jsonResult, "plain", result);
+                JsonResultHelper.jsonPutHex(jsonResult, "plain", result);
             } else {
                 return noSuchCrypt(crypt);
             }
@@ -166,7 +156,7 @@ public class SymCryptApi {
         try {
             String saltHex = PBECryptHelper.initSaltHex(alg, saltSize);
             JSONObject jsonResult = new JSONObject();
-            jsonPutHex(jsonResult, "salt", saltHex);
+            JsonResultHelper.jsonPutHex(jsonResult, "salt", saltHex);
             return responseHelper.success(jsonResult);
         } catch (Exception e) {
             return exceptionHelper.response(e);
@@ -189,10 +179,10 @@ public class SymCryptApi {
             String result = "";
             if (crypt.equals("encrypt")) {
                 result = PBECryptHelper.encrypt(alg, plainHex, password, saltHex, iterationCount);
-                jsonPutHex(jsonResult, "cipher", result);
+                JsonResultHelper.jsonPutHex(jsonResult, "cipher", result);
             } else if (crypt.equals("decrypt")) {
                 result = PBECryptHelper.decrypt(alg, cipherHex, password, saltHex, iterationCount);
-                jsonPutHex(jsonResult, "plain", result);
+                JsonResultHelper.jsonPutHex(jsonResult, "plain", result);
             } else {
                 return noSuchCrypt(crypt);
             }
@@ -223,10 +213,10 @@ public class SymCryptApi {
 
             if (crypt.equals("encrypt")) {
                 result = SymCryptHelper.encryptLoop(alg, plainHex, key, iterationCount);
-                jsonPutHex(jsonResult, "cipher", result);
+                JsonResultHelper.jsonPutHex(jsonResult, "cipher", result);
             } else if (crypt.equals("decrypt")) {
                 result = SymCryptHelper.decryptLoop(alg, cipherHex, key, iterationCount);
-                jsonPutHex(jsonResult, "plain", result);
+                JsonResultHelper.jsonPutHex(jsonResult, "plain", result);
             } else {
                 return noSuchCrypt(crypt);
             }
