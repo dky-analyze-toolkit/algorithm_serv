@@ -1,30 +1,32 @@
 package com.toolkit.algorithm_serv.algorithm.rsa;
 
+import cn.hutool.core.codec.Base64Encoder;
+import cn.hutool.core.convert.Convert;
 import cn.hutool.core.util.HexUtil;
-import cn.hutool.core.util.StrUtil;
+import cn.hutool.core.util.NumberUtil;
 import cn.hutool.crypto.KeyUtil;
-import cn.hutool.crypto.Padding;
 import cn.hutool.crypto.PemUtil;
 import cn.hutool.crypto.SecureUtil;
+import cn.hutool.crypto.asymmetric.KeyType;
+import cn.hutool.crypto.asymmetric.RSA;
 import cn.hutool.crypto.asymmetric.Sign;
 import cn.hutool.crypto.asymmetric.SignAlgorithm;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import org.apache.commons.lang3.StringUtils;
+import com.toolkit.algorithm_serv.utils_ex.Util;
+import org.apache.commons.codec.binary.Base64;
 import org.bouncycastle.jcajce.provider.asymmetric.rsa.BCRSAPrivateCrtKey;
 import org.bouncycastle.jcajce.provider.asymmetric.rsa.BCRSAPublicKey;
-import org.bouncycastle.openssl.PEMWriter;
-import org.bouncycastle.util.io.pem.PemReader;
 
 import java.io.*;
+import java.math.BigInteger;
 import java.security.Key;
 import java.security.KeyPair;
-import java.security.PublicKey;
 import java.util.Map;
 
 public class RSAHelper {
-    private static final Map<String, SignAlgorithm> rsaAlgsMap = ImmutableMap.<String, SignAlgorithm>builder()
+    private static final Map<String, SignAlgorithm> rsaSignAlgsMap = ImmutableMap.<String, SignAlgorithm>builder()
             .put("None", SignAlgorithm.NONEwithRSA)
             .put("MD2", SignAlgorithm.MD2withRSA)
             .put("MD5", SignAlgorithm.MD5withRSA)
@@ -32,6 +34,12 @@ public class RSAHelper {
             .put("SHA256", SignAlgorithm.SHA256withRSA)
             .put("SHA384", SignAlgorithm.SHA384withRSA)
             .put("SHA512", SignAlgorithm.SHA512withRSA)
+            .build();
+
+    private static final Map<String, String> rsaEncryptPadMap = ImmutableMap.<String, String>builder()
+            .put("None", "RSA/None/NoPadding")
+            .put("Zero", "RSA/ECB/NoPadding")
+            .put("PKCS1", "RSA/ECB/PKCS1Padding")
             .build();
 
     public static String toPem(String type, byte[] content) {
@@ -108,15 +116,20 @@ public class RSAHelper {
         return publicKey.getEncoded();
     }
 
-    public static SignAlgorithm getSignAlg(String algName) {
-        Preconditions.checkArgument(rsaAlgsMap.containsKey(algName), "不支持签名算法：【%s】", algName);
-        return rsaAlgsMap.get(algName);
+    public static SignAlgorithm getRsaSignAlg(String algName) {
+        Preconditions.checkArgument(rsaSignAlgsMap.containsKey(algName), "不支持签名算法：【%s】", algName);
+        return rsaSignAlgsMap.get(algName);
+    }
+
+    public static String getRsaEncryptPadding(String paddingName) {
+        Preconditions.checkArgument(rsaEncryptPadMap.containsKey(paddingName), "不支持加密补齐模式：【%s】", paddingName);
+        return rsaEncryptPadMap.get(paddingName);
     }
 
     public static String sign(String signAlg, String privKeyPem, String dataHex) {
 
         byte[] privKey = readPrivKeyFromPem(privKeyPem);
-        Sign sign = SecureUtil.sign(getSignAlg(signAlg), privKey, null);
+        Sign sign = SecureUtil.sign(getRsaSignAlg(signAlg), privKey, null);
 
         byte[] signedResult = sign.sign(HexUtil.decodeHex(dataHex));
         return HexUtil.encodeHexStr(signedResult, false);
@@ -125,8 +138,49 @@ public class RSAHelper {
     public static boolean verify(String signAlg, String pubKeyPem, String dataHex, String signHex) {
 
         byte[] pubKey = readPubKeyFromPem(pubKeyPem);
-        Sign sign = SecureUtil.sign(getSignAlg(signAlg), null, pubKey);
+        Sign sign = SecureUtil.sign(getRsaSignAlg(signAlg), null, pubKey);
 
         return sign.verify(HexUtil.decodeHex(dataHex), HexUtil.decodeHex(signHex));
+    }
+
+    public static byte[] modularExp(byte[] data, byte[] modulus, byte[] exp) {
+        BigInteger biData = Convert.toBigInteger(data);
+        BigInteger biModulus = Convert.toBigInteger(modulus);
+        BigInteger biExp = Convert.toBigInteger(exp);
+        BigInteger biResult = biData.modPow(biExp, biModulus);
+        return biResult.toByteArray();
+    }
+
+    public static String encrypt(String pubKeyPem, String plainHex, String padding) {
+        if (padding.equals("None")) {
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(pubKeyPem.getBytes());
+            BCRSAPublicKey publicKey = (BCRSAPublicKey)PemUtil.readPemPublicKey(inputStream);
+
+            BigInteger biData = Util.byteConvertInteger(HexUtil.decodeHex(plainHex));
+            BigInteger biResult = biData.modPow(publicKey.getPublicExponent(), publicKey.getModulus());
+            return HexUtil.encodeHexStr(biResult.toByteArray(), false);
+        }
+
+        String alg = getRsaEncryptPadding(padding);
+        String pubKey = Base64.encodeBase64String(readPubKeyFromPem(pubKeyPem));
+        RSA rsa = new RSA(alg, null, pubKey);
+        return rsa.encryptHex(HexUtil.decodeHex(plainHex), KeyType.PublicKey);
+    }
+
+    public static String decrypt(String privKeyPem, String cipherHex, String padding) {
+        if (padding.equals("None")) {
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(privKeyPem.getBytes());
+            BCRSAPrivateCrtKey privateKey = (BCRSAPrivateCrtKey)PemUtil.readPemPrivateKey(inputStream);
+
+            BigInteger biData = Util.byteConvertInteger(HexUtil.decodeHex(cipherHex));
+            BigInteger biResult = biData.modPow(privateKey.getPrivateExponent(), privateKey.getModulus());
+            return HexUtil.encodeHexStr(biResult.toByteArray(), false);
+        }
+
+        String alg = getRsaEncryptPadding(padding);
+        String privKey = Base64.encodeBase64String(readPrivKeyFromPem(privKeyPem));
+        RSA rsa = new RSA(alg, privKey, null);
+        byte[] plain = rsa.decrypt(HexUtil.decodeHex(cipherHex), KeyType.PrivateKey);
+        return HexUtil.encodeHexStr(plain, false);
     }
 }
