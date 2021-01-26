@@ -2,16 +2,21 @@ package com.toolkit.algorithm_serv.controller;
 
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.lang.Validator;
+import cn.hutool.core.net.URLDecoder;
 import cn.hutool.core.util.CharsetUtil;
+import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.toolkit.algorithm_serv.algorithm.b64.Base64Coding;
 import com.toolkit.algorithm_serv.global.enumeration.ErrorCodeEnum;
 import com.toolkit.algorithm_serv.global.response.ResponseHelper;
 import com.toolkit.algorithm_serv.utils.StrAuxUtils;
+import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 import static com.toolkit.algorithm_serv.algorithm.auxtools.TimeAuxUtils.stamp2time;
 import static com.toolkit.algorithm_serv.algorithm.auxtools.TimeAuxUtils.time2stamp;
@@ -147,4 +152,44 @@ public class TransCodingApi {
             return responseHelper.error(ErrorCodeEnum.ERROR_GENERAL_ERROR, e.getMessage());
         }
     }
+
+    @PostMapping("/url/{arg}")
+    @ResponseBody
+    public Object urlCode(
+            @PathVariable(value = "arg", required = true) String codeAct,
+            @RequestParam(value = "plain_str", required = false) String plainStr,
+            @RequestParam(value = "code_str", required = false) String codeStr
+    ) {
+        try{
+            if (codeAct.equalsIgnoreCase("encode")) {
+                String encodeText = "";
+                if (StrAuxUtils.isValid(plainStr)) {
+                    encodeText = HttpUtil.encodeParams(plainStr, CharsetUtil.CHARSET_UTF_8);
+                } else {
+                    return responseHelper.error(ErrorCodeEnum.ERROR_NEED_PARAMETER, "编码时需要填入参数 plain_hex 。");
+                }
+                JSONObject jsonRes = new JSONObject();
+                jsonRes.put("encode_str", encodeText);
+                jsonRes.put("length", encodeText.length());
+                return responseHelper.success(jsonRes);
+            } else if (codeAct.equalsIgnoreCase("decode")) {
+                if (StrAuxUtils.isValid(codeStr)) {
+                    String decodeStr = URLDecoder.decode(codeStr,CharsetUtil.CHARSET_UTF_8);
+
+                    JSONObject jsonRes = new JSONObject();
+                    jsonRes.put("decode_str", decodeStr);
+                    jsonRes.put("size", decodeStr.length());
+                    return responseHelper.success(jsonRes);
+                } else {
+                    return responseHelper.error(ErrorCodeEnum.ERROR_NEED_PARAMETER, "解码时需要填入参数 code_str 。");
+                }
+            } else {
+                return responseHelper.error(ErrorCodeEnum.ERROR_INVALID_URL, "只支持 base64 编码和解码，不支持：" + codeAct + "。");
+            }
+        } catch (Exception e) {
+            return responseHelper.error(ErrorCodeEnum.ERROR_GENERAL_ERROR, e.getMessage());
+        }
+
+    }
+
 }

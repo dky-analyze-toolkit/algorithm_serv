@@ -1418,13 +1418,12 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"SM4 generateKey Check\", function () {\r",
+									"pm.test(\"transcoding time Check\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData.code).to.eql(0);\r",
 									"    \r",
-									"    pm.environment.set(\"sm4_crypt_key\", jsonData.payload.key);\r",
-									"});\r",
-									""
+									"    pm.globals.set(\"time_stamp_str\", jsonData.payload.stamp);\r",
+									"});"
 								],
 								"type": "text/javascript"
 							}
@@ -1455,19 +1454,18 @@
 					"response": []
 				},
 				{
-					"name": "5.4 timeconvert 时间格式转换",
+					"name": "5.4 stamp2time时间格式转换",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"SM4 generateKey Check\", function () {\r",
+									"pm.test(\"transcoding time Check\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData.code).to.eql(0);\r",
 									"    \r",
-									"    pm.environment.set(\"sm4_crypt_key\", jsonData.payload.key);\r",
-									"});\r",
-									""
+									"    pm.globals.set(\"time_str\", jsonData.payload.time);\r",
+									"});"
 								],
 								"type": "text/javascript"
 							}
@@ -1477,7 +1475,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{API_BASE}}/transcoding/time/stamp2time?stamp=1611131935000",
+							"raw": "{{API_BASE}}/transcoding/time/stamp2time?stamp={{time_stamp_str}}",
 							"host": [
 								"{{API_BASE}}"
 							],
@@ -1489,7 +1487,7 @@
 							"query": [
 								{
 									"key": "stamp",
-									"value": "1611131935000",
+									"value": "{{time_stamp_str}}",
 									"description": "时间戳格式原文，（1611131930）"
 								}
 							]
@@ -1499,6 +1497,22 @@
 				},
 				{
 					"name": "5.5 string2hex",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"transcoding string Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    pm.globals.set(\"hex_str\", jsonData.payload.hexString);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -1507,12 +1521,12 @@
 							"formdata": [
 								{
 									"key": "string",
-									"value": "hello world",
+									"value": "hello world!",
 									"type": "text"
 								},
 								{
 									"key": "charset",
-									"value": "UTF-8",
+									"value": "ISO8859-1",
 									"description": "UTF-8,GBK,ISO8859-1",
 									"type": "text"
 								}
@@ -1541,12 +1555,12 @@
 							"formdata": [
 								{
 									"key": "hex",
-									"value": "68656c6c6f20776f726c64",
+									"value": "{{hex_str}}",
 									"type": "text"
 								},
 								{
 									"key": "charset",
-									"value": "UTF-8",
+									"value": "ISO8859-1",
 									"description": "UTF-8,GBK,ISO8859-1",
 									"type": "text"
 								}
@@ -1560,6 +1574,101 @@
 							"path": [
 								"transcoding",
 								"hex2string"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5.7 URL编码",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"base64 encode Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    pm.globals.set(\"url_encode_str\", jsonData.payload.encode_str);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "plain_str",
+									"value": "http://so.jb51.net/cse/search?q=在线工具&click=1&s=10520733385329581432&nsid=",
+									"description": "URL原文字符串",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/transcoding/url/encode",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"transcoding",
+								"url",
+								"encode"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5.8 URL解码",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"url decode Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    pm.globals.set(\"url_decode_str\", jsonData.payload.decode_str);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "code_str",
+									"value": "{{url_encode_str}}",
+									"description": "url编码字符串",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/transcoding/url/decode",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"transcoding",
+								"url",
+								"decode"
 							]
 						}
 					},
