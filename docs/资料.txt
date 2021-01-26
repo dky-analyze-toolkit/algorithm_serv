@@ -11,6 +11,8 @@ https://github.com/xiangyuecn/RSA-java/blob/master/Test.java
 https://github.com/wustrive2008/aes-rsa-java/blob/master/src/main/java/com/wustrive/aesrsa/util/AES.java
 5. 常见的MAC算法（PBOC_3DES_MAC、ANSI X9.9MAC算法、ANSI x9.19算法）
 https://www.iteye.com/blog/kxlele-2355885
+6. Python command line application to unlock Microsoft Office password protected files.
+https://github.com/petemc89/craXcel-cli
 
 【算法验证--线上】
 1. 在线加密解密：http://encode.chahuo.com/

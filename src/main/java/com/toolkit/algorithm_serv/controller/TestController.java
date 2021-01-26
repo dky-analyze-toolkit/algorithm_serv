@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Signature;
+
 @RestController
 @CrossOrigin(origins = "*",maxAge = 3600)
 @RequestMapping(value = "/test")
@@ -29,6 +31,7 @@ public class TestController {
         jsonOS.put("OS Name", SysAuxUtils.getOsName());
         jsonOS.put("OS Arch", SysAuxUtils.getOsArch());
         jsonOS.put("OS Version", SysAuxUtils.getOsVersion());
+        // Signature.getInstance("SHA1withRSA", "BC");
         return responseHelper.success(jsonOS);
     }
 
