@@ -180,8 +180,6 @@ public class RSAHelper {
         }
 
         int totalSize = inputHex.length() / 2;
-        byte[] a = biModulus.toByteArray();
-        String b = biModulus.toString(16);
         int blockSize = biModulus.toString(16).length() / 2;
 
         String[] blockList = StrSpliter.splitByLength(inputHex, blockSize * 2);
@@ -204,12 +202,6 @@ public class RSAHelper {
     public static String encrypt(String pubKeyPem, String plainHex, String padding) throws InvalidKeyException {
         if (padding.equals("None")) {
             return doCrypt(pubKeyPem, null, plainHex);
-            // ByteArrayInputStream inputStream = new ByteArrayInputStream(pubKeyPem.getBytes());
-            // BCRSAPublicKey publicKey = (BCRSAPublicKey)PemUtil.readPemPublicKey(inputStream);
-            //
-            // BigInteger biData = Util.byteConvertInteger(HexUtil.decodeHex(plainHex));
-            // BigInteger biResult = biData.modPow(publicKey.getPublicExponent(), publicKey.getModulus());
-            // return HexUtil.encodeHexStr(biResult.toByteArray(), false);
         }
 
         String alg = getRsaEncryptPadding(padding);
@@ -221,12 +213,6 @@ public class RSAHelper {
     public static String decrypt(String privKeyPem, String cipherHex, String padding) throws InvalidKeyException {
         if (padding.equals("None")) {
             return doCrypt(null, privKeyPem, cipherHex);
-            // ByteArrayInputStream inputStream = new ByteArrayInputStream(privKeyPem.getBytes());
-            // BCRSAPrivateCrtKey privateKey = (BCRSAPrivateCrtKey)PemUtil.readPemPrivateKey(inputStream);
-            //
-            // BigInteger biData = Util.byteConvertInteger(HexUtil.decodeHex(cipherHex));
-            // BigInteger biResult = biData.modPow(privateKey.getPrivateExponent(), privateKey.getModulus());
-            // return HexUtil.encodeHexStr(biResult.toByteArray(), false);
         }
 
         String alg = getRsaEncryptPadding(padding);

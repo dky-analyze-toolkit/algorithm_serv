@@ -1,10 +1,6 @@
 package com.toolkit.algorithm_serv.controller;
 
-import cn.hutool.core.codec.Base64;
-import cn.hutool.core.date.BetweenFormatter;
-import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.crypto.CryptoException;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
 import com.toolkit.algorithm_serv.algorithm.auxtools.JsonResultHelper;
@@ -18,7 +14,6 @@ import com.toolkit.algorithm_serv.utils.TimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -204,7 +199,7 @@ public class SymCryptApi {
     ) {
         try {
             if (iterationCount <=0 || iterationCount > 1000000) {
-                return responseHelper.error(ErrorCodeEnum.ERROR_LOOP_TOO_MUCH, "循环加解密的次数只允许【1--1,000,000】。");
+                return responseHelper.error(ErrorCodeEnum.ERROR_LOOP_OUT_OF_RANGE, "循环加解密的次数只允许【1--1,000,000】。");
             }
             JSONObject jsonResult = new JSONObject();
             String result = "";

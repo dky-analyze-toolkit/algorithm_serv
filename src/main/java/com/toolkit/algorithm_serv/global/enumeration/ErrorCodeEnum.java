@@ -35,7 +35,7 @@ public enum ErrorCodeEnum {
     ERROR_AUTH_FAILED(1014, "认证失败"),
     ERROR_INVALID_PASSWORD(1015, "口令错误"),
     ERROR_NO_SUCH_FUNC(1016, "请求的功能不能识别或未实现"),
-    ERROR_LOOP_TOO_MUCH(1017, "循环迭代的次数过多"),
+    ERROR_LOOP_OUT_OF_RANGE(1017, "循环迭代的次数超出范围"),
     ERROR_USER_REJECTED(1018, "用户拒绝授权"),
     ERROR_INVALID_USER_CERT(1019, "非法用户证书"),
     ERROR_INVALID_DEVICE_CERT(1020, "非法设备证书"),
