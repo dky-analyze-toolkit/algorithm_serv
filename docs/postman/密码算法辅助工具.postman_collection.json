@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "2e774a26-b371-4fc0-a147-b13817450780",
+		"_postman_id": "1dd5c3cf-d96c-45ea-9e75-eb83a9a552b7",
 		"name": "密码算法辅助工具",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1812,7 +1812,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{API_BASE}}/transcoding/time/stamp2time?stamp={{time_stamp_str}}",
+							"raw": "{{API_BASE}}/transcoding/time/stamp2time?stamp={{time_stamp_str}}&time_format=yyyy-MM-dd HH:mm:ss",
 							"host": [
 								"{{API_BASE}}"
 							],
@@ -1826,6 +1826,11 @@
 									"key": "stamp",
 									"value": "{{time_stamp_str}}",
 									"description": "时间戳格式原文，（1611131930）"
+								},
+								{
+									"key": "time_format",
+									"value": "yyyy-MM-dd HH:mm:ss",
+									"description": "yyyy-MM-dd HH:mm:ss\nyyyy/MM/dd HH:mm:ss\nyyyy.MM.dd HH:mm:ss\nyyyy年MM月dd日 HH:mm:ss"
 								}
 							]
 						}
@@ -1857,7 +1862,7 @@
 							"mode": "formdata",
 							"formdata": [
 								{
-									"key": "string",
+									"key": "plain_str",
 									"value": "hello world!",
 									"type": "text"
 								},
@@ -1891,7 +1896,7 @@
 							"mode": "formdata",
 							"formdata": [
 								{
-									"key": "hex",
+									"key": "plain_hex",
 									"value": "{{hex_str}}",
 									"type": "text"
 								},
@@ -2006,6 +2011,98 @@
 								"transcoding",
 								"url",
 								"decode"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5.9 PEM2Hex 公私钥、证书格式转换",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"transcoding pem2hex Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    pm.globals.set(\"hexString_hex\", jsonData.payload.hexString_hex);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "plain_str",
+									"value": "-----BEGIN PRIVATE KEY-----\nMIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAL4tQNyKy4U2zX6l\nIZvORB1edmwMwIgSB4cgoFECrG5pixzYxKauZkAwKG9/+L4DB8qXRjfXWcvafcOU\nDlYpRROykJ7wGkiqmqbZyrxY8DWjk5ZZQXiSuhYOAJB+Fyfb11JZV6+CvBQX/1g+\nvhJr39Gmp6oAesoYrj90ecozClmnAgMBAAECgYA3j6sSg+5f9hnldUMzbPjTh8Sb\nXsJlPrc6UFrmMBzGiUleXSpe9Dbla+x0XvQCN4pwMvAN4nnWp/f0Su5BV/9Y93nb\nim5ijGNrfN9i6QrnqGCr+MMute+4E8HR2pCScX0mBLDDf40SmDvMzCaxtd21keyr\n9DqHgInQZNEi6NKlkQJBAPCbUTFg6iQ6VTCQ8CsEf5q2xHhuTK23fJ999lvWVxN7\nQsvWb9RP9Ng34HVtvB7Pl6P7FyHLQYiDJhhvYR0L0+kCQQDKV/09Kt6Wjf5Omp1I\nwd3A+tFnipdqnPw+qNHGjevv0hYiEIWQOYbx00zXgaX+WN/pzV9eeNN2XAxlNJ++\ndxcPAkBrzeuPKFFAcjKBVC+H1rgl5gYZv7Hzk+buv02G0H6rZ+sB0c7BXiHiTwbv\nFn/XfkP/YR14Ms3mEH0dLaphjU8hAkEAh3Ar/rRiN04mCcEuRFQXtaNtZSv8PA2G\nPf7MI2Y9pdHupLCAZlBLRjTUO2/5hu1AO4QPMPIZQSFN3rRBtMCL+wJAMp/m2hvI\nTmtbMp/IrKGfma09e3yFiCmoNn7cHLJ7jLvXcacV2XNzpr9YHfBxiZo0g9FqZKvv\nPZoQ5B2XJ7bhTQ==\n-----END PRIVATE KEY-----",
+									"description": "URL原文字符串",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/transcoding/pem2hex",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"transcoding",
+								"pem2hex"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5.10 Hex2PEM 公私钥、证书格式转换",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"transcoding pem2hex Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    pm.globals.set(\"hexString_hex\", jsonData.payload.hexString_hex);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "plain_hex",
+									"value": "{{hexString_hex}}",
+									"description": "URL原文字符串",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/transcoding/hex2pem",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"transcoding",
+								"hex2pem"
 							]
 						}
 					},
