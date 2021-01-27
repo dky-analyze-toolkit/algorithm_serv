@@ -2,8 +2,10 @@ package com.toolkit.algorithm_serv.algorithm.rsa;
 
 import cn.hutool.core.codec.Base64Encoder;
 import cn.hutool.core.convert.Convert;
+import cn.hutool.core.text.StrSpliter;
 import cn.hutool.core.util.HexUtil;
 import cn.hutool.core.util.NumberUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.KeyUtil;
 import cn.hutool.crypto.PemUtil;
 import cn.hutool.crypto.SecureUtil;
@@ -13,6 +15,7 @@ import cn.hutool.crypto.asymmetric.Sign;
 import cn.hutool.crypto.asymmetric.SignAlgorithm;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.toolkit.algorithm_serv.utils_ex.Util;
 import org.apache.commons.codec.binary.Base64;
@@ -21,6 +24,7 @@ import org.bouncycastle.jcajce.provider.asymmetric.rsa.BCRSAPublicKey;
 
 import java.io.*;
 import java.math.BigInteger;
+import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyPair;
 import java.util.Map;
@@ -143,22 +147,69 @@ public class RSAHelper {
         return sign.verify(HexUtil.decodeHex(dataHex), HexUtil.decodeHex(signHex));
     }
 
-    public static byte[] modularExp(byte[] data, byte[] modulus, byte[] exp) {
-        BigInteger biData = Convert.toBigInteger(data);
-        BigInteger biModulus = Convert.toBigInteger(modulus);
-        BigInteger biExp = Convert.toBigInteger(exp);
-        BigInteger biResult = biData.modPow(biExp, biModulus);
-        return biResult.toByteArray();
+    public static String modularExp(byte[] input, byte[] modulus, byte[] exponent) {
+        BigInteger biInput = Util.byteConvertInteger(input);
+        BigInteger biModulus = Util.byteConvertInteger(modulus);
+        BigInteger biExponent = Util.byteConvertInteger(exponent);
+        BigInteger biResult = modularExp(biInput, biExponent, biModulus);
+        return biResult.toString(16);
     }
 
-    public static String encrypt(String pubKeyPem, String plainHex, String padding) {
-        if (padding.equals("None")) {
+    public static String modularExp(String inputHex, String modulusHex, String exponentHex) {
+        return modularExp(HexUtil.decodeHex(inputHex), HexUtil.decodeHex(modulusHex), HexUtil.decodeHex(exponentHex));
+    }
+
+    private static BigInteger modularExp(BigInteger biInput, BigInteger biExponent, BigInteger biModulus) {
+        return biInput.modPow(biExponent, biModulus);
+    }
+
+    private static String doCrypt(String pubKeyPem, String privKeyPem, String inputHex) throws InvalidKeyException {
+        BigInteger biExponent, biModulus;
+        if (!Strings.isNullOrEmpty(pubKeyPem)) {
             ByteArrayInputStream inputStream = new ByteArrayInputStream(pubKeyPem.getBytes());
             BCRSAPublicKey publicKey = (BCRSAPublicKey)PemUtil.readPemPublicKey(inputStream);
+            biExponent = publicKey.getPublicExponent();
+            biModulus = publicKey.getModulus();
+        } else if (!Strings.isNullOrEmpty(privKeyPem)) {
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(privKeyPem.getBytes());
+            BCRSAPrivateCrtKey privateKey = (BCRSAPrivateCrtKey)PemUtil.readPemPrivateKey(inputStream);
+            biExponent = privateKey.getPrivateExponent();
+            biModulus = privateKey.getModulus();
+        } else {
+            throw new InvalidKeyException("密钥无效，请使用有效的公钥或私钥");
+        }
 
-            BigInteger biData = Util.byteConvertInteger(HexUtil.decodeHex(plainHex));
-            BigInteger biResult = biData.modPow(publicKey.getPublicExponent(), publicKey.getModulus());
-            return HexUtil.encodeHexStr(biResult.toByteArray(), false);
+        int totalSize = inputHex.length() / 2;
+        byte[] a = biModulus.toByteArray();
+        String b = biModulus.toString(16);
+        int blockSize = biModulus.toString(16).length() / 2;
+
+        String[] blockList = StrSpliter.splitByLength(inputHex, blockSize * 2);
+        String fullResult = "";
+        for (int index = (blockList.length - 1); index >= 0; index--) {
+            String blockStr = blockList[index];
+            BigInteger biInput = Util.byteConvertInteger(HexUtil.decodeHex(blockStr));
+            BigInteger biResult = modularExp(biInput, biExponent, biModulus);
+            String resultStr = biResult.toString(16);
+            if (resultStr.length() < blockSize * 2) {
+                resultStr = StrUtil.padPre(resultStr, blockSize * 2, '0');
+            }
+
+            fullResult = resultStr + fullResult;
+        }
+
+        return fullResult;
+    }
+
+    public static String encrypt(String pubKeyPem, String plainHex, String padding) throws InvalidKeyException {
+        if (padding.equals("None")) {
+            return doCrypt(pubKeyPem, null, plainHex);
+            // ByteArrayInputStream inputStream = new ByteArrayInputStream(pubKeyPem.getBytes());
+            // BCRSAPublicKey publicKey = (BCRSAPublicKey)PemUtil.readPemPublicKey(inputStream);
+            //
+            // BigInteger biData = Util.byteConvertInteger(HexUtil.decodeHex(plainHex));
+            // BigInteger biResult = biData.modPow(publicKey.getPublicExponent(), publicKey.getModulus());
+            // return HexUtil.encodeHexStr(biResult.toByteArray(), false);
         }
 
         String alg = getRsaEncryptPadding(padding);
@@ -167,14 +218,15 @@ public class RSAHelper {
         return rsa.encryptHex(HexUtil.decodeHex(plainHex), KeyType.PublicKey);
     }
 
-    public static String decrypt(String privKeyPem, String cipherHex, String padding) {
+    public static String decrypt(String privKeyPem, String cipherHex, String padding) throws InvalidKeyException {
         if (padding.equals("None")) {
-            ByteArrayInputStream inputStream = new ByteArrayInputStream(privKeyPem.getBytes());
-            BCRSAPrivateCrtKey privateKey = (BCRSAPrivateCrtKey)PemUtil.readPemPrivateKey(inputStream);
-
-            BigInteger biData = Util.byteConvertInteger(HexUtil.decodeHex(cipherHex));
-            BigInteger biResult = biData.modPow(privateKey.getPrivateExponent(), privateKey.getModulus());
-            return HexUtil.encodeHexStr(biResult.toByteArray(), false);
+            return doCrypt(null, privKeyPem, cipherHex);
+            // ByteArrayInputStream inputStream = new ByteArrayInputStream(privKeyPem.getBytes());
+            // BCRSAPrivateCrtKey privateKey = (BCRSAPrivateCrtKey)PemUtil.readPemPrivateKey(inputStream);
+            //
+            // BigInteger biData = Util.byteConvertInteger(HexUtil.decodeHex(cipherHex));
+            // BigInteger biResult = biData.modPow(privateKey.getPrivateExponent(), privateKey.getModulus());
+            // return HexUtil.encodeHexStr(biResult.toByteArray(), false);
         }
 
         String alg = getRsaEncryptPadding(padding);
