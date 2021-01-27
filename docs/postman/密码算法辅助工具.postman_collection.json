@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "1dd5c3cf-d96c-45ea-9e75-eb83a9a552b7",
+		"_postman_id": "2e774a26-b371-4fc0-a147-b13817450780",
 		"name": "密码算法辅助工具",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1243,7 +1243,344 @@
 		},
 		{
 			"name": "3. 非对称加密",
-			"item": []
+			"item": [
+				{
+					"name": "3.1 生成RSA密钥",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"RSA generate_key Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    pm.globals.set(\"RSA_E\", jsonData.payload.rsa_e);\r",
+									"    pm.globals.set(\"RSA_N\", jsonData.payload.rsa_n);\r",
+									"    pm.globals.set(\"RSA_D\", jsonData.payload.rsa_d);\r",
+									"    pm.globals.set(\"RSA_PUB_KEY\", jsonData.payload.public_key_pem);\r",
+									"    pm.globals.set(\"RSA_PRIV_KEY\", jsonData.payload.private_key_pem);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// pm.globals.set(\"ASYM_ALG\", \"RSA\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE}}/crypto/asym-alg/rsa/generate-key?key_bits=512",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"crypto",
+								"asym-alg",
+								"rsa",
+								"generate-key"
+							],
+							"query": [
+								{
+									"key": "key_bits",
+									"value": "512",
+									"description": "512, 1024, 2048, 4096，默认1024"
+								},
+								{
+									"key": "rsa_e",
+									"value": null,
+									"description": "可选e，无此参数时，默认值：65537",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3.2 PEM读取RSA密钥",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "pem",
+									"value": "{{RSA_PUB_KEY}}",
+									"description": "{{RSA_PUB_KEY}}、{{RSA_PRIV_KEY}}，自动识别",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/crypto/asym-alg/rsa/read-pem",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"crypto",
+								"asym-alg",
+								"rsa",
+								"read-pem"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3.3 RSA签名",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"RSA sign Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    pm.globals.set(\"RSA_SIGN_HEX\", jsonData.payload.signature_hex);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "sign_alg",
+									"value": "SHA1",
+									"description": "None、MD2、MD5、SHA1、SHA256、SHA384、SHA512",
+									"type": "text"
+								},
+								{
+									"key": "priv_key_pem",
+									"value": "{{RSA_PRIV_KEY}}",
+									"description": "{{RSA_PRIV_KEY}}",
+									"type": "text"
+								},
+								{
+									"key": "data_hex",
+									"value": "112233",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/crypto/asym-alg/rsa/sign",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"crypto",
+								"asym-alg",
+								"rsa",
+								"sign"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3.4 RSA验签",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "sign_alg",
+									"value": "SHA1",
+									"description": "None、MD2、MD5、SHA1、SHA256、SHA384、SHA512",
+									"type": "text"
+								},
+								{
+									"key": "pub_key_pem",
+									"value": "{{RSA_PUB_KEY}}",
+									"description": "{{RSA_PUB_KEY}}",
+									"type": "text"
+								},
+								{
+									"key": "data_hex",
+									"value": "112233",
+									"type": "text"
+								},
+								{
+									"key": "sign_hex",
+									"value": "{{RSA_SIGN_HEX}}",
+									"description": "{{RSA_SIGN_HEX}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/crypto/asym-alg/rsa/verify",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"crypto",
+								"asym-alg",
+								"rsa",
+								"verify"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3.5 RSA加密",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"RSA encrypt Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    pm.globals.set(\"RSA_CIPHER_HEX\", jsonData.payload.cipher_hex);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "padding",
+									"value": "PKCS1",
+									"description": "None、Zero、PKCS1",
+									"type": "text"
+								},
+								{
+									"key": "pub_key_pem",
+									"value": "{{RSA_PUB_KEY}}",
+									"description": "{{RSA_PUB_KEY}}",
+									"type": "text"
+								},
+								{
+									"key": "plain_hex",
+									"value": "112233",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/crypto/asym-alg/rsa/encrypt",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"crypto",
+								"asym-alg",
+								"rsa",
+								"encrypt"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3.6 RSA解密",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "padding",
+									"value": "None",
+									"description": "None、Zero、PKCS1",
+									"type": "text"
+								},
+								{
+									"key": "priv_key_pem",
+									"value": "{{RSA_PRIV_KEY}}",
+									"description": "{{RSA_PRIV_KEY}}",
+									"type": "text"
+								},
+								{
+									"key": "cipher_hex",
+									"value": "{{RSA_CIPHER_HEX}}",
+									"description": "{{RSA_CIPHER_HEX}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/crypto/asym-alg/rsa/decrypt",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"crypto",
+								"asym-alg",
+								"rsa",
+								"decrypt"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		},
 		{
 			"name": "4. 摘要算法",

@@ -109,4 +109,38 @@ public class AsymCryptApi {
             return exceptionHelper.response(e);
         }
     }
+
+    @PostMapping("/rsa/encrypt")
+    @ResponseBody
+    public Object rsaEncrypt(
+            @RequestParam("padding") String padding,
+            @RequestParam("pub_key_pem") String pubKeyPem,
+            @RequestParam("plain_hex") String plainHex
+    ) {
+        try {
+            String cipherHex = RSAHelper.encrypt(pubKeyPem, plainHex, padding);
+            JSONObject jsonCipher = new JSONObject();
+            JsonResultHelper.jsonPutHex(jsonCipher, "cipher", cipherHex);
+            return responseHelper.success(jsonCipher);
+        } catch (Exception e) {
+            return exceptionHelper.response(e);
+        }
+    }
+
+    @PostMapping("/rsa/decrypt")
+    @ResponseBody
+    public Object rsaDecrypt(
+            @RequestParam("padding") String padding,
+            @RequestParam("priv_key_pem") String privKeyPem,
+            @RequestParam("cipher_hex") String cipherHex
+    ) {
+        try {
+            String plainHex = RSAHelper.decrypt(privKeyPem, cipherHex, padding);
+            JSONObject jsonPlain = new JSONObject();
+            JsonResultHelper.jsonPutHex(jsonPlain, "plain", plainHex);
+            return responseHelper.success(jsonPlain);
+        } catch (Exception e) {
+            return exceptionHelper.response(e);
+        }
+    }
 }
