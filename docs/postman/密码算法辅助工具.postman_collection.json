@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "2e774a26-b371-4fc0-a147-b13817450780",
+		"_postman_id": "1dd5c3cf-d96c-45ea-9e75-eb83a9a552b7",
 		"name": "密码算法辅助工具",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1755,13 +1755,12 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"SM4 generateKey Check\", function () {\r",
+									"pm.test(\"transcoding time Check\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData.code).to.eql(0);\r",
 									"    \r",
-									"    pm.environment.set(\"sm4_crypt_key\", jsonData.payload.key);\r",
-									"});\r",
-									""
+									"    pm.globals.set(\"time_stamp_str\", jsonData.payload.stamp);\r",
+									"});"
 								],
 								"type": "text/javascript"
 							}
@@ -1792,19 +1791,18 @@
 					"response": []
 				},
 				{
-					"name": "5.4 timeconvert 时间格式转换",
+					"name": "5.4 stamp2time时间格式转换",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"SM4 generateKey Check\", function () {\r",
+									"pm.test(\"transcoding time Check\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData.code).to.eql(0);\r",
 									"    \r",
-									"    pm.environment.set(\"sm4_crypt_key\", jsonData.payload.key);\r",
-									"});\r",
-									""
+									"    pm.globals.set(\"time_str\", jsonData.payload.time);\r",
+									"});"
 								],
 								"type": "text/javascript"
 							}
@@ -1814,7 +1812,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{API_BASE}}/transcoding/time/stamp2time?stamp=1611131935000",
+							"raw": "{{API_BASE}}/transcoding/time/stamp2time?stamp={{time_stamp_str}}&time_format=yyyy-MM-dd HH:mm:ss",
 							"host": [
 								"{{API_BASE}}"
 							],
@@ -1826,8 +1824,13 @@
 							"query": [
 								{
 									"key": "stamp",
-									"value": "1611131935000",
+									"value": "{{time_stamp_str}}",
 									"description": "时间戳格式原文，（1611131930）"
+								},
+								{
+									"key": "time_format",
+									"value": "yyyy-MM-dd HH:mm:ss",
+									"description": "yyyy-MM-dd HH:mm:ss\nyyyy/MM/dd HH:mm:ss\nyyyy.MM.dd HH:mm:ss\nyyyy年MM月dd日 HH:mm:ss"
 								}
 							]
 						}
@@ -1836,6 +1839,22 @@
 				},
 				{
 					"name": "5.5 string2hex",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"transcoding string Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    pm.globals.set(\"hex_str\", jsonData.payload.hexString);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -1843,13 +1862,13 @@
 							"mode": "formdata",
 							"formdata": [
 								{
-									"key": "string",
-									"value": "hello world",
+									"key": "plain_str",
+									"value": "hello world!",
 									"type": "text"
 								},
 								{
 									"key": "charset",
-									"value": "UTF-8",
+									"value": "ISO8859-1",
 									"description": "UTF-8,GBK,ISO8859-1",
 									"type": "text"
 								}
@@ -1877,13 +1896,13 @@
 							"mode": "formdata",
 							"formdata": [
 								{
-									"key": "hex",
-									"value": "68656c6c6f20776f726c64",
+									"key": "plain_hex",
+									"value": "{{hex_str}}",
 									"type": "text"
 								},
 								{
 									"key": "charset",
-									"value": "UTF-8",
+									"value": "ISO8859-1",
 									"description": "UTF-8,GBK,ISO8859-1",
 									"type": "text"
 								}
@@ -1897,6 +1916,193 @@
 							"path": [
 								"transcoding",
 								"hex2string"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5.7 URL编码",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"base64 encode Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    pm.globals.set(\"url_encode_str\", jsonData.payload.encode_str);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "plain_str",
+									"value": "http://so.jb51.net/cse/search?q=在线工具&click=1&s=10520733385329581432&nsid=",
+									"description": "URL原文字符串",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/transcoding/url/encode",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"transcoding",
+								"url",
+								"encode"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5.8 URL解码",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"url decode Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    pm.globals.set(\"url_decode_str\", jsonData.payload.decode_str);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "code_str",
+									"value": "{{url_encode_str}}",
+									"description": "url编码字符串",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/transcoding/url/decode",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"transcoding",
+								"url",
+								"decode"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5.9 PEM2Hex 公私钥、证书格式转换",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"transcoding pem2hex Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    pm.globals.set(\"hexString_hex\", jsonData.payload.hexString_hex);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "plain_str",
+									"value": "-----BEGIN PRIVATE KEY-----\nMIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAL4tQNyKy4U2zX6l\nIZvORB1edmwMwIgSB4cgoFECrG5pixzYxKauZkAwKG9/+L4DB8qXRjfXWcvafcOU\nDlYpRROykJ7wGkiqmqbZyrxY8DWjk5ZZQXiSuhYOAJB+Fyfb11JZV6+CvBQX/1g+\nvhJr39Gmp6oAesoYrj90ecozClmnAgMBAAECgYA3j6sSg+5f9hnldUMzbPjTh8Sb\nXsJlPrc6UFrmMBzGiUleXSpe9Dbla+x0XvQCN4pwMvAN4nnWp/f0Su5BV/9Y93nb\nim5ijGNrfN9i6QrnqGCr+MMute+4E8HR2pCScX0mBLDDf40SmDvMzCaxtd21keyr\n9DqHgInQZNEi6NKlkQJBAPCbUTFg6iQ6VTCQ8CsEf5q2xHhuTK23fJ999lvWVxN7\nQsvWb9RP9Ng34HVtvB7Pl6P7FyHLQYiDJhhvYR0L0+kCQQDKV/09Kt6Wjf5Omp1I\nwd3A+tFnipdqnPw+qNHGjevv0hYiEIWQOYbx00zXgaX+WN/pzV9eeNN2XAxlNJ++\ndxcPAkBrzeuPKFFAcjKBVC+H1rgl5gYZv7Hzk+buv02G0H6rZ+sB0c7BXiHiTwbv\nFn/XfkP/YR14Ms3mEH0dLaphjU8hAkEAh3Ar/rRiN04mCcEuRFQXtaNtZSv8PA2G\nPf7MI2Y9pdHupLCAZlBLRjTUO2/5hu1AO4QPMPIZQSFN3rRBtMCL+wJAMp/m2hvI\nTmtbMp/IrKGfma09e3yFiCmoNn7cHLJ7jLvXcacV2XNzpr9YHfBxiZo0g9FqZKvv\nPZoQ5B2XJ7bhTQ==\n-----END PRIVATE KEY-----",
+									"description": "URL原文字符串",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/transcoding/pem2hex",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"transcoding",
+								"pem2hex"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5.10 Hex2PEM 公私钥、证书格式转换",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"transcoding pem2hex Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    pm.globals.set(\"hexString_hex\", jsonData.payload.hexString_hex);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "plain_hex",
+									"value": "{{hexString_hex}}",
+									"description": "URL原文字符串",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/transcoding/hex2pem",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"transcoding",
+								"hex2pem"
 							]
 						}
 					},

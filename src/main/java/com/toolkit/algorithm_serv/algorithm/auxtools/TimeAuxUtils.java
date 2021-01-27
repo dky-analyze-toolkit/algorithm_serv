@@ -20,10 +20,15 @@ public class TimeAuxUtils {
         }
     }
 
-    public static String stamp2time(String stampStr) throws IllegalArgumentException {
+    public static String stamp2time(String stampStr,String timeFormat) throws IllegalArgumentException {
         try {
             Timestamp timestamp = new Timestamp(0);
             timestamp.setTime(Long.valueOf(stampStr));
+//TODO
+//            DateTime datetime = DateUtil.parse(timeStr);
+//            datetime.
+//            DateUtil.format()
+//            timestamp.
             return timestamp.toString();
         } catch (Exception e) {
             e.printStackTrace();

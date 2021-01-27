@@ -1,18 +1,35 @@
 package com.toolkit.algorithm_serv.controller;
 
+import cn.hutool.core.codec.Base64;
 import cn.hutool.core.convert.Convert;
-import cn.hutool.core.lang.Validator;
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.io.IoUtil;
+import cn.hutool.core.io.resource.ResourceUtil;
+import cn.hutool.core.net.URLDecoder;
 import cn.hutool.core.util.CharsetUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.crypto.KeyUtil;
+import cn.hutool.crypto.PemUtil;
+import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.base.Strings;
 import com.toolkit.algorithm_serv.algorithm.b64.Base64Coding;
+import com.toolkit.algorithm_serv.algorithm.sym_crypt.SymCryptHelper;
 import com.toolkit.algorithm_serv.global.enumeration.ErrorCodeEnum;
+import com.toolkit.algorithm_serv.global.exception.ExceptionHelper;
 import com.toolkit.algorithm_serv.global.response.ResponseHelper;
 import com.toolkit.algorithm_serv.utils.StrAuxUtils;
+import org.bouncycastle.util.io.pem.PemObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.InputStream;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+
+import static cn.hutool.crypto.PemUtil.readPemObject;
 import static com.toolkit.algorithm_serv.algorithm.auxtools.TimeAuxUtils.stamp2time;
 import static com.toolkit.algorithm_serv.algorithm.auxtools.TimeAuxUtils.time2stamp;
 
@@ -21,11 +38,24 @@ import static com.toolkit.algorithm_serv.algorithm.auxtools.TimeAuxUtils.time2st
 public class TransCodingApi {
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    private final ExceptionHelper exceptionHelper;
     private final ResponseHelper responseHelper;
 
     @Autowired
-    public TransCodingApi(ResponseHelper responseHelper) {
+    public TransCodingApi(ExceptionHelper exceptionHelper, ResponseHelper responseHelper) {
+        this.exceptionHelper = exceptionHelper;
         this.responseHelper = responseHelper;
+    }
+
+    private void putHexSize(JSONObject jsonResult, String hex) {
+        jsonResult.put("size", hex.length() / 2);
+        jsonResult.put("bits", hex.length() / 2 * 8);
+    }
+
+    private void jsonPutHex(JSONObject jsonResult, String key, String value) {
+        jsonResult.put(key + "_hex", value);
+        jsonResult.put(key + "_b64", Base64.encode(value));
+        putHexSize(jsonResult, value);
     }
 
     @PostMapping("/b64/{arg}")
@@ -69,7 +99,8 @@ public class TransCodingApi {
     public Object timeConvert(
             @PathVariable(value = "arg", required = true) String codeAct,
             @RequestParam(value = "time", required = false) String timeStr,
-            @RequestParam(value = "stamp", required = false) String stampStr) {
+            @RequestParam(value = "stamp", required = false) String stampStr,
+            @RequestParam(value = "time_format", required = false) String timeFormat) {
         try {
             if (codeAct.equalsIgnoreCase("time2stamp")) {
                 if (StrAuxUtils.isValid(timeStr)) {
@@ -80,7 +111,7 @@ public class TransCodingApi {
                 return responseHelper.success(jsonOS);
             } else if (codeAct.equalsIgnoreCase("stamp2time")) {
                 if (StrAuxUtils.isValid(stampStr)) {
-                    timeStr = stamp2time(stampStr);
+                    timeStr = stamp2time(stampStr, timeFormat);
                 }
                 JSONObject jsonOS = new JSONObject();
                 jsonOS.put("time", timeStr);
@@ -96,7 +127,7 @@ public class TransCodingApi {
 
     @RequestMapping(value = "/string2hex")
     @ResponseBody
-    public Object string2hex(@RequestParam("string") String str,
+    public Object string2hex(@RequestParam("plain_str") String str,
                              @RequestParam("charset") String strCharset) throws Exception {
 
         try {
@@ -105,7 +136,7 @@ public class TransCodingApi {
             if (strCharset.equals("UTF-8")) {
                 strRes = Convert.toHex(str, CharsetUtil.CHARSET_UTF_8);
             } else if (strCharset.equals("GBK")) {
-                strRes =  Convert.toHex(str, CharsetUtil.CHARSET_GBK);
+                strRes = Convert.toHex(str, CharsetUtil.CHARSET_GBK);
             } else if (strCharset.equals("ISO8859-1")) {
                 strRes = Convert.toHex(str, CharsetUtil.CHARSET_ISO_8859_1);
             } else {
@@ -123,7 +154,7 @@ public class TransCodingApi {
 
     @RequestMapping(value = "/hex2string")
     @ResponseBody
-    public Object hex2string(@RequestParam("hex") String hexStr,
+    public Object hex2string(@RequestParam("plain_hex") String hexStr,
                              @RequestParam("charset") String strCharset) throws Exception {
 
         try {
@@ -139,7 +170,7 @@ public class TransCodingApi {
                 String errMsg = String.format("当前请求的接口，不能识别【%s】字符集。", strCharset);
                 return responseHelper.error(ErrorCodeEnum.ERROR_NO_SUCH_FUNC, errMsg);
             }
-            jsonOS.put("string",strRes);
+            jsonOS.put("string", strRes);
             jsonOS.put("size", strRes.length());
 
             return responseHelper.success(jsonOS);
@@ -147,4 +178,104 @@ public class TransCodingApi {
             return responseHelper.error(ErrorCodeEnum.ERROR_GENERAL_ERROR, e.getMessage());
         }
     }
+
+    @PostMapping("/url/{arg}")
+    @ResponseBody
+    public Object urlCode(
+            @PathVariable(value = "arg", required = true) String codeAct,
+            @RequestParam(value = "plain_str", required = false) String plainStr,
+            @RequestParam(value = "code_str", required = false) String codeStr
+    ) {
+        try {
+            if (codeAct.equalsIgnoreCase("encode")) {
+                String encodeText = "";
+                if (StrAuxUtils.isValid(plainStr)) {
+                    encodeText = HttpUtil.encodeParams(plainStr, CharsetUtil.CHARSET_UTF_8);
+                } else {
+                    return responseHelper.error(ErrorCodeEnum.ERROR_NEED_PARAMETER, "编码时需要填入参数 plain_hex 。");
+                }
+                JSONObject jsonRes = new JSONObject();
+                jsonRes.put("encode_str", encodeText);
+                jsonRes.put("length", encodeText.length());
+                return responseHelper.success(jsonRes);
+            } else if (codeAct.equalsIgnoreCase("decode")) {
+                if (StrAuxUtils.isValid(codeStr)) {
+                    String decodeStr = URLDecoder.decode(codeStr, CharsetUtil.CHARSET_UTF_8);
+
+                    JSONObject jsonRes = new JSONObject();
+                    jsonRes.put("decode_str", decodeStr);
+                    jsonRes.put("size", decodeStr.length());
+                    return responseHelper.success(jsonRes);
+                } else {
+                    return responseHelper.error(ErrorCodeEnum.ERROR_NEED_PARAMETER, "解码时需要填入参数 code_str 。");
+                }
+            } else {
+                return responseHelper.error(ErrorCodeEnum.ERROR_INVALID_URL, "只支持 base64 编码和解码，不支持：" + codeAct + "。");
+            }
+        } catch (Exception e) {
+            return responseHelper.error(ErrorCodeEnum.ERROR_GENERAL_ERROR, e.getMessage());
+        }
+
+    }
+
+    @PostMapping("/pem2hex")
+    @ResponseBody
+    public Object pem2hex(@RequestParam(value = "plain_str") String plainStr) {
+        try {
+            JSONObject jsonResult = new JSONObject();
+
+            InputStream pemStream = IoUtil.toStream(plainStr, CharsetUtil.CHARSET_UTF_8);
+            PemObject pemObject = readPemObject(pemStream);
+            if (null != pemObject) {
+                jsonPutHex(jsonResult, "hexString", StrAuxUtils.bytesToHexString(pemObject.getContent()));
+                putHexSize(jsonResult, StrAuxUtils.bytesToHexString(pemObject.getContent()));
+            }
+
+            return responseHelper.success(jsonResult);
+        } catch (Exception e) {
+            return exceptionHelper.response(e);
+        }
+    }
+
+    @PostMapping("/hex2pem")
+    @ResponseBody
+    public Object hex2pem(@RequestParam(value = "plain_hex") String plainHex) {
+        try {
+            JSONObject jsonResult = new JSONObject();
+            byte[] bytePem = StrAuxUtils.hexStringToBytes(plainHex);
+
+//            InputStream keyStream = IoUtil.toStream(plainHex,CharsetUtil.CHARSET_UTF_8);
+            InputStream keyStream = IoUtil.toStream(StrAuxUtils.hexStringToBytes(plainHex));
+
+            PemObject object = readPemObject(keyStream);
+            String type = object.getType();
+            if (StrUtil.isNotBlank(type)) {
+                if (type.endsWith("PRIVATE KEY")) {
+//                    return KeyUtil.generateRSAPrivateKey(object.getContent());
+                    System.out.println("PRIVATE KEY");
+                }
+
+                if (type.endsWith("PUBLIC KEY")) {
+//                    return KeyUtil.generateRSAPublicKey(object.getContent());
+                    System.out.println("PUBLIC KEY");
+                }
+
+                if (type.endsWith("CERTIFICATE")) {
+//                    return KeyUtil.readPublicKeyFromCert(IoUtil.toStream(object.getContent()));
+                    System.out.println("CERTIFICATE");
+                }
+            }
+//
+//            PemObject pemObject = readPemObject(keyStream);
+//            if (null != pemObject) {
+//                jsonPutHex(jsonResult, "hexString", StrAuxUtils.bytesToHexString(pemObject.getContent()));
+//                putHexSize(jsonResult, StrAuxUtils.bytesToHexString(pemObject.getContent()));
+//            }
+
+            return responseHelper.success(jsonResult);
+        } catch (Exception e) {
+            return exceptionHelper.response(e);
+        }
+    }
+
 }
