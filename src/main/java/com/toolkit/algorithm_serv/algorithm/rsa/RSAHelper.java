@@ -2,6 +2,7 @@ package com.toolkit.algorithm_serv.algorithm.rsa;
 
 import cn.hutool.core.codec.Base64Encoder;
 import cn.hutool.core.convert.Convert;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.text.StrSpliter;
 import cn.hutool.core.util.HexUtil;
 import cn.hutool.core.util.NumberUtil;
@@ -71,10 +72,15 @@ public class RSAHelper {
         jsonKey.put("private_key_pem", toPem("PRIVATE KEY", privateKey.getEncoded()));
         String rsaN = privateKey.getModulus().toString(16);
         jsonKey.put("rsa_n", rsaN);
+        /** TODO: 生成密钥的d值和单独由p/q/e计算的结果d'不同，但是用d和d'解密：对由(n,e)加密的结果，均能解密成功。
+        // 为何两个d值不同，但不影响私钥计算结果，原因未知 */
         jsonKey.put("rsa_d", privateKey.getPrivateExponent().toString(16));
         jsonKey.put("rsa_e", privateKey.getPublicExponent().toString(16));
         jsonKey.put("rsa_p", privateKey.getPrimeP().toString(16));
         jsonKey.put("rsa_q", privateKey.getPrimeQ().toString(16));
+        jsonKey.put("rsa_dp", privateKey.getPrimeExponentP().toString(16));
+        jsonKey.put("rsa_dq", privateKey.getPrimeExponentQ().toString(16));
+        jsonKey.put("rsa_qinv", privateKey.getCrtCoefficient().toString(16));
         jsonKey.put("modulus_bits", rsaN.length() * 4);
         jsonKey.put("modulus_size", rsaN.length() / 2);
 

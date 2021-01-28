@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "1dd5c3cf-d96c-45ea-9e75-eb83a9a552b7",
+		"_postman_id": "e46aa21e-f079-426f-aac3-83dce4136382",
 		"name": "密码算法辅助工具",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1258,6 +1258,8 @@
 									"    pm.globals.set(\"RSA_E\", jsonData.payload.rsa_e);\r",
 									"    pm.globals.set(\"RSA_N\", jsonData.payload.rsa_n);\r",
 									"    pm.globals.set(\"RSA_D\", jsonData.payload.rsa_d);\r",
+									"    pm.globals.set(\"RSA_P\", jsonData.payload.rsa_p);\r",
+									"    pm.globals.set(\"RSA_Q\", jsonData.payload.rsa_q);\r",
 									"    pm.globals.set(\"RSA_PUB_KEY\", jsonData.payload.public_key_pem);\r",
 									"    pm.globals.set(\"RSA_PRIV_KEY\", jsonData.payload.private_key_pem);\r",
 									"});\r",
@@ -1280,7 +1282,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{API_BASE}}/crypto/asym-alg/rsa/generate-key?key_bits=512",
+							"raw": "{{API_BASE}}/crypto/asym-alg/rsa/generate-key?key_bits=32",
 							"host": [
 								"{{API_BASE}}"
 							],
@@ -1293,7 +1295,7 @@
 							"query": [
 								{
 									"key": "key_bits",
-									"value": "512",
+									"value": "32",
 									"description": "512, 1024, 2048, 4096，默认1024"
 								},
 								{
@@ -1749,17 +1751,17 @@
 					"response": []
 				},
 				{
-					"name": "5.3 time2stamp 时间格式转换",
+					"name": "5.3 格式化时间字符串转时间戳",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"transcoding time Check\", function () {\r",
+									"pm.test(\"transcoding str2timestamp Check\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData.code).to.eql(0);\r",
 									"    \r",
-									"    pm.globals.set(\"time_stamp_str\", jsonData.payload.stamp);\r",
+									"    pm.globals.set(\"time_stamp\", jsonData.payload.time_stamp);\r",
 									"});"
 								],
 								"type": "text/javascript"
@@ -1770,18 +1772,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{API_BASE}}/transcoding/time/time2stamp?time=2021.01.20 16:38:55",
+							"raw": "{{API_BASE}}/transcoding/time/str2timestamp?time_str=2021.01.20 16:38:55",
 							"host": [
 								"{{API_BASE}}"
 							],
 							"path": [
 								"transcoding",
 								"time",
-								"time2stamp"
+								"str2timestamp"
 							],
 							"query": [
 								{
-									"key": "time",
+									"key": "time_str",
 									"value": "2021.01.20 16:38:55",
 									"description": "yyyy-MM-dd HH:mm:ss\nyyyy/MM/dd HH:mm:ss\nyyyy.MM.dd HH:mm:ss\nyyyy年MM月dd日 HH:mm:ss"
 								}
@@ -1791,17 +1793,17 @@
 					"response": []
 				},
 				{
-					"name": "5.4 stamp2time时间格式转换",
+					"name": "5.4 时间戳格式化时间字符串",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"transcoding time Check\", function () {\r",
+									"pm.test(\"transcoding timestamp2str Check\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData.code).to.eql(0);\r",
 									"    \r",
-									"    pm.globals.set(\"time_str\", jsonData.payload.time);\r",
+									"    pm.globals.set(\"time_str\", jsonData.payload.time_str);\r",
 									"});"
 								],
 								"type": "text/javascript"
@@ -1812,18 +1814,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{API_BASE}}/transcoding/time/stamp2time?stamp={{time_stamp_str}}&time_format=yyyy-MM-dd HH:mm:ss",
+							"raw": "{{API_BASE}}/transcoding/time/timestamp2str?time_stamp={{time_stamp_str}}&time_format=yyyy-MM-dd HH:mm:ss",
 							"host": [
 								"{{API_BASE}}"
 							],
 							"path": [
 								"transcoding",
 								"time",
-								"stamp2time"
+								"timestamp2str"
 							],
 							"query": [
 								{
-									"key": "stamp",
+									"key": "time_stamp",
 									"value": "{{time_stamp_str}}",
 									"description": "时间戳格式原文，（1611131930）"
 								},
@@ -1838,7 +1840,7 @@
 					"response": []
 				},
 				{
-					"name": "5.5 string2hex",
+					"name": "5.5 文字转hex编码",
 					"event": [
 						{
 							"listen": "test",
@@ -1888,7 +1890,7 @@
 					"response": []
 				},
 				{
-					"name": "5.6 hex2string",
+					"name": "5.6 Hex编码转文字",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -2017,17 +2019,17 @@
 					"response": []
 				},
 				{
-					"name": "5.9 PEM2Hex 公私钥、证书格式转换",
+					"name": "5.9 PEM解析(公私钥、证书)",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"transcoding pem2hex Check\", function () {\r",
+									"pm.test(\"transcoding pem-parse Check\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData.code).to.eql(0);\r",
 									"    \r",
-									"    pm.globals.set(\"hexString_hex\", jsonData.payload.hexString_hex);\r",
+									"    // pm.globals.set(\"hexString_hex\", jsonData.payload.hexString_hex);\r",
 									"});\r",
 									""
 								],
@@ -2042,9 +2044,109 @@
 							"mode": "urlencoded",
 							"urlencoded": [
 								{
-									"key": "plain_str",
+									"key": "pem",
 									"value": "-----BEGIN PRIVATE KEY-----\nMIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAL4tQNyKy4U2zX6l\nIZvORB1edmwMwIgSB4cgoFECrG5pixzYxKauZkAwKG9/+L4DB8qXRjfXWcvafcOU\nDlYpRROykJ7wGkiqmqbZyrxY8DWjk5ZZQXiSuhYOAJB+Fyfb11JZV6+CvBQX/1g+\nvhJr39Gmp6oAesoYrj90ecozClmnAgMBAAECgYA3j6sSg+5f9hnldUMzbPjTh8Sb\nXsJlPrc6UFrmMBzGiUleXSpe9Dbla+x0XvQCN4pwMvAN4nnWp/f0Su5BV/9Y93nb\nim5ijGNrfN9i6QrnqGCr+MMute+4E8HR2pCScX0mBLDDf40SmDvMzCaxtd21keyr\n9DqHgInQZNEi6NKlkQJBAPCbUTFg6iQ6VTCQ8CsEf5q2xHhuTK23fJ999lvWVxN7\nQsvWb9RP9Ng34HVtvB7Pl6P7FyHLQYiDJhhvYR0L0+kCQQDKV/09Kt6Wjf5Omp1I\nwd3A+tFnipdqnPw+qNHGjevv0hYiEIWQOYbx00zXgaX+WN/pzV9eeNN2XAxlNJ++\ndxcPAkBrzeuPKFFAcjKBVC+H1rgl5gYZv7Hzk+buv02G0H6rZ+sB0c7BXiHiTwbv\nFn/XfkP/YR14Ms3mEH0dLaphjU8hAkEAh3Ar/rRiN04mCcEuRFQXtaNtZSv8PA2G\nPf7MI2Y9pdHupLCAZlBLRjTUO2/5hu1AO4QPMPIZQSFN3rRBtMCL+wJAMp/m2hvI\nTmtbMp/IrKGfma09e3yFiCmoNn7cHLJ7jLvXcacV2XNzpr9YHfBxiZo0g9FqZKvv\nPZoQ5B2XJ7bhTQ==\n-----END PRIVATE KEY-----",
 									"description": "URL原文字符串",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/transcoding/pem-parse",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"transcoding",
+								"pem-parse"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5.10 生成PEM",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"transcoding generate-pem Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    // pm.globals.set(\"hexString_hex\", jsonData.payload.hexString_hex);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "rsa_p_hex",
+									"value": "{{RSA_P}}",
+									"type": "text"
+								},
+								{
+									"key": "rsa_q_hex",
+									"value": "{{RSA_Q}}",
+									"type": "text"
+								},
+								{
+									"key": "rsa_e_hex",
+									"value": "{{RSA_E}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/transcoding/generate-pem",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"transcoding",
+								"generate-pem"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5.11 PEM转成Hex(公私钥、证书)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"transcoding pem2hex Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    // pm.globals.set(\"hexString_hex\", jsonData.payload.hexString_hex);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "pem",
+									"value": "-----BEGIN PRIVATE KEY-----\nMIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAL4tQNyKy4U2zX6l\nIZvORB1edmwMwIgSB4cgoFECrG5pixzYxKauZkAwKG9/+L4DB8qXRjfXWcvafcOU\nDlYpRROykJ7wGkiqmqbZyrxY8DWjk5ZZQXiSuhYOAJB+Fyfb11JZV6+CvBQX/1g+\nvhJr39Gmp6oAesoYrj90ecozClmnAgMBAAECgYA3j6sSg+5f9hnldUMzbPjTh8Sb\nXsJlPrc6UFrmMBzGiUleXSpe9Dbla+x0XvQCN4pwMvAN4nnWp/f0Su5BV/9Y93nb\nim5ijGNrfN9i6QrnqGCr+MMute+4E8HR2pCScX0mBLDDf40SmDvMzCaxtd21keyr\n9DqHgInQZNEi6NKlkQJBAPCbUTFg6iQ6VTCQ8CsEf5q2xHhuTK23fJ999lvWVxN7\nQsvWb9RP9Ng34HVtvB7Pl6P7FyHLQYiDJhhvYR0L0+kCQQDKV/09Kt6Wjf5Omp1I\nwd3A+tFnipdqnPw+qNHGjevv0hYiEIWQOYbx00zXgaX+WN/pzV9eeNN2XAxlNJ++\ndxcPAkBrzeuPKFFAcjKBVC+H1rgl5gYZv7Hzk+buv02G0H6rZ+sB0c7BXiHiTwbv\nFn/XfkP/YR14Ms3mEH0dLaphjU8hAkEAh3Ar/rRiN04mCcEuRFQXtaNtZSv8PA2G\nPf7MI2Y9pdHupLCAZlBLRjTUO2/5hu1AO4QPMPIZQSFN3rRBtMCL+wJAMp/m2hvI\nTmtbMp/IrKGfma09e3yFiCmoNn7cHLJ7jLvXcacV2XNzpr9YHfBxiZo0g9FqZKvv\nPZoQ5B2XJ7bhTQ==\n-----END PRIVATE KEY-----",
 									"type": "text"
 								}
 							]
@@ -2063,17 +2165,17 @@
 					"response": []
 				},
 				{
-					"name": "5.10 Hex2PEM 公私钥、证书格式转换",
+					"name": "5.12 Hex转成PEM",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"transcoding pem2hex Check\", function () {\r",
+									"pm.test(\"transcoding hex2pem Check\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData.code).to.eql(0);\r",
 									"    \r",
-									"    pm.globals.set(\"hexString_hex\", jsonData.payload.hexString_hex);\r",
+									"    // pm.globals.set(\"hexString_hex\", jsonData.payload.hexString_hex);\r",
 									"});\r",
 									""
 								],
@@ -2088,9 +2190,14 @@
 							"mode": "urlencoded",
 							"urlencoded": [
 								{
-									"key": "plain_hex",
-									"value": "{{hexString_hex}}",
-									"description": "URL原文字符串",
+									"key": "hex",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "type",
+									"value": "",
+									"description": "publicKey, privateKey, certificate",
 									"type": "text"
 								}
 							]
@@ -2248,6 +2355,563 @@
 									"value": "8",
 									"description": "取值范围应为1-256字节"
 								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "7. 计算工具",
+			"item": [
+				{
+					"name": "7.1 大数相加",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"calc big number add Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    // pm.environment.set(\"MD5\", jsonData.payload.MD5);\r",
+									"   \r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "x_hex",
+									"value": "112233",
+									"description": "被加数，16进制大数，前缀“-”表示负数",
+									"type": "text"
+								},
+								{
+									"key": "y_hex",
+									"value": "-FE334455",
+									"description": "加数，16进制大数，前缀“-”表示负数",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/calc/bn/add",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"calc",
+								"bn",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "7.2 大数相减",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"calc big number subtract Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    // pm.environment.set(\"MD5\", jsonData.payload.MD5);\r",
+									"   \r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "x_hex",
+									"value": "112233",
+									"description": "被减数，16进制大数，前缀“-”表示负数",
+									"type": "text"
+								},
+								{
+									"key": "y_hex",
+									"value": "334455",
+									"description": "减数，16进制大数，前缀“-”表示负数",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/calc/bn/subtract",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"calc",
+								"bn",
+								"subtract"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "7.3 大数相乘",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"calc big number multiply Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    // pm.environment.set(\"MD5\", jsonData.payload.MD5);\r",
+									"   \r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "x_hex",
+									"value": "{{RSA_P}}",
+									"description": "被乘数，16进制大数，前缀“-”表示负数",
+									"type": "text"
+								},
+								{
+									"key": "y_hex",
+									"value": "{{RSA_Q}}",
+									"description": "乘数，16进制大数，前缀“-”表示负数",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/calc/bn/multiply",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"calc",
+								"bn",
+								"multiply"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "7.4 大数相除",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"calc big number divide Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    // pm.environment.set(\"MD5\", jsonData.payload.MD5);\r",
+									"   \r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "x_hex",
+									"value": "1122332",
+									"description": "被除数，16进制大数，前缀“-”表示负数",
+									"type": "text"
+								},
+								{
+									"key": "y_hex",
+									"value": "334455",
+									"description": "除数，16进制大数，前缀“-”表示负数",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/calc/bn/divide",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"calc",
+								"bn",
+								"divide"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "7.5 最大公因数",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"calc big number gcd Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    // pm.environment.set(\"MD5\", jsonData.payload.MD5);\r",
+									"   \r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "x_hex",
+									"value": "1122332",
+									"description": "16进制大数，前缀“-”表示负数",
+									"type": "text"
+								},
+								{
+									"key": "y_hex",
+									"value": "334455",
+									"description": "16进制大数，前缀“-”表示负数",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/calc/bn/gcd",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"calc",
+								"bn",
+								"gcd"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "7.6 大数求模",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"calc big number mod Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    // pm.environment.set(\"MD5\", jsonData.payload.MD5);\r",
+									"   \r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "x_hex",
+									"value": "1122332",
+									"description": "16进制大数",
+									"type": "text"
+								},
+								{
+									"key": "y_hex",
+									"value": "334455",
+									"description": "模数，16进制大数",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/calc/bn/mod",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"calc",
+								"bn",
+								"mod"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "7.7 模逆",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"calc big number mod-inverse Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    // pm.environment.set(\"MD5\", jsonData.payload.MD5);\r",
+									"   \r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "x_hex",
+									"value": "7333",
+									"description": "16进制大数",
+									"type": "text"
+								},
+								{
+									"key": "y_hex",
+									"value": "9ABCD5",
+									"description": "模数，16进制大数",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/calc/bn/mod-inverse",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"calc",
+								"bn",
+								"mod-inverse"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "7.8 （x-1）*（y-1）",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"calc big number multiply-1 Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    // pm.environment.set(\"MD5\", jsonData.payload.MD5);\r",
+									"   \r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "x_hex",
+									"value": "{{RSA_P}}",
+									"description": "16进制大数",
+									"type": "text"
+								},
+								{
+									"key": "y_hex",
+									"value": "{{RSA_Q}}",
+									"description": "16进制大数",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/calc/bn/multiply-1",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"calc",
+								"bn",
+								"multiply-1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "7.9 模幂",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"calc big number mod-pow Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    // pm.environment.set(\"MD5\", jsonData.payload.MD5);\r",
+									"   \r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "x_hex",
+									"value": "7333",
+									"description": "16进制大数",
+									"type": "text"
+								},
+								{
+									"key": "y_hex",
+									"value": "{{RSA_D}}",
+									"description": "幂，16进制大数",
+									"type": "text"
+								},
+								{
+									"key": "m_hex",
+									"value": "{{RSA_N}}",
+									"description": "模数，16进制大数",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/calc/bn/mod-pow",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"calc",
+								"bn",
+								"mod-pow"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "7.10 pqe求RSA公私钥",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"calc big number rsa-d Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    // pm.environment.set(\"MD5\", jsonData.payload.MD5);\r",
+									"   \r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "p_hex",
+									"value": "{{RSA_P}}",
+									"description": "{{RSA_P}}",
+									"type": "text"
+								},
+								{
+									"key": "q_hex",
+									"value": "{{RSA_Q}}",
+									"description": "{{RSA_Q}}",
+									"type": "text"
+								},
+								{
+									"key": "e_hex",
+									"value": "{{RSA_E}}",
+									"description": "{{RSA_E}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/calc/bn/rsa-d",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"calc",
+								"bn",
+								"rsa-d"
 							]
 						}
 					},

@@ -98,23 +98,23 @@ public class TransCodingApi {
     @ResponseBody
     public Object timeConvert(
             @PathVariable(value = "arg", required = true) String codeAct,
-            @RequestParam(value = "time", required = false) String timeStr,
-            @RequestParam(value = "stamp", required = false) String stampStr,
+            @RequestParam(value = "time_str", required = false) String timeStr,
+            @RequestParam(value = "time_stamp", required = false) String stampStr,
             @RequestParam(value = "time_format", required = false) String timeFormat) {
         try {
-            if (codeAct.equalsIgnoreCase("time2stamp")) {
+            if (codeAct.equalsIgnoreCase("str2timestamp")) {
                 if (StrAuxUtils.isValid(timeStr)) {
                     stampStr = time2stamp(timeStr);
                 }
                 JSONObject jsonOS = new JSONObject();
-                jsonOS.put("stamp", stampStr);
+                jsonOS.put("time_stamp", stampStr);
                 return responseHelper.success(jsonOS);
-            } else if (codeAct.equalsIgnoreCase("stamp2time")) {
+            } else if (codeAct.equalsIgnoreCase("timestamp2str")) {
                 if (StrAuxUtils.isValid(stampStr)) {
                     timeStr = stamp2time(stampStr, timeFormat);
                 }
                 JSONObject jsonOS = new JSONObject();
-                jsonOS.put("time", timeStr);
+                jsonOS.put("time_str", timeStr);
                 return responseHelper.success(jsonOS);
             } else {
                 return responseHelper.error(ErrorCodeEnum.ERROR_FAIL_TIME_CONVERT, "不能识别的参数，arg：" + codeAct);
