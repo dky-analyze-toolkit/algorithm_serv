@@ -143,4 +143,19 @@ public class AsymCryptApi {
             return exceptionHelper.response(e);
         }
     }
+
+    @PostMapping("/rsa/attack-d")
+    @ResponseBody
+    public Object rsaAttackD(
+            @RequestParam("rsa_n") String rsaN,
+            @RequestParam("rsa_e") String rsaE,
+            @RequestParam("rsa_d") String rsaD
+    ) {
+        try {
+            JSONObject jsonResult = RSAHelper.attackRsaD(rsaE, rsaD, rsaN);
+            return responseHelper.success(jsonResult);
+        } catch (Exception e) {
+            return exceptionHelper.response(e);
+        }
+    }
 }

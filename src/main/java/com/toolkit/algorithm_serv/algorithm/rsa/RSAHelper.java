@@ -18,6 +18,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
+import com.toolkit.algorithm_serv.utils.BnAuxUtils;
 import com.toolkit.algorithm_serv.utils_ex.Util;
 import org.apache.commons.codec.binary.Base64;
 import org.bouncycastle.jcajce.provider.asymmetric.rsa.BCRSAPrivateCrtKey;
@@ -29,6 +30,7 @@ import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyPair;
 import java.util.Map;
+import java.util.Random;
 
 public class RSAHelper {
     private static final Map<String, SignAlgorithm> rsaSignAlgsMap = ImmutableMap.<String, SignAlgorithm>builder()
@@ -60,8 +62,8 @@ public class RSAHelper {
 
     public static JSONObject generateKeyPairJson(int keyBits, int rsa_e) throws IOException {
         KeyPair keyPair = KeyUtil.generateKeyPair("RSA", keyBits);
-        BCRSAPrivateCrtKey privateKey = (BCRSAPrivateCrtKey)keyPair.getPrivate();
-        BCRSAPublicKey publicKey = (BCRSAPublicKey)keyPair.getPublic();
+        BCRSAPrivateCrtKey privateKey = (BCRSAPrivateCrtKey) keyPair.getPrivate();
+        BCRSAPublicKey publicKey = (BCRSAPublicKey) keyPair.getPublic();
 
         JSONObject jsonKey = new JSONObject();
         jsonKey.put("public_key_format", publicKey.getFormat());
@@ -73,7 +75,7 @@ public class RSAHelper {
         String rsaN = privateKey.getModulus().toString(16);
         jsonKey.put("rsa_n", rsaN);
         /** TODO: 生成密钥的d值和单独由p/q/e计算的结果d'不同，但是用d和d'解密：对由(n,e)加密的结果，均能解密成功。
-        // 为何两个d值不同，但不影响私钥计算结果，原因未知 */
+         // 为何两个d值不同，但不影响私钥计算结果，原因未知 */
         jsonKey.put("rsa_d", privateKey.getPrivateExponent().toString(16));
         jsonKey.put("rsa_e", privateKey.getPublicExponent().toString(16));
         jsonKey.put("rsa_p", privateKey.getPrimeP().toString(16));
@@ -93,13 +95,13 @@ public class RSAHelper {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(pem.getBytes());
         Key key = PemUtil.readPemKey(inputStream);
         if (key instanceof BCRSAPublicKey) {
-            BCRSAPublicKey publicKey = (BCRSAPublicKey)key;
+            BCRSAPublicKey publicKey = (BCRSAPublicKey) key;
             jsonKey.put("public_key_format", publicKey.getFormat());
             jsonKey.put("public_key_b64", publicKey.getEncoded());
             rsaN = publicKey.getModulus().toString(16);
             jsonKey.put("rsa_e", publicKey.getPublicExponent().toString(16));
         } else if (key instanceof BCRSAPrivateCrtKey) {
-            BCRSAPrivateCrtKey privateKey = (BCRSAPrivateCrtKey)key;
+            BCRSAPrivateCrtKey privateKey = (BCRSAPrivateCrtKey) key;
             jsonKey.put("private_key_format", privateKey.getFormat());
             jsonKey.put("private_key_b64", privateKey.getEncoded());
             rsaN = privateKey.getModulus().toString(16);
@@ -116,13 +118,13 @@ public class RSAHelper {
 
     public static byte[] readPrivKeyFromPem(String pem) {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(pem.getBytes());
-        BCRSAPrivateCrtKey privateKey = (BCRSAPrivateCrtKey)PemUtil.readPemPrivateKey(inputStream);
+        BCRSAPrivateCrtKey privateKey = (BCRSAPrivateCrtKey) PemUtil.readPemPrivateKey(inputStream);
         return privateKey.getEncoded();
     }
 
     public static byte[] readPubKeyFromPem(String pem) {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(pem.getBytes());
-        BCRSAPublicKey publicKey = (BCRSAPublicKey)PemUtil.readPemPublicKey(inputStream);
+        BCRSAPublicKey publicKey = (BCRSAPublicKey) PemUtil.readPemPublicKey(inputStream);
         return publicKey.getEncoded();
     }
 
@@ -173,12 +175,12 @@ public class RSAHelper {
         BigInteger biExponent, biModulus;
         if (!Strings.isNullOrEmpty(pubKeyPem)) {
             ByteArrayInputStream inputStream = new ByteArrayInputStream(pubKeyPem.getBytes());
-            BCRSAPublicKey publicKey = (BCRSAPublicKey)PemUtil.readPemPublicKey(inputStream);
+            BCRSAPublicKey publicKey = (BCRSAPublicKey) PemUtil.readPemPublicKey(inputStream);
             biExponent = publicKey.getPublicExponent();
             biModulus = publicKey.getModulus();
         } else if (!Strings.isNullOrEmpty(privKeyPem)) {
             ByteArrayInputStream inputStream = new ByteArrayInputStream(privKeyPem.getBytes());
-            BCRSAPrivateCrtKey privateKey = (BCRSAPrivateCrtKey)PemUtil.readPemPrivateKey(inputStream);
+            BCRSAPrivateCrtKey privateKey = (BCRSAPrivateCrtKey) PemUtil.readPemPrivateKey(inputStream);
             biExponent = privateKey.getPrivateExponent();
             biModulus = privateKey.getModulus();
         } else {
@@ -226,5 +228,66 @@ public class RSAHelper {
         RSA rsa = new RSA(alg, privKey, null);
         byte[] plain = rsa.decrypt(HexUtil.decodeHex(cipherHex), KeyType.PrivateKey);
         return HexUtil.encodeHexStr(plain, false);
+    }
+
+    /**
+     * 已知e，d，n，分解n
+     *
+     * @param e 公钥e
+     * @param d 私钥d
+     * @param n 模数n
+     * @return p，q
+     */
+    public static BigInteger[] attackRsaD(BigInteger e, BigInteger d, BigInteger n) {
+        // p,q
+        BigInteger[] result = new BigInteger[2];
+        // k=de-1
+        BigInteger k = d.multiply(e).subtract(BigInteger.ONE);
+        Random random = new Random();
+        while (true) {
+            BigInteger g = new BigInteger(n.bitLength(), random);
+            // 选择随机数g，1<g<n
+            while (g.compareTo(BigInteger.ONE) <= 0 || g.compareTo(n) >= 0)
+                g = new BigInteger(n.bitLength(), random);
+            BigInteger k1 = k;
+            // 计算t和g^(k/2^i)的过程合在一起
+            while (k1.mod(BigInteger.valueOf(2)).equals(BigInteger.ZERO)) {
+                // 如果k为偶数，就除以2
+                k1 = k1.shiftRight(1);
+                // 此时g^(k/2^i)=g^k1
+                BigInteger x = g.modPow(k1, n);
+                // 计算y=gcd(x−1,n)，直接赋值给p(result[0])
+                result[0] = x.subtract(BigInteger.ONE).gcd(n);
+                // 如果x>1且y=gcd(x−1,n)>1
+                if (x.compareTo(BigInteger.ONE) > 0 && result[0].compareTo(BigInteger.ONE) > 0) {
+                    result[1] = n.divide(result[0]);
+                    return result;
+                }
+            }
+        }
+    }
+
+    public static JSONObject attackRsaD(String eHex, String dHex, String nHex) {
+        BigInteger biE = BnAuxUtils.hex2BigInteger(eHex);
+        BigInteger biD = BnAuxUtils.hex2BigInteger(dHex);
+        BigInteger biN = BnAuxUtils.hex2BigInteger(nHex);
+
+        BigInteger[] primes = attackRsaD(biE, biD, biN);
+        BigInteger biP = primes[0];
+        BigInteger biQ = primes[1];
+        BigInteger biDP = biD.mod(biP.subtract(BigInteger.ONE));
+        BigInteger biDQ = biD.mod(biQ.subtract(BigInteger.ONE));
+        BigInteger biQInv = biQ.modInverse(biP);
+
+        JSONObject jsonKeys = new JSONObject();
+        jsonKeys.put("rsa_p", BnAuxUtils.packResultJson(biP));
+        jsonKeys.put("rsa_q", BnAuxUtils.packResultJson(biQ));
+        jsonKeys.put("rsa_dp", BnAuxUtils.packResultJson(biDP));
+        jsonKeys.put("rsa_dq", BnAuxUtils.packResultJson(biDQ));
+        jsonKeys.put("rsa_qinv", BnAuxUtils.packResultJson(biQInv));
+        jsonKeys.put("rsa_n", BnAuxUtils.packResultJson(biN));
+        jsonKeys.put("rsa_e", BnAuxUtils.packResultJson(biE));
+        jsonKeys.put("rsa_d", BnAuxUtils.packResultJson(biD));
+        return jsonKeys;
     }
 }

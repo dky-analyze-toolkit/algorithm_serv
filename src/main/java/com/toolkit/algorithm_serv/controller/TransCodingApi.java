@@ -19,6 +19,8 @@ import com.toolkit.algorithm_serv.global.enumeration.ErrorCodeEnum;
 import com.toolkit.algorithm_serv.global.exception.ExceptionHelper;
 import com.toolkit.algorithm_serv.global.response.ResponseHelper;
 import com.toolkit.algorithm_serv.utils.StrAuxUtils;
+import org.bouncycastle.crypto.params.RSAPrivateCrtKeyParameters;
+import org.bouncycastle.jcajce.provider.asymmetric.rsa.BCRSAPrivateCrtKey;
 import org.bouncycastle.util.io.pem.PemObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.InputStream;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.spec.RSAPrivateKeySpec;
 
 import static cn.hutool.crypto.PemUtil.readPemObject;
 import static com.toolkit.algorithm_serv.algorithm.auxtools.TimeAuxUtils.stamp2time;
