@@ -1,18 +1,14 @@
 package com.toolkit.algorithm_serv.controller;
 
-import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSONObject;
-import com.toolkit.algorithm_serv.algorithm.rsa.RSAHelper;
+import com.google.common.base.Strings;
 import com.toolkit.algorithm_serv.global.exception.ExceptionHelper;
 import com.toolkit.algorithm_serv.global.response.ResponseHelper;
 import com.toolkit.algorithm_serv.utils.BnAuxUtils;
-import com.toolkit.algorithm_serv.utils.TimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Date;
 
 @RestController
 @RequestMapping(value = "/calc/bn")
@@ -60,13 +56,18 @@ public class BNCalcApi {
 
     @PostMapping("/{operation}")
     @ResponseBody
-    public Object biAdd(
+    public Object biCalcXY(
             @PathVariable("operation") String operation,
-            @RequestParam("x_hex") String xHex,
-            @RequestParam("y_hex") String yHex
+            @RequestParam(value = "x_hex") String xHex,
+            @RequestParam(value = "y_hex", required = false) String yHex
     ) {
         try {
-            JSONObject jsonResult = BnAuxUtils.biCalc(operation, xHex, yHex);
+            JSONObject jsonResult;
+            if (Strings.isNullOrEmpty(yHex)) {
+                jsonResult = BnAuxUtils.biSingleAction(operation, xHex);
+            } else {
+                jsonResult = BnAuxUtils.biCalcXY(operation, xHex, yHex);
+            }
             return responseHelper.success(jsonResult);
         } catch (Exception e) {
             return exceptionHelper.response(e);

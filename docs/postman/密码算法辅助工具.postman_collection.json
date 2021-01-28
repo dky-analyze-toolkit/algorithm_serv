@@ -1581,6 +1581,60 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "3.7 RSA分解d",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "rsa_n",
+									"value": "{{RSA_N}}",
+									"description": "{{RSA_N}}",
+									"type": "text"
+								},
+								{
+									"key": "rsa_e",
+									"value": "{{RSA_E}}",
+									"description": "{{RSA_E}}",
+									"type": "text"
+								},
+								{
+									"key": "rsa_d",
+									"value": "{{RSA_D}}",
+									"description": "{{RSA_D}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/crypto/asym-alg/rsa/attack-d",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"crypto",
+								"asym-alg",
+								"rsa",
+								"attack-d"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -2912,6 +2966,416 @@
 								"calc",
 								"bn",
 								"rsa-d"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "7.11 求商和余",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"calc big number divide-mod Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    // pm.environment.set(\"MD5\", jsonData.payload.MD5);\r",
+									"   \r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "x_hex",
+									"value": "f8cad911fdd737311433dc\n7be0f1171fd9076\t\t443de6162f4759   cd97109dc346aa90a5   db85e0f9dc3f3\na56ec99646fa485f58720f873df5d163efead7be9d8da3",
+									"type": "text"
+								},
+								{
+									"key": "y_hex",
+									"value": "FE334455",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/calc/bn/divide-mod",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"calc",
+								"bn",
+								"divide-mod"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "7.12 大数位与",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"calc big number bit-and Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    // pm.environment.set(\"MD5\", jsonData.payload.MD5);\r",
+									"   \r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "x_hex",
+									"value": "f8cad911fdd737311433dc\n7be0f1171fd9076\t\t443de6162f4759   cd97109dc346aa90a5   db85e0f9dc3f3\na56ec99646fa485f58720f873df5d163efead7be9d8da3",
+									"type": "text"
+								},
+								{
+									"key": "y_hex",
+									"value": "FE334455",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/calc/bn/bit-and",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"calc",
+								"bn",
+								"bit-and"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "7.13 大数位或",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"calc big number bit-or Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    // pm.environment.set(\"MD5\", jsonData.payload.MD5);\r",
+									"   \r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "x_hex",
+									"value": "f8cad911fdd737311433dc\n7be0f1171fd9076\t\t443de6162f4759   cd97109dc346aa90a5   db85e0f9dc3f3\na56ec99646fa485f58720f873df5d163efead7be9d8da3",
+									"type": "text"
+								},
+								{
+									"key": "y_hex",
+									"value": "FE334455",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/calc/bn/bit-or",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"calc",
+								"bn",
+								"bit-or"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "7.14 大数异或",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"calc big number bit-xor Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    // pm.environment.set(\"MD5\", jsonData.payload.MD5);\r",
+									"   \r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "x_hex",
+									"value": "f8cad911fdd737311433dc\n7be0f1171fd9076\t\t443de6162f4759   cd97109dc346aa90a5   db85e0f9dc3f3\na56ec99646fa485f58720f873df5d163efead7be9d8da3",
+									"type": "text"
+								},
+								{
+									"key": "y_hex",
+									"value": "FE334455",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/calc/bn/bit-xor",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"calc",
+								"bn",
+								"bit-xor"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "7.15 大数求反",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"calc big number bit-not Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    // pm.environment.set(\"MD5\", jsonData.payload.MD5);\r",
+									"   \r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "x_hex",
+									"value": "f8cad911fdd737311433dc\n7be0f1171fd9076\t\t443de6162f4759   cd97109dc346aa90a5   db85e0f9dc3f3\na56ec99646fa485f58720f873df5d163efead7be9d8da3",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/calc/bn/bit-not",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"calc",
+								"bn",
+								"bit-not"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "7.16 大数开方",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"calc big number sqrt Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    // pm.environment.set(\"MD5\", jsonData.payload.MD5);\r",
+									"   \r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "x_hex",
+									"value": "f8cad911fdd737311433dc\n7be0f1171fd9076\t\t443de6162f4759   cd97109dc346aa90a5   db85e0f9dc3f3\na56ec99646fa485f58720f873df5d163efead7be9d8da3",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/calc/bn/sqrt",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"calc",
+								"bn",
+								"sqrt"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "7.17 大数求幂",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"calc big number pow Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    // pm.environment.set(\"MD5\", jsonData.payload.MD5);\r",
+									"   \r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "x_hex",
+									"value": "11223323355112233233551    1223323355",
+									"description": "16进制大数",
+									"type": "text"
+								},
+								{
+									"key": "y_hex",
+									"value": "61",
+									"description": "幂次，16进制，不大于0x64（100）",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/calc/bn/pow",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"calc",
+								"bn",
+								"pow"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "7.18 质数判断",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"calc big number is-prime Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    // pm.environment.set(\"MD5\", jsonData.payload.MD5);\r",
+									"   \r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "x_hex",
+									"value": "f4a1d5ea309a48c7f17f007d8bdb50a5ea1396a79b9a529c936e08af48c3b3160aa760ddd3f50a57c13b7445da4d2aa9eb1b0a7e9d8e1fc3231c44a7561b0905",
+									"description": "16进制大数",
+									"type": "text"
+								},
+								{
+									"key": "y_hex",
+									"value": "61",
+									"description": "确定程度（16进制），不大于1000",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/calc/bn/is-prime",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"calc",
+								"bn",
+								"is-prime"
 							]
 						}
 					},
