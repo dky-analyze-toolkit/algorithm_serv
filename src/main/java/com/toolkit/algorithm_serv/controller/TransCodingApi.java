@@ -14,6 +14,7 @@ import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
 import com.toolkit.algorithm_serv.algorithm.b64.Base64Coding;
+import com.toolkit.algorithm_serv.algorithm.rsa.RSAHelper;
 import com.toolkit.algorithm_serv.algorithm.sym_crypt.SymCryptHelper;
 import com.toolkit.algorithm_serv.global.enumeration.ErrorCodeEnum;
 import com.toolkit.algorithm_serv.global.exception.ExceptionHelper;
@@ -102,25 +103,24 @@ public class TransCodingApi {
             @RequestParam(value = "time_stamp", required = false) String stampStr,
             @RequestParam(value = "time_format", required = false) String timeFormat) {
         try {
+            JSONObject jsonRes = new JSONObject();
             if (codeAct.equalsIgnoreCase("str2timestamp")) {
                 if (StrAuxUtils.isValid(timeStr)) {
                     stampStr = time2stamp(timeStr);
                 }
-                JSONObject jsonOS = new JSONObject();
-                jsonOS.put("time_stamp", stampStr);
-                return responseHelper.success(jsonOS);
+                jsonRes.put("time_stamp", stampStr);
+                return responseHelper.success(jsonRes);
             } else if (codeAct.equalsIgnoreCase("timestamp2str")) {
                 if (StrAuxUtils.isValid(stampStr)) {
                     timeStr = stamp2time(stampStr, timeFormat);
                 }
-                JSONObject jsonOS = new JSONObject();
-                jsonOS.put("time_str", timeStr);
-                return responseHelper.success(jsonOS);
+                jsonRes.put("time_str", timeStr);
+                return responseHelper.success(jsonRes);
             } else {
                 return responseHelper.error(ErrorCodeEnum.ERROR_FAIL_TIME_CONVERT, "不能识别的参数，arg：" + codeAct);
             }
         } catch (Exception e) {
-            return responseHelper.error(ErrorCodeEnum.ERROR_GENERAL_ERROR, e.getMessage());
+            return exceptionHelper.response(e);
         }
 
     }
@@ -220,15 +220,16 @@ public class TransCodingApi {
 
     @PostMapping("/pem2hex")
     @ResponseBody
-    public Object pem2hex(@RequestParam(value = "plain_str") String plainStr) {
+    public Object pem2hex(@RequestParam(value = "pem") String pemStr) {
         try {
             JSONObject jsonResult = new JSONObject();
 
-            InputStream pemStream = IoUtil.toStream(plainStr, CharsetUtil.CHARSET_UTF_8);
+            InputStream pemStream = IoUtil.toStream(pemStr, CharsetUtil.CHARSET_UTF_8);
             PemObject pemObject = readPemObject(pemStream);
             if (null != pemObject) {
-                jsonPutHex(jsonResult, "hexString", StrAuxUtils.bytesToHexString(pemObject.getContent()));
-                putHexSize(jsonResult, StrAuxUtils.bytesToHexString(pemObject.getContent()));
+//                jsonPutHex(jsonResult, "hexString", StrAuxUtils.bytesToHexString(pemObject.getContent()));
+//                putHexSize(jsonResult, StrAuxUtils.bytesToHexString(pemObject.getContent()));
+                jsonResult.put("pem_hex", StrAuxUtils.bytesToHexString(pemObject.getContent()));
             }
 
             return responseHelper.success(jsonResult);
@@ -239,38 +240,21 @@ public class TransCodingApi {
 
     @PostMapping("/hex2pem")
     @ResponseBody
-    public Object hex2pem(@RequestParam(value = "plain_hex") String plainHex) {
+    public Object hex2pem(@RequestParam(value = "hex") String plainHex,
+                          @RequestParam(value = "type") String typeStr) {
         try {
             JSONObject jsonResult = new JSONObject();
             byte[] bytePem = StrAuxUtils.hexStringToBytes(plainHex);
 
-//            InputStream keyStream = IoUtil.toStream(plainHex,CharsetUtil.CHARSET_UTF_8);
-            InputStream keyStream = IoUtil.toStream(StrAuxUtils.hexStringToBytes(plainHex));
-
-            PemObject object = readPemObject(keyStream);
-            String type = object.getType();
-            if (StrUtil.isNotBlank(type)) {
-                if (type.endsWith("PRIVATE KEY")) {
-//                    return KeyUtil.generateRSAPrivateKey(object.getContent());
-                    System.out.println("PRIVATE KEY");
-                }
-
-                if (type.endsWith("PUBLIC KEY")) {
-//                    return KeyUtil.generateRSAPublicKey(object.getContent());
-                    System.out.println("PUBLIC KEY");
-                }
-
-                if (type.endsWith("CERTIFICATE")) {
-//                    return KeyUtil.readPublicKeyFromCert(IoUtil.toStream(object.getContent()));
-                    System.out.println("CERTIFICATE");
-                }
+            if (typeStr.equals("publicKey")) {
+                jsonResult.put("pem", RSAHelper.toPem("PUBLIC KEY", bytePem));
+            } else if (typeStr.equals("privateKey")) {
+                jsonResult.put("pem", RSAHelper.toPem("PRIVATE KEY", bytePem));
+            } else if (typeStr.equals("privateKey")) {
+                jsonResult.put("pem", RSAHelper.toPem("CERTIFICATE", bytePem));
+            } else {
+                return responseHelper.error(ErrorCodeEnum.ERROR_FAIL_TYPE_PEM, "不支持的数据类型：" + typeStr + "。");
             }
-//
-//            PemObject pemObject = readPemObject(keyStream);
-//            if (null != pemObject) {
-//                jsonPutHex(jsonResult, "hexString", StrAuxUtils.bytesToHexString(pemObject.getContent()));
-//                putHexSize(jsonResult, StrAuxUtils.bytesToHexString(pemObject.getContent()));
-//            }
 
             return responseHelper.success(jsonResult);
         } catch (Exception e) {

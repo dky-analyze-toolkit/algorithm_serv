@@ -110,6 +110,7 @@ public enum ErrorCodeEnum {
     ERROR_FAIL_HASH(2075, "计算摘要失败"),
     ERROR_FAIL_RANDOM(2076, "生成随机数失败"),
     ERROR_FAIL_TIME_CONVERT(2076, "时间格式转换失败"),
+    ERROR_FAIL_TYPE_PEM(2077, "不支持的PEM数据类型"),
 
     ;
 
