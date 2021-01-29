@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "f1553448-e155-45c8-a9cf-75a2cdbc18e7",
+		"_postman_id": "b0fbf604-7ce3-4196-a943-c9663e17db0d",
 		"name": "密码算法辅助工具",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1694,6 +1694,69 @@
 							"path": [
 								"crypto",
 								"hash"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4.2 Hmac",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"SM2 sign Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    pm.environment.set(\"MD5\", jsonData.payload.MD5);\r",
+									"    pm.environment.set(\"SHA1\", jsonData.payload.SHA1);\r",
+									"    pm.environment.set(\"SHA256\", jsonData.payload.SHA256);\r",
+									"    pm.environment.set(\"SHA384\", jsonData.payload.SHA384);\r",
+									"    pm.environment.set(\"SHA512\", jsonData.payload.SHA512);\r",
+									"    pm.environment.set(\"SM3\", jsonData.payload.SM3);\r",
+									"    \r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "plain_hex",
+									"value": "{{PLAIN_HEX}}",
+									"description": "{{PLAIN_HEX}}",
+									"type": "text"
+								},
+								{
+									"key": "alg",
+									"value": "MD5,,SHA1,    ,    SHA256,SHA384    ,SHA512,SM3,,,",
+									"description": "MD5,SHA1,SHA256,SHA384,SHA512,SM3  多个，用逗号分隔",
+									"type": "text"
+								},
+								{
+									"key": "key_hex",
+									"value": "112233445566",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/crypto/hmac",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"crypto",
+								"hmac"
 							]
 						}
 					},

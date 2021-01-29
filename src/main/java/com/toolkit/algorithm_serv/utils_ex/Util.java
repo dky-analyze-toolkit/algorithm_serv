@@ -2,6 +2,7 @@ package com.toolkit.algorithm_serv.utils_ex;
 
 import java.math.BigInteger;
 
+@Deprecated
 public class Util {
     /**
      * 整形转换成网络传输的字节流（字节数组）型数据

@@ -11,6 +11,7 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.HashMap;
 import java.util.Map;
 
+@Deprecated
 public class RSAEncrypt {
 
     //非对称密钥算法

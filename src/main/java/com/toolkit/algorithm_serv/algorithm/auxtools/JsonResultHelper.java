@@ -15,4 +15,11 @@ public class JsonResultHelper {
         putHexSize(jsonResult, value);
     }
 
+    public static JSONObject jsonHexAndB64(String dataHex) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("hex", dataHex);
+        jsonObject.put("b64", Base64.encode(dataHex));
+        putHexSize(jsonObject, dataHex);
+        return jsonObject;
+    }
 }

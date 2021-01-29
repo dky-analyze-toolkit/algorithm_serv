@@ -2,7 +2,9 @@ package com.toolkit.algorithm_serv.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.toolkit.algorithm_serv.algorithm.hash.HashHelper;
+import com.toolkit.algorithm_serv.algorithm.hmac.HMacHelper;
 import com.toolkit.algorithm_serv.global.enumeration.ErrorCodeEnum;
+import com.toolkit.algorithm_serv.global.exception.ExceptionHelper;
 import com.toolkit.algorithm_serv.global.response.ResponseHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,10 +19,12 @@ public class HashApi {
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final ResponseHelper responseHelper;
+    private final ExceptionHelper exceptionHelper;
 
     @Autowired
-    public HashApi(ResponseHelper responseHelper) {
+    public HashApi(ResponseHelper responseHelper, ExceptionHelper exceptionHelper) {
         this.responseHelper = responseHelper;
+        this.exceptionHelper = exceptionHelper;
     }
 
     /**
@@ -53,6 +57,20 @@ public class HashApi {
             return responseHelper.success(jsonOS);
         } catch (IllegalArgumentException e) {
             return responseHelper.error(ErrorCodeEnum.ERROR_FAIL_HASH, e.getMessage());
+        }
+    }
+
+    @PostMapping("/hmac")
+    @ResponseBody
+    public Object hash(@RequestParam("plain_hex") String plainHex,
+                       @RequestParam("alg") String alg,
+                       @RequestParam("key_hex") String keyHex) {
+
+        try {
+            JSONObject jsonResult = HMacHelper.hmac(alg, plainHex, keyHex);
+            return responseHelper.success(jsonResult);
+        } catch (Exception e) {
+            return exceptionHelper.response(e);
         }
     }
 }
