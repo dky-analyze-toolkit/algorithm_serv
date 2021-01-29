@@ -4,6 +4,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
 import com.alibaba.fastjson.JSONObject;
 
+import com.toolkit.algorithm_serv.annotation.SysAuth;
 import com.toolkit.algorithm_serv.global.enumeration.ErrorCodeEnum;
 import com.toolkit.algorithm_serv.global.response.ResponseHelper;
 import com.toolkit.algorithm_serv.utils.StrAuxUtils;
@@ -26,6 +27,7 @@ public class AuxToolsApi {
         this.responseHelper = responseHelper;
     }
 
+    @SysAuth
     @GetMapping("/system-time")
     @ResponseBody
     public Object systemTime() {

@@ -56,4 +56,13 @@ public class HMacHelper {
 
         return jsonResult;
     }
+
+    public static byte[] hmac(HmacAlgorithm alg, String plain, byte[] key) {
+        HMac hmac = new HMac(alg, key);
+        return hmac.digest(plain);
+    }
+
+    public static byte[] sha1hmac(String plain, byte[] key) {
+        return hmac(HmacAlgorithm.HmacSHA1, plain, key);
+    }
 }

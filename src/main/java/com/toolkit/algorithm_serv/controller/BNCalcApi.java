@@ -2,6 +2,7 @@ package com.toolkit.algorithm_serv.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
+import com.toolkit.algorithm_serv.annotation.SysAuth;
 import com.toolkit.algorithm_serv.global.exception.ExceptionHelper;
 import com.toolkit.algorithm_serv.global.response.ResponseHelper;
 import com.toolkit.algorithm_serv.utils.BnAuxUtils;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@SysAuth
 @RequestMapping(value = "/calc/bn")
 public class BNCalcApi {
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -54,6 +56,7 @@ public class BNCalcApi {
         }
     }
 
+    // @SysAuth
     @PostMapping("/{operation}")
     @ResponseBody
     public Object biCalcXY(

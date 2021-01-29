@@ -42,6 +42,8 @@ public class ExceptionHelper {
             err = ErrorCodeEnum.ERROR_BAD_BLOCK_SIZE;
         } else if (e instanceof InvalidKeyException || e instanceof InvalidKeySpecException) {
             err = ErrorCodeEnum.ERROR_BAD_CRYPT_KEY;
+        } else if (e instanceof IllegalAccessException) {
+            err = ErrorCodeEnum.ERROR_ILLEGAL_ACCESS;
         } else {
             err = ErrorCodeEnum.ERROR_GENERAL_ERROR;
         }

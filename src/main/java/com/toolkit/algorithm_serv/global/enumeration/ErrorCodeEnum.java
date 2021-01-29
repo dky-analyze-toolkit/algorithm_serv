@@ -23,7 +23,7 @@ public enum ErrorCodeEnum {
     ERROR_NO_SUCH_PADDING(118, "不能识别指定的补齐方式"),
     ERROR_GENERAL_ERROR(1001, "未知错误"),
     ERROR_INTERNAL_ERROR(1002, "内部错误"),
-    ERROR_PARAMETER(1003, "参数错误"),
+    ERROR_ILLEGAL_ACCESS(1003, "不允许非法访问系统"),
     ERROR_NOT_IMPLEMENTED(1004, "待实现"),
     ERROR_INVALID_USER(1005, "无效用户"),
     ERROR_USER_NOT_FOUND(1006, "用户未找到"),

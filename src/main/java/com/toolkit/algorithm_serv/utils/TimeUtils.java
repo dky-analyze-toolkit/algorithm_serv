@@ -1,6 +1,7 @@
 package com.toolkit.algorithm_serv.utils;
 
 import cn.hutool.core.date.BetweenFormatter;
+import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
 
@@ -107,5 +108,9 @@ public class TimeUtils {
             formatBetween += String.format("%d毫秒", timeMs);
         }
         return formatBetween;
+    }
+
+    public static String asDay(DateTime dateTime) {
+        return DateUtil.format(dateTime, "YYYY-MM-dd");
     }
 }
