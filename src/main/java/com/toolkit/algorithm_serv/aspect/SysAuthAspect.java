@@ -2,7 +2,7 @@ package com.toolkit.algorithm_serv.aspect;
 
 import com.toolkit.algorithm_serv.global.exception.ExceptionHelper;
 import com.toolkit.algorithm_serv.global.response.ResponseHelper;
-import com.toolkit.algorithm_serv.utils.SystemManageHelper;
+import com.toolkit.algorithm_serv.services.sys_auth.SystemAuthHelper;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
@@ -97,7 +97,7 @@ public class SysAuthAspect {
     }
 
     private void checkSystemAuthStatus() throws Exception {
-        if (!SystemManageHelper.checkSystemAuthStatus()) {
+        if (!SystemAuthHelper.checkSystemAuthStatus()) {
             throw new IllegalAccessException("系统未授权，或授权过期，请使用有效授权码激活系统。");
         }
     }

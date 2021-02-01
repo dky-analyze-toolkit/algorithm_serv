@@ -1,10 +1,19 @@
 package com.toolkit.algorithm_serv.utils;
 
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.io.file.PathUtil;
+import cn.hutool.core.lang.UUID;
+import cn.hutool.core.lang.generator.UUIDGenerator;
+import cn.hutool.core.util.IdUtil;
+import com.google.common.base.Strings;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class FileUtils {
 
@@ -38,5 +47,39 @@ public class FileUtils {
             path = StringUtils.trimLeadingCharacter(path, '/');
         }
         return path;
+    }
+
+    /**
+     * 拼接目录或文件路径，不对当前目录'.'和上级目录'..'进行额外处理
+     * @param params
+     * @return
+     */
+    public static String joinPath(String... params) {
+        String path = "";
+        for (String param: params) {
+            if (path.isEmpty()) {
+                path = param;
+            } else {
+                path = path + File.separator + param;
+            }
+        }
+        return path;
+    }
+
+    public static String getAppDataPath() {
+        String appRoot;
+        if (SystemUtils.isWindows()) {
+            appRoot = System.getProperty("user.home");
+        } else {
+            appRoot = "/usr/local";
+        }
+        String appDataPath = joinPath(appRoot, "AppData", "tmp");
+
+        File path = new File(appDataPath);
+        if (!path.exists()) {
+            path.mkdirs();
+        }
+
+        return appDataPath;
     }
 }
