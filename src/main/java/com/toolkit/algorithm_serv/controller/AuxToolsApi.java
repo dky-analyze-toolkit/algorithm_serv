@@ -40,6 +40,7 @@ public class AuxToolsApi {
         }
     }
 
+    @SysAuth
     @GetMapping("/uuid")
     @ResponseBody
     public Object generateUUID(@RequestParam(value = "simple", required = false) String simple) {
@@ -63,6 +64,7 @@ public class AuxToolsApi {
     }
 
     //获取指定字节数的随机数，默认8字节，最少1字节，最多256字节。
+    @SysAuth
     @GetMapping("/random")
     @ResponseBody
     public Object random(@RequestParam(value = "size", required = false) int randomLen) {

@@ -17,6 +17,7 @@ import com.google.common.base.Strings;
 import com.toolkit.algorithm_serv.algorithm.b64.Base64Coding;
 import com.toolkit.algorithm_serv.algorithm.rsa.RSAHelper;
 import com.toolkit.algorithm_serv.algorithm.sym_crypt.SymCryptHelper;
+import com.toolkit.algorithm_serv.annotation.SysAuth;
 import com.toolkit.algorithm_serv.global.enumeration.ErrorCodeEnum;
 import com.toolkit.algorithm_serv.global.exception.ExceptionHelper;
 import com.toolkit.algorithm_serv.global.response.ResponseHelper;
@@ -70,6 +71,7 @@ public class TransCodingApi {
         putHexSize(jsonResult, value);
     }
 
+    @SysAuth
     @PostMapping("/b64/{arg}")
     @ResponseBody
     public Object base64Code(
@@ -106,6 +108,7 @@ public class TransCodingApi {
         }
     }
 
+    @SysAuth
     @GetMapping("/time/{arg}")
     @ResponseBody
     public Object timeConvert(
@@ -136,6 +139,7 @@ public class TransCodingApi {
 
     }
 
+    @SysAuth
     @RequestMapping(value = "/string2hex")
     @ResponseBody
     public Object string2hex(@RequestParam("plain_str") String str,
@@ -163,6 +167,7 @@ public class TransCodingApi {
         }
     }
 
+    @SysAuth
     @RequestMapping(value = "/hex2string")
     @ResponseBody
     public Object hex2string(@RequestParam("plain_hex") String hexStr,
@@ -190,6 +195,7 @@ public class TransCodingApi {
         }
     }
 
+    @SysAuth
     @PostMapping("/url/{arg}")
     @ResponseBody
     public Object urlCode(
@@ -229,6 +235,7 @@ public class TransCodingApi {
 
     }
 
+    @SysAuth
     @PostMapping("/pem2hex")
     @ResponseBody
     public Object pem2hex(@RequestParam(value = "pem") String pemStr) {
@@ -249,6 +256,7 @@ public class TransCodingApi {
         }
     }
 
+    @SysAuth
     @PostMapping("/hex2pem")
     @ResponseBody
     public Object hex2pem(@RequestParam(value = "hex") String plainHex,
@@ -273,6 +281,7 @@ public class TransCodingApi {
         }
     }
 
+    @SysAuth
     @PostMapping("/pem-parse")
     @ResponseBody
     public Object pemParse(@RequestParam(value = "pem") String pemStr) {
@@ -285,6 +294,7 @@ public class TransCodingApi {
         }
     }
 
+    @SysAuth
     @PostMapping("/generate-pem")
     @ResponseBody
     public Object generatePem(@RequestParam(value = "rsa_p_hex") String pHex,

@@ -7,6 +7,7 @@ import com.toolkit.algorithm_serv.algorithm.auxtools.JsonResultHelper;
 import com.toolkit.algorithm_serv.algorithm.sym_crypt.ExtSymCryptHelper;
 import com.toolkit.algorithm_serv.algorithm.sym_crypt.PBECryptHelper;
 import com.toolkit.algorithm_serv.algorithm.sym_crypt.SymCryptHelper;
+import com.toolkit.algorithm_serv.annotation.SysAuth;
 import com.toolkit.algorithm_serv.global.enumeration.ErrorCodeEnum;
 import com.toolkit.algorithm_serv.global.exception.ExceptionHelper;
 import com.toolkit.algorithm_serv.global.response.ResponseHelper;
@@ -37,6 +38,7 @@ public class SymCryptApi {
         return responseHelper.error(ErrorCodeEnum.ERROR_NO_SUCH_FUNC, errMsg);
     }
 
+    @SysAuth
     @GetMapping("/generate-key")
     @ResponseBody
     public Object symGenerateKey(
@@ -54,6 +56,7 @@ public class SymCryptApi {
         }
     }
 
+    @SysAuth
     @PostMapping("/{crypt}")
     @ResponseBody
     public Object doCrypt(
@@ -91,6 +94,7 @@ public class SymCryptApi {
         }
     }
 
+    @SysAuth
     @PostMapping("/rc4/{crypt}")
     @ResponseBody
     public Object doRC4Crypt(
@@ -117,6 +121,7 @@ public class SymCryptApi {
         }
     }
 
+    @SysAuth
     @PostMapping("/vigenere/{crypt}")
     @ResponseBody
     public Object doVigenereCrypt(
@@ -144,6 +149,7 @@ public class SymCryptApi {
         }
     }
 
+    @SysAuth
     @GetMapping("/pbe/init-salt")
     @ResponseBody
     public Object initPBESalt(@RequestParam(value = "alg") String alg,
@@ -158,6 +164,7 @@ public class SymCryptApi {
         }
     }
 
+    @SysAuth
     @PostMapping("/pbe/{crypt}")
     @ResponseBody
     public Object doPBECrypt(
@@ -187,6 +194,7 @@ public class SymCryptApi {
         }
     }
 
+    @SysAuth
     @PostMapping("/kits/loop/{crypt}")
     @ResponseBody
     public Object doLoopCrypt(

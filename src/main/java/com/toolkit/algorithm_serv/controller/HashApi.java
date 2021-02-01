@@ -3,6 +3,7 @@ package com.toolkit.algorithm_serv.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.toolkit.algorithm_serv.algorithm.hash.HashHelper;
 import com.toolkit.algorithm_serv.algorithm.hmac.HMacHelper;
+import com.toolkit.algorithm_serv.annotation.SysAuth;
 import com.toolkit.algorithm_serv.global.enumeration.ErrorCodeEnum;
 import com.toolkit.algorithm_serv.global.exception.ExceptionHelper;
 import com.toolkit.algorithm_serv.global.response.ResponseHelper;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@CrossOrigin(origins = "*", maxAge = 3600)
+//@CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping(value = "/crypto")
 public class HashApi {
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -34,6 +35,7 @@ public class HashApi {
      *
      * @return
      */
+    @SysAuth
     @PostMapping("/hash")
     @ResponseBody
     public Object hash(@RequestParam("src_hex") String srcHex,
@@ -60,6 +62,7 @@ public class HashApi {
         }
     }
 
+    @SysAuth
     @PostMapping("/hmac")
     @ResponseBody
     public Object hash(@RequestParam("plain_hex") String plainHex,

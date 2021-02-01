@@ -26,6 +26,7 @@ public class BNCalcApi {
         this.responseHelper = responseHelper;
     }
 
+    @SysAuth
     @PostMapping("/mod-pow")
     @ResponseBody
     public Object biModPow(
@@ -41,6 +42,7 @@ public class BNCalcApi {
         }
     }
 
+    @SysAuth
     @PostMapping("/rsa-d")
     @ResponseBody
     public Object biRsaD(
@@ -56,7 +58,7 @@ public class BNCalcApi {
         }
     }
 
-    // @SysAuth
+    @SysAuth
     @PostMapping("/{operation}")
     @ResponseBody
     public Object biCalcXY(
