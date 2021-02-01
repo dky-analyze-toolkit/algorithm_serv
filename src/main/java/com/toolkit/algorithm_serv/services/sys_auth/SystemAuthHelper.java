@@ -21,7 +21,7 @@ public class SystemAuthHelper {
     public static String calcAuthCode(String fp) {
         // 对指纹计算hashmac，作为授权码
         byte[] result = HMacHelper.sha1hmac(fp, mainKey);
-        return Base64.encode(result);
+        return Base64.encodeUrlSafe(result);
     }
 
     public static String getEnvTodayFingerprint() {
@@ -30,7 +30,7 @@ public class SystemAuthHelper {
 
         // 对硬件信息计算hashmac，作为当天动态指纹
         String hwInfo = jsonInfo.toJSONString();
-        return Base64.encode(HMacHelper.sha1hmac(hwInfo, mainKey));
+        return Base64.encodeUrlSafe(HMacHelper.sha1hmac(hwInfo, mainKey));
     }
 
     public static boolean refreshSystemAuth(String authCode) {

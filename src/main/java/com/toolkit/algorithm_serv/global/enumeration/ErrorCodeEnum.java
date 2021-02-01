@@ -24,7 +24,7 @@ public enum ErrorCodeEnum {
     ERROR_GENERAL_ERROR(1001, "未知错误"),
     ERROR_INTERNAL_ERROR(1002, "内部错误"),
     ERROR_ILLEGAL_ACCESS(1003, "不允许非法访问系统"),
-    ERROR_NOT_IMPLEMENTED(1004, "待实现"),
+    ERROR_FAIL_TO_AUTH(1004, "授权失败"),
     ERROR_INVALID_USER(1005, "无效用户"),
     ERROR_USER_NOT_FOUND(1006, "用户未找到"),
     ERROR_APP_NOT_FOUND(1009, "应用未找到"),

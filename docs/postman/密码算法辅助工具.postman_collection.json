@@ -3503,22 +3503,18 @@
 							}
 						}
 					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
-						"method": "POST",
+						"method": "GET",
 						"header": [],
 						"body": {
 							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "today_fp",
-									"value": "{{ENV_FINGERPRINT}}",
-									"description": "{{ENV_FINGERPRINT}}",
-									"type": "text"
-								}
-							]
+							"urlencoded": []
 						},
 						"url": {
-							"raw": "{{API_BASE}}/system/manage/calc-auth-code",
+							"raw": "{{API_BASE}}/system/manage/calc-auth-code?today_fp={{ENV_FINGERPRINT}}",
 							"host": [
 								"{{API_BASE}}"
 							],
@@ -3526,6 +3522,13 @@
 								"system",
 								"manage",
 								"calc-auth-code"
+							],
+							"query": [
+								{
+									"key": "today_fp",
+									"value": "{{ENV_FINGERPRINT}}",
+									"description": "{{ENV_FINGERPRINT}}"
+								}
 							]
 						}
 					},
@@ -3550,22 +3553,18 @@
 							}
 						}
 					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
-						"method": "POST",
+						"method": "GET",
 						"header": [],
 						"body": {
 							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "auth_code",
-									"value": "{{SYS_AUTH_CODE}}",
-									"description": "{{SYS_AUTH_CODE}}",
-									"type": "text"
-								}
-							]
+							"urlencoded": []
 						},
 						"url": {
-							"raw": "{{API_BASE}}/system/manage/authorize",
+							"raw": "{{API_BASE}}/system/manage/authorize?auth_code={{SYS_AUTH_CODE}}",
 							"host": [
 								"{{API_BASE}}"
 							],
@@ -3573,6 +3572,13 @@
 								"system",
 								"manage",
 								"authorize"
+							],
+							"query": [
+								{
+									"key": "auth_code",
+									"value": "{{SYS_AUTH_CODE}}",
+									"description": "{{SYS_AUTH_CODE}}"
+								}
 							]
 						}
 					},

@@ -1,6 +1,7 @@
 package com.toolkit.algorithm_serv.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.toolkit.algorithm_serv.global.enumeration.ErrorCodeEnum;
 import com.toolkit.algorithm_serv.global.exception.ExceptionHelper;
 import com.toolkit.algorithm_serv.global.response.ResponseHelper;
 import com.toolkit.algorithm_serv.services.sys_auth.SystemAuthHelper;
@@ -35,8 +36,8 @@ public class SystemManageApi {
         }
     }
 
-    @PostMapping("/calc-auth-code")
-    @ResponseBody
+    // @GetMapping("/calc-auth-code")
+    // @ResponseBody
     public Object calculateAuthCode(
             @RequestParam("today_fp") String todayFP
     ) {
@@ -49,14 +50,18 @@ public class SystemManageApi {
         }
     }
 
-    @PostMapping("/authorize")
+    @GetMapping("/authorize")
     @ResponseBody
     public Object refreshAuthorize(
             @RequestParam("auth_code") String authCode
     ) {
         try {
             boolean result = SystemAuthHelper.refreshSystemAuth(authCode);
-            return responseHelper.success(result);
+            if (result) {
+                return responseHelper.success("授权成功。");
+            } else {
+                return responseHelper.error(ErrorCodeEnum.ERROR_FAIL_TO_AUTH, "授权码验证失败，请重新获取正确的授权码进行系统授权。");
+            }
         } catch (Exception e) {
             return exceptionHelper.response(e);
         }
