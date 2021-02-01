@@ -7,6 +7,7 @@ import cn.hutool.core.text.StrSpliter;
 import cn.hutool.core.util.HexUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.crypto.CryptoException;
 import cn.hutool.crypto.KeyUtil;
 import cn.hutool.crypto.PemUtil;
 import cn.hutool.crypto.SecureUtil;
@@ -18,6 +19,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
+import com.toolkit.algorithm_serv.global.enumeration.ErrorCodeEnum;
 import com.toolkit.algorithm_serv.utils.BnAuxUtils;
 import com.toolkit.algorithm_serv.utils_ex.Util;
 import org.apache.commons.codec.binary.Base64;
@@ -149,10 +151,13 @@ public class RSAHelper {
 
     public static boolean verify(String signAlg, String pubKeyPem, String dataHex, String signHex) {
 
-        byte[] pubKey = readPubKeyFromPem(pubKeyPem);
-        Sign sign = SecureUtil.sign(getRsaSignAlg(signAlg), null, pubKey);
-
-        return sign.verify(HexUtil.decodeHex(dataHex), HexUtil.decodeHex(signHex));
+        try{
+            byte[] pubKey = readPubKeyFromPem(pubKeyPem);
+            Sign sign = SecureUtil.sign(getRsaSignAlg(signAlg), null, pubKey);
+            return sign.verify(HexUtil.decodeHex(dataHex), HexUtil.decodeHex(signHex));
+        } catch (Exception e) {
+            throw new CryptoException("验签失败");
+        }
     }
 
     public static String modularExp(byte[] input, byte[] modulus, byte[] exponent) {

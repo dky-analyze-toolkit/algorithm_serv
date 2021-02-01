@@ -36,8 +36,8 @@ public class SystemManageApi {
         }
     }
 
-    // @GetMapping("/calc-auth-code")
-    // @ResponseBody
+//     @GetMapping("/calc-auth-code")
+//     @ResponseBody
     public Object calculateAuthCode(
             @RequestParam("today_fp") String todayFP
     ) {

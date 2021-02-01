@@ -15,7 +15,7 @@ public enum ErrorCodeEnum {
     ERROR_NEED_PLAIN(110, "缺原文数据无法进行加密"),
     ERROR_NEED_CIPHER(111, "缺密文数据无法进行解密"),
     ERROR_BAD_KEY_SIZE(112, "密钥长度错误"),
-    ERROR_FAIL_CRYPT(113, "数据加密或解密失败"),
+    ERROR_FAIL_CRYPT(113, "密码算法错误"),
     ERROR_ALG_NOT_SUPPORT(114, "不能识别指定的算法"),
     ERROR_BAD_PADDING(115, "数据块补齐存在问题，解密失败"),
     ERROR_BAD_BLOCK_SIZE(116, "数据块长度错误"),
