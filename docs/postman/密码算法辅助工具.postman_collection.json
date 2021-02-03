@@ -1282,7 +1282,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{API_BASE}}/crypto/asym-alg/rsa/generate-key?key_bits=32",
+							"raw": "{{API_BASE}}/crypto/asym-alg/rsa/generate-key?key_bits=1024",
 							"host": [
 								"{{API_BASE}}"
 							],
@@ -1295,7 +1295,7 @@
 							"query": [
 								{
 									"key": "key_bits",
-									"value": "32",
+									"value": "1024",
 									"description": "512, 1024, 2048, 4096，默认1024"
 								},
 								{
@@ -2470,6 +2470,102 @@
 									"key": "size",
 									"value": "8",
 									"description": "取值范围应为1-256字节"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "6.4 进制转换",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"SM4 generateKey Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    pm.environment.set(\"sm4_crypt_key\", jsonData.payload.key);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE}}/aux/base-convert?src_number=1213823658&src_radix=10&dest_radix=16",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"aux",
+								"base-convert"
+							],
+							"query": [
+								{
+									"key": "src_number",
+									"value": "1213823658"
+								},
+								{
+									"key": "src_radix",
+									"value": "10",
+									"description": "源进制"
+								},
+								{
+									"key": "dest_radix",
+									"value": "16",
+									"description": "转换后的进制"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "6.5 IP转换",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"SM4 generateKey Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    pm.environment.set(\"sm4_crypt_key\", jsonData.payload.key);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE}}/aux/ip-convert?ip_str=72.89.122.170&ip_num=10",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"aux",
+								"ip-convert"
+							],
+							"query": [
+								{
+									"key": "ip_str",
+									"value": "72.89.122.170"
+								},
+								{
+									"key": "ip_num",
+									"value": "10"
 								}
 							]
 						}
