@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-//@CrossOrigin(origins = "*", maxAge = 3600)
+@SysAuth
 @RequestMapping(value = "/crypto")
 public class HashApi {
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -35,7 +35,6 @@ public class HashApi {
      *
      * @return
      */
-    @SysAuth
     @PostMapping("/hash")
     @ResponseBody
     public Object hash(@RequestParam("src_hex") String srcHex,
@@ -62,7 +61,6 @@ public class HashApi {
         }
     }
 
-    @SysAuth
     @PostMapping("/hmac")
     @ResponseBody
     public Object hash(@RequestParam("plain_hex") String plainHex,

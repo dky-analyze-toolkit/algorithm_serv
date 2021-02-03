@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 
 @RestController
+@SysAuth
 @RequestMapping(value = "/crypto/asym-alg")
 public class AsymCryptApi {
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -29,7 +30,6 @@ public class AsymCryptApi {
         this.responseHelper = responseHelper;
     }
 
-    @SysAuth
     @GetMapping("/rsa/generate-key")
     @ResponseBody
     public Object rsaGenerateKey(
@@ -50,7 +50,6 @@ public class AsymCryptApi {
         }
     }
 
-    @SysAuth
     @PostMapping("/rsa/read-pem")
     @ResponseBody
     public Object rsaReadPEM(
@@ -64,7 +63,6 @@ public class AsymCryptApi {
         }
     }
 
-    @SysAuth
     @PostMapping("/rsa/sign")
     @ResponseBody
     public Object rsaSign(
@@ -82,7 +80,6 @@ public class AsymCryptApi {
         }
     }
 
-    @SysAuth
     @PostMapping("/rsa/verify")
     @ResponseBody
     public Object rsaVerify(
@@ -101,7 +98,6 @@ public class AsymCryptApi {
         }
     }
 
-    @SysAuth
     @PostMapping("/rsa/encrypt")
     @ResponseBody
     public Object rsaEncrypt(
@@ -119,7 +115,7 @@ public class AsymCryptApi {
         }
     }
 
-    @SysAuth
+
     @PostMapping("/rsa/decrypt")
     @ResponseBody
     public Object rsaDecrypt(
@@ -137,7 +133,6 @@ public class AsymCryptApi {
         }
     }
 
-    @SysAuth
     @PostMapping("/rsa/attack-d")
     @ResponseBody
     public Object rsaAttackD(

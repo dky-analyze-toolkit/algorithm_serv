@@ -24,7 +24,7 @@ import java.math.BigInteger;
 //import com.toolkit.algorithm_serv.global.cache.HostConfigs;
 
 @RestController
-//@CrossOrigin(origins = "*",maxAge = 3600)
+@SysAuth
 @RequestMapping(value = "/alg")
 public class SMApi {
     private String defaultIV = "30303030303030303030303030303030";
@@ -42,7 +42,6 @@ public class SMApi {
      * 1.0 SM2
      * @return
      */
-    @SysAuth
     @RequestMapping(value = "/generateKeyPair", method = RequestMethod.GET)
     @ResponseBody
     public Object generateKeyPair() {
@@ -84,7 +83,6 @@ public class SMApi {
      * srchex = "0653F3748DFD938FE83935800FF3F526B85C30C2331DD56FCB1794AA99F2A416";
      * @return
      */
-    @SysAuth
     @RequestMapping(value = "/sm2sign", method = RequestMethod.GET)
     @ResponseBody
     public Object sm2sign(@RequestParam("privatekey") String privatekey,
@@ -114,7 +112,6 @@ public class SMApi {
      * 1.2 SM2验签
      * @return
      */
-    @SysAuth
     @RequestMapping(value = "/sm2verify", method = RequestMethod.GET)
     @ResponseBody
     public Object sm2verify(@RequestParam("publickey") String publickey,
@@ -140,7 +137,6 @@ public class SMApi {
      * 1.3 SM2加密
      * @return
      */
-    @SysAuth
     @RequestMapping(value = "/sm2enc", method = RequestMethod.GET)
     @ResponseBody
     public Object sm2enc(@RequestParam("publickey") String publicKey,
@@ -169,7 +165,6 @@ public class SMApi {
      * 1.4 SM2解密
      * @return
      */
-    @SysAuth
     @RequestMapping(value = "/sm2dec", method = RequestMethod.GET)
     @ResponseBody
     public Object sm2dec(@RequestParam("privatekey") String privatekey,
@@ -203,7 +198,6 @@ public class SMApi {
      * 1.5 SM3Digest
      * @return
      */
-    @SysAuth
     @RequestMapping(value = "/sm3digest", method = RequestMethod.GET)
     @ResponseBody
     public Object sm3(@RequestParam("srchex") String srchex) {
@@ -221,7 +215,6 @@ public class SMApi {
      * 1.6 SM4加密
      * @return
      */
-    @SysAuth
     @RequestMapping(value = "/sm4enc", method = RequestMethod.GET)
     @ResponseBody
     public Object sm4enc(@RequestParam("key") String key,
@@ -263,7 +256,6 @@ public class SMApi {
      * 1.7 SM4解密
      * @return
      */
-    @SysAuth
     @RequestMapping(value = "/sm4dec", method = RequestMethod.GET)
     @ResponseBody
     public Object sm4dec(@RequestParam("key") String key,
@@ -306,7 +298,6 @@ public class SMApi {
      * 1.8 SM4sm4generatekey
      * @return
      */
-    @SysAuth
     @RequestMapping(value = "/sm4generatekey", method = RequestMethod.GET)
     @ResponseBody
     public Object sm4generatekey() {
@@ -339,7 +330,6 @@ public class SMApi {
      * 1.9 string2hex
      * @return
      */
-    @SysAuth
     @RequestMapping(value = "/string2hex", method = RequestMethod.GET)
     @ResponseBody
     public Object string2hex(@RequestParam("string") String str) throws Exception {
@@ -357,7 +347,6 @@ public class SMApi {
      * 1.10 hex2string
      * @return
      */
-    @SysAuth
     @RequestMapping(value = "/hex2string", method = RequestMethod.GET)
     @ResponseBody
     public Object hex2string(@RequestParam("hex") String hex) throws Exception {

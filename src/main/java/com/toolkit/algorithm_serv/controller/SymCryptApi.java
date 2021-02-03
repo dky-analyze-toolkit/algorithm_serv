@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 
 @RestController
+@SysAuth
 @RequestMapping(value = "/crypto/sym-alg")
 public class SymCryptApi {
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -38,7 +39,6 @@ public class SymCryptApi {
         return responseHelper.error(ErrorCodeEnum.ERROR_NO_SUCH_FUNC, errMsg);
     }
 
-    @SysAuth
     @GetMapping("/generate-key")
     @ResponseBody
     public Object symGenerateKey(
@@ -56,7 +56,6 @@ public class SymCryptApi {
         }
     }
 
-    @SysAuth
     @PostMapping("/{crypt}")
     @ResponseBody
     public Object doCrypt(
@@ -94,7 +93,6 @@ public class SymCryptApi {
         }
     }
 
-    @SysAuth
     @PostMapping("/rc4/{crypt}")
     @ResponseBody
     public Object doRC4Crypt(
@@ -121,7 +119,6 @@ public class SymCryptApi {
         }
     }
 
-    @SysAuth
     @PostMapping("/vigenere/{crypt}")
     @ResponseBody
     public Object doVigenereCrypt(
@@ -149,7 +146,6 @@ public class SymCryptApi {
         }
     }
 
-    @SysAuth
     @GetMapping("/pbe/init-salt")
     @ResponseBody
     public Object initPBESalt(@RequestParam(value = "alg") String alg,
@@ -164,7 +160,6 @@ public class SymCryptApi {
         }
     }
 
-    @SysAuth
     @PostMapping("/pbe/{crypt}")
     @ResponseBody
     public Object doPBECrypt(
@@ -194,7 +189,6 @@ public class SymCryptApi {
         }
     }
 
-    @SysAuth
     @PostMapping("/kits/loop/{crypt}")
     @ResponseBody
     public Object doLoopCrypt(

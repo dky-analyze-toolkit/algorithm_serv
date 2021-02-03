@@ -23,6 +23,7 @@ import java.math.BigInteger;
 import static com.toolkit.algorithm_serv.algorithm.auxtools.RandomHelper.generateRandom;
 
 @RestController
+@SysAuth
 @RequestMapping(value = "/aux")
 public class AuxToolsApi {
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -36,7 +37,6 @@ public class AuxToolsApi {
         this.exceptionHelper = exceptionHelper;
     }
 
-    @SysAuth
     @GetMapping("/system-time")
     @ResponseBody
     public Object systemTime() {
@@ -49,15 +49,10 @@ public class AuxToolsApi {
         }
     }
 
-    @SysAuth
     @GetMapping("/uuid")
     @ResponseBody
     public Object generateUUID(@RequestParam(value = "simple", required = false) String simple) {
         try {
-
-//            System.out.println("UUID.fromString "+  UUID.fromString(UUID.randomUUID().toString()));
-//            System.out.println("UUID.randomUUID "+  UUID.randomUUID());
-
             JSONObject jsonOS = new JSONObject();
             if (StrAuxUtils.isValid(simple)) {
                 jsonOS.put("uuid", IdUtil.simpleUUID());
@@ -73,7 +68,6 @@ public class AuxToolsApi {
     }
 
     //获取指定字节数的随机数，默认8字节，最少1字节，最多256字节。
-    @SysAuth
     @GetMapping("/random")
     @ResponseBody
     public Object random(@RequestParam(value = "size", required = false) int randomLen) {
