@@ -1803,6 +1803,12 @@
 									"value": "123456",
 									"description": "原文字符串，二选一",
 									"type": "text"
+								},
+								{
+									"key": "url_safe",
+									"value": "1",
+									"description": "1: URL safe; 其它值：not URL safe",
+									"type": "text"
 								}
 							]
 						},
@@ -1847,8 +1853,14 @@
 							"urlencoded": [
 								{
 									"key": "code_str",
-									"value": "{{b64_encode_str}}",
+									"value": "AUFD3UyKmxBDg1ZOd8-vEqUCJueNDLMK6e6k2Rjw2pla3_dQny88fosOm6u5pRkQQ_YHjINlVBsb9oGxNl4w8KHDz4PObmj10aU4UZcvLMW_VTlSA3qh9yZr-ajPluqCzv1nwC-26FJ7aRgD8deiUGnSreIoJF3QJJEiEOhax6NQsn-IqQ-KE9XsEj7gvAdGqVlbqA3uysA_eaSnBgsxOzc0O14V4geaMy5kXtTotFVLjBe6a4wqlj82rkbH3Bcdsurkr5JICnQPbvyc9Qb9ATt6CJ4HBV5KnKVuZRxZwVr2sBMJXF3b7gIFFV7uaDuMQ7HfhsY8kFMJTM1hIaHJQuQ",
 									"description": "base64编码字符串",
+									"type": "text"
+								},
+								{
+									"key": "url_safe",
+									"value": "1",
+									"description": "1: URL safe; 其它值：not URL safe",
 									"type": "text"
 								}
 							]
