@@ -7,6 +7,7 @@ import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.io.resource.ResourceUtil;
 import cn.hutool.core.net.URLDecoder;
 import cn.hutool.core.util.CharsetUtil;
+import cn.hutool.core.util.HexUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.KeyUtil;
 import cn.hutool.crypto.PemUtil;
@@ -78,24 +79,28 @@ public class TransCodingApi {
             @PathVariable(value = "arg", required = true) String codeAct,
             @RequestParam(value = "plain_hex", required = false) String plainHex,
             @RequestParam(value = "plain_str", required = false) String plainStr,
-            @RequestParam(value = "code_str", required = false) String codeStr
+            @RequestParam(value = "code_str", required = false) String codeStr,
+            @RequestParam(value = "url_safe", required = false, defaultValue = "0") int urlSafe
     ) {
         if (codeAct.equalsIgnoreCase("encode")) {
-            String encodeText = "";
+            byte[] plain = null;
             if (StrAuxUtils.isValid(plainHex)) {
-                encodeText = Base64Coding.encodeFromHexString(plainHex);
+                plain = HexUtil.decodeHex(plainHex);
             } else if (StrAuxUtils.isValid(plainStr)) {
-                encodeText = Base64Coding.encode(plainStr.getBytes());
+                plain = plainStr.getBytes();
             } else {
                 return responseHelper.error(ErrorCodeEnum.ERROR_NEED_PARAMETER, "编码时需要填入参数 plain_hex 或 plain_str 。");
             }
+            byte[] encode = Base64.encode(plain, false, urlSafe == 1);
+            String encodeText = Convert.hexToStr(HexUtil.encodeHexStr(encode), CharsetUtil.CHARSET_UTF_8);
             JSONObject jsonRes = new JSONObject();
             jsonRes.put("encode_str", encodeText);
             jsonRes.put("length", encodeText.length());
             return responseHelper.success(jsonRes);
         } else if (codeAct.equalsIgnoreCase("decode")) {
             if (StrAuxUtils.isValid(codeStr)) {
-                String decodeHex = Base64Coding.decodeToHexString(codeStr);
+                byte[] decode = Base64.decode(codeStr);
+                String decodeHex = HexUtil.encodeHexStr(decode, false);
                 JSONObject jsonRes = new JSONObject();
                 jsonRes.put("decode_hex", decodeHex);
                 jsonRes.put("size", decodeHex.length() / 2);
