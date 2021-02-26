@@ -2,6 +2,7 @@ package com.toolkit.algorithm_serv.controller;
 
 import com.toolkit.algorithm_serv.global.annotation.*;
 import com.toolkit.algorithm_serv.global.exception.ExceptionHelper;
+import com.toolkit.algorithm_serv.global.exception.SizeMismatchExcept;
 import com.toolkit.algorithm_serv.global.response.ResponseHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,11 +30,13 @@ public class CrackPwdApi {
     public Object removeWordPwd(
             @RequestParam("file_item") MultipartFile wordFile
     ) {
-        try {
-            return responseHelper.success("OK");
-        } catch (Exception e) {
-            return exceptionHelper.response(e);
-        }
+        throw new SizeMismatchExcept("test");
+        // try {
+        //     throw new SizeMismatchExcept("test");
+        //     // return responseHelper.success("OK");
+        // } catch (Exception e) {
+        //     return exceptionHelper.response(e);
+        // }
     }
 
 }
