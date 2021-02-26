@@ -1,4 +1,4 @@
-package com.toolkit.algorithm_serv.annotation;
+package com.toolkit.algorithm_serv.global.annotation;
 
 import java.lang.annotation.*;
 

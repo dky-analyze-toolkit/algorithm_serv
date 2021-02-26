@@ -7,7 +7,7 @@ import com.toolkit.algorithm_serv.algorithm.auxtools.JsonResultHelper;
 import com.toolkit.algorithm_serv.algorithm.sym_crypt.ExtSymCryptHelper;
 import com.toolkit.algorithm_serv.algorithm.sym_crypt.PBECryptHelper;
 import com.toolkit.algorithm_serv.algorithm.sym_crypt.SymCryptHelper;
-import com.toolkit.algorithm_serv.annotation.SysAuth;
+import com.toolkit.algorithm_serv.global.annotation.*;
 import com.toolkit.algorithm_serv.global.enumeration.ErrorCodeEnum;
 import com.toolkit.algorithm_serv.global.exception.ExceptionHelper;
 import com.toolkit.algorithm_serv.global.response.ResponseHelper;

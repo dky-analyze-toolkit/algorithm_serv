@@ -1,4 +1,4 @@
-package com.toolkit.algorithm_serv.global.common;
+package com.toolkit.algorithm_serv.global.configuration;
 
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;

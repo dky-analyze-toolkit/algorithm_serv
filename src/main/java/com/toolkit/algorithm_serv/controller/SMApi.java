@@ -4,7 +4,7 @@ import cn.hutool.core.convert.Convert;
 import cn.hutool.core.util.CharsetUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.toolkit.algorithm_serv.algorithm.hash.HashHelper;
-import com.toolkit.algorithm_serv.annotation.SysAuth;
+import com.toolkit.algorithm_serv.global.annotation.*;
 import com.toolkit.algorithm_serv.global.enumeration.ErrorCodeEnum;
 import com.toolkit.algorithm_serv.global.response.ResponseHelper;
 import com.toolkit.algorithm_serv.utils_ex.Util;

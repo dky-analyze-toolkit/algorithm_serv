@@ -1,4 +1,4 @@
-package com.toolkit.algorithm_serv.aspect;
+package com.toolkit.algorithm_serv.global.aspect;
 
 import com.toolkit.algorithm_serv.global.exception.ExceptionHelper;
 import com.toolkit.algorithm_serv.global.response.ResponseHelper;
@@ -34,12 +34,12 @@ public class SysAuthAspect {
     // @Value(value = "${jwt.clientId}")
     // String tokenScope;
 
-    @Pointcut("@annotation(com.toolkit.algorithm_serv.annotation.SysAuth)")
+    @Pointcut("@annotation(com.toolkit.algorithm_serv.global.annotation.SysAuth)")
     public void annotationPointcut() {
 
     }
 
-    @Pointcut("@within(com.toolkit.algorithm_serv.annotation.SysAuth)")
+    @Pointcut("@within(com.toolkit.algorithm_serv.global.annotation.SysAuth)")
     public void withinPointcut() {
 
     }

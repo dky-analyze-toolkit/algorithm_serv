@@ -3,7 +3,7 @@ package com.toolkit.algorithm_serv.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.toolkit.algorithm_serv.algorithm.hash.HashHelper;
 import com.toolkit.algorithm_serv.algorithm.hmac.HMacHelper;
-import com.toolkit.algorithm_serv.annotation.SysAuth;
+import com.toolkit.algorithm_serv.global.annotation.*;
 import com.toolkit.algorithm_serv.global.enumeration.ErrorCodeEnum;
 import com.toolkit.algorithm_serv.global.exception.ExceptionHelper;
 import com.toolkit.algorithm_serv.global.response.ResponseHelper;

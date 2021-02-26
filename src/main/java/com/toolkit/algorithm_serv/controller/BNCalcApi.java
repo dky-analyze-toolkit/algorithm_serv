@@ -2,7 +2,7 @@ package com.toolkit.algorithm_serv.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
-import com.toolkit.algorithm_serv.annotation.SysAuth;
+import com.toolkit.algorithm_serv.global.annotation.*;
 import com.toolkit.algorithm_serv.global.exception.ExceptionHelper;
 import com.toolkit.algorithm_serv.global.response.ResponseHelper;
 import com.toolkit.algorithm_serv.utils.BnAuxUtils;
