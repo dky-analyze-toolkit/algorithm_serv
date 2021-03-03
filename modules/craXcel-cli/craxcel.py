@@ -92,7 +92,8 @@ class MicrosoftOfficeFile(metaclass=abc.ABCMeta):
         with the original file's extension restored. This makes the newly
         repackaged file openable by the original application.
         """
-        file_suffix = f'_{APP_NAME}{self._file.extension}'
+        # file_suffix = f'_{APP_NAME}{self._file.extension}'
+        file_suffix = f'_cracked{self._file.extension}'
         filename = self._file.name.replace(self._file.extension, file_suffix)
         unlocked_filepath = os.path.join(APP_SAVE_DIR, filename)
 
@@ -101,8 +102,9 @@ class MicrosoftOfficeFile(metaclass=abc.ABCMeta):
             for filepath in filepaths:
                 rel_filepath = filepath.replace(self._temp_processing_dir,'')
                 repackaged_zip.write(filepath,arcname=rel_filepath)
-            
+
         print('File repackaged...')
+        print('cracked_file:'+unlocked_filepath)
 
     def _cleanup(self):
         """

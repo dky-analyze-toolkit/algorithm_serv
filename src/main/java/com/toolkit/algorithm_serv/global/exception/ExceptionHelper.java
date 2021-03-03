@@ -44,6 +44,8 @@ public class ExceptionHelper {
             err = ErrorCodeEnum.ERROR_BAD_CRYPT_KEY;
         } else if (e instanceof IllegalAccessException) {
             err = ErrorCodeEnum.ERROR_ILLEGAL_ACCESS;
+        } else if (e instanceof UnlockPasswordExcept) {
+            err = ErrorCodeEnum.ERROR_FAIL_UNLOCK_PWD;
         } else {
             err = ErrorCodeEnum.ERROR_GENERAL_ERROR;
         }

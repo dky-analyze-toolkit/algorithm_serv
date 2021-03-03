@@ -27,7 +27,7 @@ public enum ErrorCodeEnum {
     ERROR_FAIL_TO_AUTH(1004, "授权失败"),
     ERROR_INVALID_USER(1005, "无效用户"),
     ERROR_USER_NOT_FOUND(1006, "用户未找到"),
-    ERROR_APP_NOT_FOUND(1009, "应用未找到"),
+    ERROR_FAIL_UNLOCK_PWD(1009, "口令解锁失败"),
     ERROR_USER_INACTIVE(1010, "用户未激活"),
     ERROR_POLICY_NOT_FOUND(1011, "策略未找到"),
     ERROR_APP_INACTIVE(1012, "应用未激活"),

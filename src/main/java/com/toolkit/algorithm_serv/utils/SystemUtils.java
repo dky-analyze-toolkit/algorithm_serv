@@ -1,13 +1,19 @@
 package com.toolkit.algorithm_serv.utils;
 
 import com.alibaba.fastjson.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Properties;
 
 public class SystemUtils {
+    protected static Logger logger = LoggerFactory.getLogger(SystemUtils.class);
+
     public static Properties sysProps = System.getProperties();
 
     static public String getOsName() {
@@ -58,6 +64,22 @@ public class SystemUtils {
         // 中文版 Windows 运行时环境的输出默认是 GBK 编码
 //        return new BufferedReader(new InputStreamReader(proc.getInputStream(), "GBK"));
         return new BufferedReader(new InputStreamReader(proc.getInputStream(), SystemUtils.getEnvEncoding()));
+    }
+
+    public static ArrayList<String> execProc(String[] args) throws InterruptedException, IOException {
+        Process proc = Runtime.getRuntime().exec(args);
+        BufferedReader output = SysAuxUtils.getProcReader(proc);
+        String line;
+        ArrayList<String> results = new ArrayList<String>();
+        while ((line = output.readLine()) != null) {
+            logger.info(line);
+            results.add(line);
+        }
+        output.close();
+
+        int exitVal = proc.waitFor();
+        System.out.println("Exited with error code: " + exitVal + ". Thread is: " + Thread.currentThread().getName());
+        return results;
     }
 
     public static BufferedReader getExecOutput(String[] args) throws IOException {

@@ -5,6 +5,7 @@ public enum TaskRunStatusEnum {
     RUNNING(2),         // 任务执行中
     FINISHED(3),        // 任务完成
     INTERRUPTED(4),     // 任务中断
+    UNKNOWN(99),        // 未知状态
     ;
 
     private int status;
