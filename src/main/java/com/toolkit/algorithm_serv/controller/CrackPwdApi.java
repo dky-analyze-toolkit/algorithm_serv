@@ -3,6 +3,7 @@ package com.toolkit.algorithm_serv.controller;
 import cn.hutool.core.io.FileUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.toolkit.algorithm_serv.global.annotation.*;
+import com.toolkit.algorithm_serv.global.notify.NotifyHandler;
 import com.toolkit.algorithm_serv.global.response.ResponseHelper;
 import com.toolkit.algorithm_serv.services.pwd_crack.CrackPwdTask;
 import com.toolkit.algorithm_serv.services.pwd_crack.CrackUploadFile;
@@ -26,12 +27,14 @@ public class CrackPwdApi {
     private final ResponseHelper responseHelper;
     private final CrackUploadFile crackUploadFile;
     private final CrackPwdTask crackPwdTask;
+    private final NotifyHandler notifyHandler;
 
     @Autowired
-    public CrackPwdApi(ResponseHelper responseHelper, CrackUploadFile crackUploadFile, CrackPwdTask crackPwdTask) {
+    public CrackPwdApi(ResponseHelper responseHelper, CrackUploadFile crackUploadFile, CrackPwdTask crackPwdTask, NotifyHandler notifyHandler) {
         this.responseHelper = responseHelper;
         this.crackUploadFile = crackUploadFile;
         this.crackPwdTask = crackPwdTask;
+        this.notifyHandler = notifyHandler;
     }
 
     @PostMapping("upload")
@@ -88,21 +91,33 @@ public class CrackPwdApi {
     @ResponseBody
     public Object runCrackTask(
             @RequestParam("file_name") String fileName,
-            @RequestParam(value = "client_id", required = false, defaultValue = "0") boolean clientId
+            @RequestParam(value = "client_id", required = false, defaultValue = "0") String clientId
     ) {
         String filePath = FileUtils.joinPath(FileUtils.getWorkingPath(), "files", "upload", fileName);
-        String taskUuid = crackPwdTask.addTask(filePath);
+        String taskUuid = crackPwdTask.addTask(filePath, clientId);
         JSONObject info = crackPwdTask.getTaskInfo(taskUuid);
         return responseHelper.success(info);
     }
 
     @GetMapping("task-info")
     @ResponseBody
-    public Object getTaskInfo(
-            @RequestParam("task_uuid") String taskUuid
-    ) {
+    public Object getTaskInfo(@RequestParam("task_uuid") String taskUuid) {
         JSONObject info = crackPwdTask.getTaskInfo(taskUuid);
         return responseHelper.success(info);
+    }
+
+    @DeleteMapping("stop-task")
+    @ResponseBody
+    public Object stopCrackTask(@RequestParam("task_uuid") String taskUuid) {
+        crackPwdTask.stopTask(taskUuid);
+        return responseHelper.success();
+    }
+
+    @GetMapping("test-ws-client")
+    @ResponseBody
+    public Object test() {
+        notifyHandler.sendToClient("123", "222");
+        return responseHelper.success();
     }
 
 }

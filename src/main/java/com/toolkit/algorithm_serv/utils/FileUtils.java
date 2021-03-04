@@ -43,7 +43,7 @@ public class FileUtils {
             e.printStackTrace();
         }
         // Windows平台需要把前缀斜杠除去
-        if (SystemUtils.isWindows()) {
+        if (SysAuxUtils.isWindows()) {
             path = StringUtils.trimLeadingCharacter(path, '/');
         }
         return path;
@@ -68,7 +68,7 @@ public class FileUtils {
 
     public static String getAppDataPath() {
         String appRoot;
-        if (SystemUtils.isWindows()) {
+        if (SysAuxUtils.isWindows()) {
             appRoot = System.getProperty("user.home");
         } else {
             appRoot = "/usr/local";

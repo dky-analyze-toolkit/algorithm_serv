@@ -3,9 +3,9 @@ package com.toolkit.algorithm_serv.services.pwd_crack;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.NumberUtil;
 import com.alibaba.fastjson.JSONObject;
-import com.toolkit.algorithm_serv.utils.FileUtils;
-import com.toolkit.algorithm_serv.utils.SystemUtils;
+import com.toolkit.algorithm_serv.utils.SysAuxUtils;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ public class JtrHelper {
     }
 
     public static String getExtractCmd(String fileType) {
-        boolean isWindows = SystemUtils.isWindows();
+        boolean isWindows = SysAuxUtils.isWindows();
         String cmd = cmdList.getString(fileType);
         if (cmd == null) {
             // 按项目需要，临时用 rar 设置默认
@@ -36,7 +36,7 @@ public class JtrHelper {
 
     public static ArrayList<String> showHashCrack(String hashFilePath) throws IOException, InterruptedException {
         String[] args = new String[]{ getJohnCmd(), hashFilePath, "--show" };
-        ArrayList<String> results = SystemUtils.execProc(args);
+        ArrayList<String> results = SysAuxUtils.execProc(args);
         return results;
     }
 
@@ -79,21 +79,31 @@ public class JtrHelper {
         // String[] args = new String[]{ cmd, filePath, ">", hashFilePath };
         String[] args = new String[]{ cmd, filePath };
 
-        ArrayList<String> outputInfo = SystemUtils.execProc(args);
+        ArrayList<String> outputInfo = SysAuxUtils.execProc(args);
         FileUtil.writeUtf8Lines(outputInfo, hashFilePath);
         return hashFilePath;
     }
 
-    public static ArrayList<String> crackHash(String hashFilePath) {
+    public static Process crackHash(String hashFilePath) {
         String wordList = "--wordlist=" + johnPath() + "rockyou.txt";
         String[] args = new String[]{ getJohnCmd(), hashFilePath, wordList };
-        ArrayList<String> results = null;
-        try {
-            results = SystemUtils.execProc(args);
-        } catch (InterruptedException | IOException e) {
-            e.printStackTrace();
+        return SysAuxUtils.execAndGetProc(args);
+    }
+
+    public static void stopCrack(Process crackProc) {
+        if (crackProc == null) {
+            return;
         }
-        return results;
+
+        crackProc.destroyForcibly();
+        // try {
+            // BufferedWriter writer = SysAuxUtils.getProcWriter(crackProc);
+            // writer.write("s");
+            // writer.flush();
+            // writer.close();
+        // } catch (IOException e) {
+        //     e.printStackTrace();
+        // }
     }
 
 }

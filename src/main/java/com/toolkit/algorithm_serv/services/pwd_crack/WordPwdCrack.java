@@ -5,7 +5,6 @@ import com.sun.jna.StringArray;
 import com.toolkit.algorithm_serv.global.exception.UnlockPasswordExcept;
 import com.toolkit.algorithm_serv.utils.FileUtils;
 import com.toolkit.algorithm_serv.utils.SysAuxUtils;
-import com.toolkit.algorithm_serv.utils.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,18 +45,18 @@ public class WordPwdCrack {
     }
 
     public static ArrayList<String> runPython(String[] args) throws InterruptedException, IOException {
-        boolean isWindows = SystemUtils.isWindows();
+        boolean isWindows = SysAuxUtils.isWindows();
         String pythonCmd = isWindows ? "python" : "python3";
 
         ArrayList<String> py_args = new ArrayList<String>(Arrays.asList(args));
         py_args.add(0, pythonCmd);
         args = py_args.toArray(args);
 
-        return SystemUtils.execProc(args);
+        return SysAuxUtils.execProc(args);
     }
 
     // public static ArrayList<String> runPython(String[] args) throws InterruptedException, IOException {
-    //     boolean isWindows = SystemUtils.isWindows();
+    //     boolean isWindows = SysAuxUtils.isWindows();
     //     String pythonCmd = isWindows ? "python" : "python3";
     //
     //     ArrayList<String> py_args = new ArrayList<String>(Arrays.asList(args));

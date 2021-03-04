@@ -78,7 +78,7 @@ public class NetworkUtils {
             // Windows: netstat -an
             try {
                 String[] args = new String[] { "netstat", "-an" };
-                BufferedReader output = SysAuxUtils.getExecOutput(args);
+                BufferedReader output = SysAuxUtils.execReader(args);
                 String line;
                 while ((line = output.readLine()) != null) {
                     // 去除首尾空格
@@ -134,7 +134,7 @@ public class NetworkUtils {
             // Linux: netstat -tunpl
             try {
                 String[] args = new String[] { "netstat", "-tunpl" };
-                BufferedReader output = SysAuxUtils.getExecOutput(args);
+                BufferedReader output = SysAuxUtils.execReader(args);
                 String line;
                 while ((line = output.readLine()) != null) {
                     // 去除首尾空格

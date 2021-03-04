@@ -3693,6 +3693,300 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "9. 文件保护密码破解",
+			"item": [
+				{
+					"name": "9.1 移除Word密码",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file_item",
+									"type": "file",
+									"src": "/E:/Temp/11/locked.docx"
+								},
+								{
+									"key": "download",
+									"value": "1",
+									"description": "可选，1为下载",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/crack-pwd/word/remove-pwd",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"crack-pwd",
+								"word",
+								"remove-pwd"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "9.2 上传文件",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"upload file Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    pm.globals.set(\"UP_FILE_NAME\", jsonData.payload);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file_item",
+									"type": "file",
+									"src": "/E:/Develop/Projects/analyze_toolkit/algorithm_serv.git/files/test/hard.rar"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/crack-pwd/upload",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"crack-pwd",
+								"upload"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "9.3 移除Office文档密码",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"remove office pwd Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    pm.globals.set(\"CRACK_FILE_NAME\", jsonData.payload);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "file_name",
+									"value": "{{UP_FILE_NAME}}",
+									"description": "已上传到后台，并在后台服务器上保存的文件名",
+									"type": "text"
+								},
+								{
+									"key": "download",
+									"value": "1",
+									"description": "可选，1为下载",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "new_name",
+									"value": "",
+									"description": "可选，下载时指定的新文件名",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/crack-pwd/office/remove-pwd",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"crack-pwd",
+								"office",
+								"remove-pwd"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "9.4 下载文件",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE}}/crack-pwd/download?file_name={{CRACK_FILE_NAME}}&new_name",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"crack-pwd",
+								"download"
+							],
+							"query": [
+								{
+									"key": "file_name",
+									"value": "{{CRACK_FILE_NAME}}"
+								},
+								{
+									"key": "new_name",
+									"value": null,
+									"description": "可选，下载时指定的新文件名"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "9.5 启动破解任务",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"run pwd_crack task Check\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(0);\r",
+									"    \r",
+									"    pm.globals.set(\"TASK_ID\", jsonData.payload.uuid);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "client_id",
+									"value": "123",
+									"description": "前端应用的 client_id，用于websocket 消息推送",
+									"type": "text"
+								},
+								{
+									"key": "file_name",
+									"value": "{{UP_FILE_NAME}}",
+									"description": "已上传到后台，并在后台服务器上保存的文件名",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_BASE}}/crack-pwd/run-task",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"crack-pwd",
+								"run-task"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "9.6 查看任务信息",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE}}/crack-pwd/task-info?task_uuid={{TASK_ID}}",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"crack-pwd",
+								"task-info"
+							],
+							"query": [
+								{
+									"key": "task_uuid",
+									"value": "{{TASK_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "9.7 停止任务",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE}}/crack-pwd/stop-task?task_uuid={{TASK_ID}}",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"crack-pwd",
+								"stop-task"
+							],
+							"query": [
+								{
+									"key": "task_uuid",
+									"value": "{{TASK_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "9.8 测试WS客户端",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_BASE}}/crack-pwd/test-ws-client",
+							"host": [
+								"{{API_BASE}}"
+							],
+							"path": [
+								"crack-pwd",
+								"test-ws-client"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"event": [
