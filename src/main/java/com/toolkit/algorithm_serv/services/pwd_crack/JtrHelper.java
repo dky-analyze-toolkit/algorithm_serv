@@ -97,10 +97,9 @@ public class JtrHelper {
 
         crackProc.destroyForcibly();
         // try {
-            // BufferedWriter writer = SysAuxUtils.getProcWriter(crackProc);
-            // writer.write("s");
-            // writer.flush();
-            // writer.close();
+        //     BufferedWriter writer = SysAuxUtils.getProcWriter(crackProc);
+        //     writer.write("q");
+        //     writer.close();
         // } catch (IOException e) {
         //     e.printStackTrace();
         // }
